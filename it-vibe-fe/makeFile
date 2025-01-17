@@ -1,0 +1,17 @@
+install:
+    npm install
+
+serve:
+    npm run serve
+
+build:
+    npm run build
+
+test-unit:
+    npm run test:unit
+
+test-e2e:
+    npm run test:e2e
+
+lint:
+    npm run lint
