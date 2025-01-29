@@ -21,6 +21,7 @@ resource "aws_s3_bucket_public_access_block" "public-access" {
 resource "aws_s3_bucket_policy" "allow-public-access-bucket-policy" {
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
   policy = data.aws_iam_policy_document.public-policy-json.json
+  depends_on = [ aws_s3_bucket_public_access_block.public-access ]
 }
 
 data "aws_iam_policy_document" "public-policy-json" {
@@ -40,7 +41,6 @@ data "aws_iam_policy_document" "public-policy-json" {
     ]
   }
 }
-
 
 resource "aws_s3_object" "index-html" {
   key      = "index.html"
