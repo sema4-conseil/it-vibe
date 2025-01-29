@@ -44,9 +44,31 @@ data "aws_iam_policy_document" "public-policy-json" {
 
 resource "aws_s3_object" "index-html" {
   key      = "index.html"
-  source   = "../dist/index_2.html"
+  source   = "../dist/index.html"
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
   content_type = "text/html"
+}
+
+resource "aws_s3_object" "favicon" {
+  key      = "favicon.ico"
+  source   = "../dist/favicon.ico"
+  bucket = aws_s3_bucket.it-vibe-static-site-s3.id
+}
+
+resource "aws_s3_object" "js" {
+  for_each = fileset("../dist/js", "**/*.*")
+  bucket      = aws_s3_bucket.it-vibe-static-site-s3.id
+  key         = "js/${each.value}"
+  source      = "../dist/js/${each.value}"
+  content_type = "application/javascript"
+}
+
+resource "aws_s3_object" "css" {
+  for_each = fileset("../dist/css", "**/*.*")
+  bucket      = aws_s3_bucket.it-vibe-static-site-s3.id
+  key         = "css/${each.value}"
+  source      = "../dist/css/${each.value}"
+  content_type = "text/css"
 }
 
 
