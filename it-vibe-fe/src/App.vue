@@ -2,11 +2,11 @@
   <div id="app">
     <nav class="navbar">
       <ul class="menu">
-        <li class="logo">IT Vibe</li>
+        <li class="logo">IT Vibes</li>
         <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="#/about">About</a></li>
+        <li><a href="#/contact">Contact</a></li>
+        <li><a href="#/joint_us">Joint us</a></li>
       </ul>
     </nav>
     <div class="search-container">

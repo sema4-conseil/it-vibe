@@ -15,20 +15,28 @@ npm run serve
 npm run build
 ```
 
-### Run your unit tests
+### Compiles and minifies for production
 ```
-npm run test:unit
-```
-
-### Run your end-to-end tests
-```
-npm run test:e2e
+npm run build
 ```
 
-### Lints and fixes files
+### Create docker image on nginx
 ```
-npm run lint
+docker build -t it-vibe-static-site .
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Run docker image locally
+```
+docker run --name it-vibe -d -p 8080:80 it-vibe-static-site
+```
+
+### Deploy on s3 with terraform
+```
+terraform apply
+```
+
+
+### Destroy terraform resources
+```
+terraform destroy
+```
