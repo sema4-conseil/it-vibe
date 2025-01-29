@@ -56,12 +56,24 @@ resource "aws_s3_object" "index-html" {
   source   = "../dist/index.html"
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
   content_type = "text/html"
+  tags = {
+    "creationDatetime" : "${timestamp()}"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_s3_object" "favicon" {
   key      = "favicon.ico"
   source   = "../dist/favicon.ico"
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
+  tags = {
+    "creationDatetime" : "${timestamp()}"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_s3_object" "js" {
@@ -70,6 +82,9 @@ resource "aws_s3_object" "js" {
   key         = "js/${each.value}"
   source      = "../dist/js/${each.value}"
   content_type = "application/javascript"
+  tags = {
+    "creationDatetime" : "${timestamp()}"
+  }
 }
 
 resource "aws_s3_object" "css" {
@@ -78,6 +93,12 @@ resource "aws_s3_object" "css" {
   key         = "css/${each.value}"
   source      = "../dist/css/${each.value}"
   content_type = "text/css"
+  lifecycle {
+    create_before_destroy = true
+  }
+  tags = {
+    "creationDatetime" : "${timestamp()}"
+  }
 }
 
 
