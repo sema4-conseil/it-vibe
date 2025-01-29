@@ -3,15 +3,13 @@
     <nav class="navbar">
       <ul class="menu">
         <li class="logo">IT Vibes</li>
-        <li><a href="#">Home</a></li>
-        <li><a href="#/about">About</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
         <li><a href="#/contact">Contact</a></li>
         <li><a href="#/joint_us">Joint us</a></li>
       </ul>
     </nav>
-    <div class="search-container">
-      <input type="text" placeholder="Search..." class="search-bar" />
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
