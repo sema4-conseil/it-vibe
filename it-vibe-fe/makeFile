@@ -18,3 +18,10 @@ lint:
 
 terraform-apply:
     terraform apply
+
+# Build locally prod mode with docker 
+docker-build:
+    docker build -t it-vibe-static-site:1.0 .
+
+docker-run:
+    docker run --name it-vibe -d -p 8080:80 it-vibe-static-site:1.0
