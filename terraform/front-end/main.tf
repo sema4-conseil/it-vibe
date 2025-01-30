@@ -1,16 +1,3 @@
-provider "aws" {
-  region = "eu-west-3"
-}
-
-terraform {
-  backend "s3" {
-    bucket         = "it-vibe-terraform-backend-state"
-    key            = "it-vibe/terraform.tfstate"
-    region         = "eu-west-3" 
-    encrypt        = true
-  }
-}
-
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
   bucket = "it-vibe-static-site-s3"
   tags = {
@@ -53,7 +40,7 @@ data "aws_iam_policy_document" "public-policy-json" {
 
 resource "aws_s3_object" "index-html" {
   key      = "index.html"
-  source   = "../dist/index.html"
+  source   = "../it-vibe-fe/dist/index.html"
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
   content_type = "text/html"
   tags = {
@@ -66,7 +53,7 @@ resource "aws_s3_object" "index-html" {
 
 resource "aws_s3_object" "favicon" {
   key      = "favicon.ico"
-  source   = "../dist/favicon.ico"
+  source   = "../it-vibe-fe/dist/favicon.ico"
   bucket = aws_s3_bucket.it-vibe-static-site-s3.id
   tags = {
     "creationDatetime" : "${timestamp()}"
@@ -77,10 +64,10 @@ resource "aws_s3_object" "favicon" {
 }
 
 resource "aws_s3_object" "js" {
-  for_each = fileset("../dist/js", "**/*.*")
+  for_each = fileset("../it-vibe-fe/dist/js", "**/*.*")
   bucket      = aws_s3_bucket.it-vibe-static-site-s3.id
   key         = "js/${each.value}"
-  source      = "../dist/js/${each.value}"
+  source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
   tags = {
     "creationDatetime" : "${timestamp()}"
@@ -88,10 +75,10 @@ resource "aws_s3_object" "js" {
 }
 
 resource "aws_s3_object" "css" {
-  for_each = fileset("../dist/css", "**/*.*")
+  for_each = fileset("../it-vibe-fe/dist/css", "**/*.*")
   bucket      = aws_s3_bucket.it-vibe-static-site-s3.id
   key         = "css/${each.value}"
-  source      = "../dist/css/${each.value}"
+  source      = "../it-vibe-fe/dist/css/${each.value}"
   content_type = "text/css"
   lifecycle {
     create_before_destroy = true

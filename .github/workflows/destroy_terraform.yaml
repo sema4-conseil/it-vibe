@@ -25,9 +25,9 @@ jobs:
         terraform_wrapper: false
 
     - name: Initialize Terraform
-      working-directory: it-vibe-fe/terraform
+      working-directory: terraform
       run: terraform init
 
     - name: Perform terraform destroy
-      working-directory: it-vibe-fe/terraform
+      working-directory: terraform
       run: terraform destroy -auto-approve
