@@ -19,9 +19,17 @@ lint:
 terraform-apply:
     terraform apply
 
+terraform-apply-lambda-only:
+    terraform apply -target=module.lambda
+
 # Build locally prod mode with docker 
 docker-build:
     docker build -t it-vibe-static-site:1.0 .
 
 docker-run:
     docker run -d -p 8080:80 it-vibe-static-site:1.0
+
+
+# Lambda
+zip_lambda:
+    zip -r get_companies.zip get_companies.py

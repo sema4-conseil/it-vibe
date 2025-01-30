@@ -18,3 +18,7 @@ module "api-gateway" {
 module "front-end" {
   source = "./front-end"
 }
+
+module "lambda" {
+  source = "./lambda"
+}
