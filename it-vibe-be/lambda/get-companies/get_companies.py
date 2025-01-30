@@ -1,5 +1,6 @@
 import json
 
+
 def lambda_handler(event, context):
     companies = [
         {
@@ -27,7 +28,7 @@ def lambda_handler(event, context):
             "size": "4000"
         }
     ]
-    
+
     return {
         "statusCode": 200,
         "body": json.dumps(companies),
