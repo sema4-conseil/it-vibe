@@ -14,3 +14,7 @@ terraform {
 module "api-gateway" {
   source = "./api-gateway"
 }
+
+module "front-end" {
+  source = "./front-end"
+}
