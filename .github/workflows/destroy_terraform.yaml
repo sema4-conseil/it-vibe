@@ -1,0 +1,26 @@
+name: Terraform Destroy
+
+# This workflow is triggered manually
+on:
+  workflow_dispatch:
+  
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+
+    - name: Initialize Terraform
+      working-directory: it-vibe-fe/terraform
+      run: terraform init
+
+    - name: Perform terraform destroy
+      working-directory: it-vibe-fe/terraform
+      run: terraform destroy -auto-approve
