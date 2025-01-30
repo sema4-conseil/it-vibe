@@ -6,7 +6,8 @@ on:
       - main
 
 jobs:
-  build:
+# Build jobs: build-front-end, build-back-end
+  build-front-end:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,10 +31,29 @@ jobs:
         with:
           name: dist
           path: it-vibe-fe/dist
+  build-back-end:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      - name: Zip get_companies lambda
+        run: zip -r get_companies.zip get_companies.py
+        working-directory: it-vibe-be/lambda/get-companies
+
+      - name: Archive lambda get_companies artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: get_companies
+          path: it-vibe-be/lambda/get-companies/get_companies.zip
+          if-no-files-found: error
+          overwrite: true
+
+
+# Deploy jobs: deploy-front-end, deploy-back-end
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build-front-end, build-back-end]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -43,6 +63,12 @@ jobs:
         with:
           name: dist
           path: it-vibe-fe/dist
+
+      - name: Download get_companies lambda artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: get_companies
+          path: it-vibe-be/lambda/get-companies
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
