@@ -5,12 +5,16 @@ import uuid
 
 def lambda_handler(event, context):
     companies = []
+    
     for i in range(100):
         company = {
             "name": f"Company_{i}",
             "location": f"Location_{i}",
             "code": str(uuid.uuid4()),
-            "size": str(random.randint(1, 2000))
+            "size": str(random.randint(1, 2000)),
+            "revenue": str(random.randint(100000, 1000000000)),
+            "industry": f"Industry_{i}",
+            "description": f"Some description _{i}",
         }
         companies.append(company)
 
