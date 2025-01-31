@@ -11,14 +11,18 @@ terraform {
   }
 }
 
-module "api-gateway" {
-  source = "./api-gateway"
-}
-
 module "front-end" {
   source = "./front-end"
 }
 
 module "lambda" {
   source = "./lambda"
+}
+
+
+module "api-gateway" {
+  source = "./api-gateway"
+  get_compagnies_lambda_invoke_arn = module.lambda.get_compagnies_lambda_invoke_arn
+  get_compagnies_lambda_arn = module.lambda.get_compagnies_lambda_arn
+  depends_on = [ module.lambda ]
 }
