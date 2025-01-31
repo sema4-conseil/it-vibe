@@ -1,33 +1,18 @@
 import json
+import random
+import uuid
 
 
 def lambda_handler(event, context):
-    companies = [
-        {
-            "name": "Capgemeni",
-            "location": "Pune",
-            "code": "C1",
-            "size": "1000"
-        },
-        {
-            "name": "TCS",
-            "location": "Mumbai",
-            "code": "T1",
-            "size": "2000"
-        },
-        {
-            "name": "Infosys",
-            "location": "Bangalore",
-            "code": "I1",
-            "size": "3000"
-        },
-        {
-            "name": "Wipro",
-            "location": "Chennai",
-            "code": "W1",
-            "size": "4000"
+    companies = []
+    for i in range(100):
+        company = {
+            "name": f"Company_{i}",
+            "location": f"Location_{i}",
+            "code": str(uuid.uuid4()),
+            "size": str(random.randint(1, 2000))
         }
-    ]
+        companies.append(company)
 
     return {
         "statusCode": 200,
