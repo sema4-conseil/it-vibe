@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: ITVibe API
+  version: 1.0.0
+  description: API for managing companies
+
+paths:
+  /companies:
+    get:
+      summary: Get all companies
+      responses:
+        '200':
+          description: A list of companies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+    post:
+      summary: Create a new company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+      responses:
+        '201':
+          description: Company created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+
+  /companies/search:
+    get:
+      summary: Search companies by keyword
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of companies matching the keyword
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+
+  /companies/{id}:
+    delete:
+      summary: Delete a company by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Company deleted successfully
+
+components:
+  schemas:
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        size:
+          type: number
+        createdAt:
+          type: string
+          format: date-time 
+        siren:
+          type: string
+        siret:
+          type: string
+        capital:
+          type: number
+        legalForm:
+          type: string
+        activity:
+          type: string
+        vatNumber:  
+          type: string
+        website:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+        socialNetworks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string    
