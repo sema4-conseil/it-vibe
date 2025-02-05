@@ -49,6 +49,17 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
+      - name: Zip create_company lambda
+        run: zip -r create_company.zip create_company.py
+        working-directory: it-vibe-be/lambda/create-company
+      
+      - name: Archive lambda create_company artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: create_company
+          path: it-vibe-be/lambda/create-company/create_company.zip
+          if-no-files-found: error
+          overwrite: true
 
 # Deploy jobs: deploy-front-end, deploy-back-end
   deploy:
