@@ -5,14 +5,13 @@ info:
   description: API for managing companies
 
 paths:
-
   /companies:
     get:
       x-amazon-apigateway-integration:
         uri: "${get_compagnies_lambda_invoke_arn}"
         httpMethod: POST
         type: aws_proxy
-      summary: Get all companies
+      summary: List all companies
       responses:
         "200":
           description: A list of companies
@@ -22,7 +21,38 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Company"
-    
+    post:
+      x-amazon-apigateway-integration:
+        uri: "${create_compagny_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Create a company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Company"
+      responses:
+        "201":
+          description: The created company
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     Company:
@@ -30,43 +60,30 @@ components:
       properties:
         id:
           type: string
+          example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
         name:
           type: string
-        address:
+          example: "ITVibe"
+        location:
           type: string
-        phone:
-          type: string
-        email:
-          type: string
+          example: "Paris"
         size:
           type: number
-        createdAt:
-          type: string
-          format: date-time
-        siren:
-          type: string
-        siret:
-          type: string
-        capital:
+          example: 100
+        revenue:
           type: number
-        legalForm:
+          example: 1000000
+        industry:
           type: string
-        activity:
-          type: string
-        vatNumber:
-          type: string
-        website:
-          type: string
-        logo:
-          type: string
+          example: "IT"
         description:
           type: string
-        socialNetworks:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              url:
-                type: string
+          example: "IT company"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
