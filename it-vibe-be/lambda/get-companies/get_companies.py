@@ -8,9 +8,9 @@ def lambda_handler(event, context):
     
     for i in range(100):
         company = {
+            "id": str(uuid.uuid4()),
             "name": f"Company_{i}",
             "location": f"Location_{i}",
-            "code": str(uuid.uuid4()),
             "size": str(random.randint(1, 2000)),
             "revenue": str(random.randint(100000, 1000000000)),
             "industry": f"Industry_{i}",
