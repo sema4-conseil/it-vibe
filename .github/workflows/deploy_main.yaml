@@ -49,6 +49,17 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
+      - name: Zip save_company lambda
+        run: zip -r save_company.zip save_company.py
+        working-directory: it-vibe-be/lambda/save-company
+      
+      - name: Archive lambda save_company artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: save_company
+          path: it-vibe-be/lambda/save-company/save_company.zip
+          if-no-files-found: error
+          overwrite: true
 
 # Deploy jobs: deploy-front-end, deploy-back-end
   deploy:
@@ -69,6 +80,12 @@ jobs:
         with:
           name: get_companies
           path: it-vibe-be/lambda/get-companies
+
+      - name: Download save_company lambda artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: save_company 
+          path: it-vibe-be/lambda/save-company
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
