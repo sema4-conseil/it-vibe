@@ -1,12 +1,26 @@
-variable "code_path" {
+variable "get_companies_code_path" {
   default = "../it-vibe-be/lambda/get-companies/get_companies.zip"
 }
 
+variable "save_company_code_path" {
+  default = "../it-vibe-be/lambda/save-company/save_company.zip"
+}
+
 resource "aws_lambda_function" "get_companies_lambda" {
-    filename         = var.code_path
+    filename         = var.get_companies_code_path
     function_name    = "get_companies"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "get_companies.lambda_handler"
+    runtime          = "python3.8"
+}
+
+
+
+resource "aws_lambda_function" "save_company_lambda" {
+    filename         = var.save_company_code_path
+    function_name    = "save_compagny"
+    role             = aws_iam_role.lambda_exec.arn
+    handler          = "save_company.lambda_handler"
     runtime          = "python3.8"
 }
 

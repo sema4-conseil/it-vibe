@@ -31,5 +31,8 @@ docker-run:
 
 
 # Lambda
-zip_lambda:
+zip_get_companies_lambda:
     zip -r get_companies.zip get_companies.py
+
+zip_save_company_lambda:
+    zip -r save_company.zip save_company.py
