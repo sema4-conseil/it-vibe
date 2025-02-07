@@ -11,7 +11,7 @@ resource "aws_lambda_function" "get_companies_lambda" {
     function_name    = "get_companies"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "get_companies.lambda_handler"
-    runtime          = "python3.8"
+    runtime          = "python3.13"
 }
 
 
@@ -21,7 +21,7 @@ resource "aws_lambda_function" "save_company_lambda" {
     function_name    = "save_compagny"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "save_company.lambda_handler"
-    runtime          = "python3.8"
+    runtime          = "python3.13"
 }
 
 resource "aws_iam_role" "lambda_exec" {
