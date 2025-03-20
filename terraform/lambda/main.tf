@@ -6,6 +6,10 @@ variable "save_company_code_path" {
   default = "../it-vibe-be/lambda/save-company/save_company.zip"
 }
 
+variable "push_contact_message_code_path" {
+  default = "../it-vibe-be/lambda/push-contact-message/push_contact_message.zip"
+}
+
 resource "aws_lambda_function" "get_companies_lambda" {
     filename         = var.get_companies_code_path
     function_name    = "get_companies"
@@ -21,6 +25,14 @@ resource "aws_lambda_function" "save_company_lambda" {
     function_name    = "save_company"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "save_company.lambda_handler"
+    runtime          = "python3.13"
+}
+
+resource "aws_lambda_function" "push_contact_message_lambda" {
+    filename         = var.push_contact_message_code_path
+    function_name    = "push_contact_message"
+    role             = aws_iam_role.lambda_exec.arn
+    handler          = "push_contact_message.lambda_handler"
     runtime          = "python3.13"
 }
 
