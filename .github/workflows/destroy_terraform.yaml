@@ -4,7 +4,7 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 15 * * *"
+    - cron: "15 15 * * *"
       branches:
         - feat/51
   
