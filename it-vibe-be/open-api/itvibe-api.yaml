@@ -52,7 +52,7 @@ paths:
                   $ref: "#/components/schemas/Company"
     post:
       x-amazon-apigateway-integration:
-        uri: "${create_compagny_lambda_invoke_arn}"
+        uri: "${create_company_lambda_invoke_arn}"
         httpMethod: POST
         type: aws_proxy
       summary: Create a company
