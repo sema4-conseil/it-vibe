@@ -4,10 +4,8 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 15 * * *"
-      branches:
-        - feat/51
-  
+    - cron: "31 14 * * *"
+      
 jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
