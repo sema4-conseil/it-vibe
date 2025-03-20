@@ -3,6 +3,10 @@ name: Terraform Destroy
 # This workflow is triggered manually
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * *"
+      branches:
+        - feat/51
   
 jobs:
   terraform-destroy:
