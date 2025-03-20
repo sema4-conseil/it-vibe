@@ -4,7 +4,6 @@
       <h2>{{ company.name }}</h2>
       <p><strong>Location:</strong> {{ company.location }}</p>
       <p><strong>Industry:</strong> {{ company.industry }}</p>
-      <p><strong>Description:</strong> {{ company.description }}</p>
     </div>
   </div>
 </template>
@@ -23,7 +22,7 @@ export default {
     async fetchCompanies() {
       try {
         const response = await fetch(
-          "https://3hiqc0jhwh.execute-api.eu-west-3.amazonaws.com/uat/companies"
+          "https://lqp6tpvzci.execute-api.eu-west-3.amazonaws.com/dev/companies"
         );
         const data = await response.json();
         this.companies = data.map((company) => ({
@@ -43,15 +42,16 @@ export default {
 
 <style>
 .company-cards {
+  padding: 5px;
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   gap: 16px;
 }
 
 .company-card {
-  border: 1px solid #ddd;
-  padding: 16px;
+  border: 1px solid #1c1c1c;
   border-radius: 8px;
-  width: 300px;
+  width: 100%;
 }
 </style>

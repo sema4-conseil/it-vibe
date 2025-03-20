@@ -26,7 +26,11 @@ def lambda_handler(event, context):
             "body": json.dumps({
                 "message": "Company created successfully",
                 "company": company_data
-            })
+            }),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
+            }
         }
         
     except KeyError as e:

@@ -22,7 +22,12 @@ def lambda_handler(event, context):
             "statusCode": 201,
             "body": json.dumps({
                 "message": "Message pushed successfully, we will get back to you soon! on the email:" + body["email"]
-            })
+            }),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
+            }
+
         }
         
     except KeyError as e:

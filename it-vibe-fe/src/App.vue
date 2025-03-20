@@ -9,7 +9,9 @@
         <li><a href="#/joint_us">Joint us</a></li>
       </ul>
     </nav>
-    <router-view></router-view>
+    <div class="content">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -25,13 +27,20 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
   color: #333;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
+
 #app {
   text-align: center;
 }
+
 .navbar {
   background-color: #333;
   overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure the navbar is above other content */
 }
 
 .menu {
@@ -61,6 +70,12 @@ body {
   text-align: left;
   padding-left: 20px;
   color: white;
+}
+
+.content {
+  margin-top: 60px; /* Add margin to avoid content being hidden behind the fixed navbar */
+  overflow-y: auto;
+  height: calc(100vh - 60px); /* Adjust height to be scrollable */
 }
 
 .search-container {
