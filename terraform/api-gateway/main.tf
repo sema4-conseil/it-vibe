@@ -2,7 +2,7 @@ data "template_file" "itvibe_api_spec" {
   template = file(var.openapi_spec_location)
 
   vars = {
-    get_compagnies_lambda_invoke_arn = var.get_compagnies_lambda_invoke_arn
+    get_companies_lambda_invoke_arn = var.get_companies_lambda_invoke_arn
     create_compagny_lambda_invoke_arn = var.save_company_lambda_invoke_arn
   }
 }
@@ -19,7 +19,7 @@ resource "aws_api_gateway_rest_api" "itvibe_api" {
 resource "aws_lambda_permission" "get_companies_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name =  var.get_compagnies_lambda_arn
+  function_name =  var.get_companies_lambda_arn
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
 }

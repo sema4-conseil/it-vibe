@@ -37,7 +37,7 @@ paths:
   /companies:
     get:
       x-amazon-apigateway-integration:
-        uri: "${get_compagnies_lambda_invoke_arn}"
+        uri: "${get_compagnis_lambda_invoke_arn}"
         httpMethod: POST
         type: aws_proxy
       summary: List all companies

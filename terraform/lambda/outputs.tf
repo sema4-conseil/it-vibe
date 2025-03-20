@@ -1,8 +1,8 @@
-output "get_compagnies_lambda_invoke_arn" {
+output "get_companies_lambda_invoke_arn" {
     value = aws_lambda_function.get_companies_lambda.invoke_arn
 }
 
-output "get_compagnies_lambda_arn" {
+output "get_companies_lambda_arn" {
     value = aws_lambda_function.get_companies_lambda.arn
 }
 
