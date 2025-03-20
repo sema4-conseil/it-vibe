@@ -22,6 +22,7 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps(companies),
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",  # Required for CORS support to work    
         }
     }
