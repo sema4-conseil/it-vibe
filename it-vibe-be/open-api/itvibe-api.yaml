@@ -81,6 +81,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /contact:
+    post:
+      x-amazon-apigateway-integration:
+        uri: "${push_contact_message_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Push a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactMessage"
+      responses:
+        "201":
+          description: The contact message is pushed with success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactMessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 
 components:
   schemas:
@@ -108,7 +141,24 @@ components:
         description:
           type: string
           example: "IT company"
-
+    ContactMessage:
+      type: object
+      required:
+        - email
+        - messageContent
+      properties:
+        email:
+          type: string
+          example: "jhon.dohe@company.com"
+        messageContent:
+          type: string
+          example: "Hello, I would like to know more about your company"
+    ContactMessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Message sent with success"          
     Error:
       type: object
       properties:
