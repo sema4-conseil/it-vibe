@@ -21,8 +21,8 @@ module "lambda" {
 
 module "api-gateway" {
   source = "./api-gateway"
-  get_compagnies_lambda_invoke_arn = module.lambda.get_compagnies_lambda_invoke_arn
-  get_compagnies_lambda_arn = module.lambda.get_compagnies_lambda_arn
+  get_companies_lambda_invoke_arn = module.lambda.get_companies_lambda_invoke_arn
+  get_companies_lambda_arn = module.lambda.get_companies_lambda_arn
   save_company_lambda_invoke_arn = module.lambda.save_company_lambda_invoke_arn
   save_company_lambda_arn = module.lambda.save_company_lambda_arn
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"

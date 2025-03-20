@@ -18,7 +18,7 @@ resource "aws_lambda_function" "get_companies_lambda" {
 
 resource "aws_lambda_function" "save_company_lambda" {
     filename         = var.save_company_code_path
-    function_name    = "save_compagny"
+    function_name    = "save_company"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "save_company.lambda_handler"
     runtime          = "python3.13"
