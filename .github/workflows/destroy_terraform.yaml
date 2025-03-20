@@ -4,7 +4,7 @@ name: Terraform Destroy
 on:
   workflow_dispatch:
   schedule:
-    - cron: "31 14 * * *"
+    - cron: "35 14 * * *"
       
 jobs:
   terraform-destroy:
