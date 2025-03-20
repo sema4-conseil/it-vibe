@@ -61,6 +61,18 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
+      - name: Zip push_message lambda
+        run: zip -r push_contact_message.zip push_contact_message.py
+        working-directory: it-vibe-be/lambda/push-contact-message
+      
+      - name: Archive lambda save_company artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: push_contact_message
+          path: it-vibe-be/lambda/push-contact-message/push_contact_message.zip
+          if-no-files-found: error
+          overwrite: true
+
 # Deploy jobs: deploy-front-end, deploy-back-end
   deploy:
     runs-on: ubuntu-latest
@@ -86,6 +98,12 @@ jobs:
         with:
           name: save_company 
           path: it-vibe-be/lambda/save-company
+
+      - name: Download push_contact_message lambda artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: push_contact_message 
+          path: it-vibe-be/lambda/push-contact-message
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
