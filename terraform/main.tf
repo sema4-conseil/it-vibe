@@ -19,6 +19,13 @@ module "lambda" {
   source = "./lambda"
 }
 
+module "route-53" {
+  source = "./route-53"
+  s3_hosted_zone_id  = module.front-end.zone_id
+  s3_domain_name     = module.front-end.domain_name
+  bucket_name        = module.front-end.bucket_name
+}
+
 module "api-gateway" {
   source = "./api-gateway"
   get_companies_lambda_invoke_arn = module.lambda.get_companies_lambda_invoke_arn

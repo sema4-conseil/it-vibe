@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
-  bucket = "it-vibe-static-site-s3"
+  bucket = "it-vibe.dev.sema4-conseil.com"
   tags = {
     Name = "IT-Vibe-s3-bucket-static-web-site"
     Env = "dev"
@@ -107,4 +107,17 @@ output "bucket_arn" {
 
 output "site-endpoint" {
   value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.website_endpoint
+}
+
+
+output "bucket_name" {
+  value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.bucket
+}
+
+output "domain_name" {
+  value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.website_domain
+}
+
+output "zone_id" {
+  value = aws_s3_bucket.it-vibe-static-site-s3.hosted_zone_id
 }
