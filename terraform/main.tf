@@ -11,6 +11,10 @@ terraform {
   }
 }
 
+variable "hosted_zone_id" {
+  default = "Z09606333IIM9GKOYXW0S"
+}
+
 module "front-end" {
   source = "./front-end"
 }
@@ -35,5 +39,6 @@ module "api-gateway" {
   push_contact_message_lambda_arn = module.lambda.push_contact_message_lambda_arn
   push_contact_message_lambda_invoke_arn = module.lambda.push_contact_message_lambda_invoke_arn
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
+  hosted_zone_id = var.hosted_zone_id
   depends_on = [ module.lambda ]
 }

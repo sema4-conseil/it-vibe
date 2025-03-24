@@ -14,3 +14,5 @@
 npm run serve
 ```
 #### Back-end 
+* API
+    * Healthcheck (dev) : https://dev.api.it-vibe.sema4-conseil.com/healthcheck
