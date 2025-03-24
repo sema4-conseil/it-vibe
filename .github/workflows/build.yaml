@@ -23,7 +23,7 @@ jobs:
 
       - name: Run build
         working-directory: it-vibe-fe
-        run: npm run build
+        run: npm run build -- --mode stg
   lint-and-test-python:
     runs-on: ubuntu-latest
 

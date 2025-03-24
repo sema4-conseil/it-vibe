@@ -13,6 +13,7 @@ export default {
   data() {
     return {
       companies: [],
+      apibaseUrl: process.env.VUE_APP_API_BASE_URL,
     };
   },
   created() {
@@ -21,9 +22,7 @@ export default {
   methods: {
     async fetchCompanies() {
       try {
-        const response = await fetch(
-          "https://lqp6tpvzci.execute-api.eu-west-3.amazonaws.com/dev/companies"
-        );
+        const response = await fetch(`${this.apibaseUrl}/companies`);
         const data = await response.json();
         this.companies = data.map((company) => ({
           id: company.id,
