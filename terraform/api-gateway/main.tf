@@ -8,9 +8,18 @@ data "template_file" "itvibe_api_spec" {
   }
 }
 
+variable "certeficate_arn" {
+  default = "arn:aws:acm:eu-west-3:327441465709:certificate/47169326-35c6-49a7-9030-d361cff2184e"
+}
+
+variable "hosted_zone_id" {
+  type = string
+  description = "The zone id of the hosted zone"
+}
+
 resource "aws_api_gateway_rest_api" "itvibe_api" {
-  name        = "ItVibeAPI"
-  description = "API for IT-Vibe"
+  name        = "api.it-vibe.sema4-conseil.com"
+  description = "API for IT-Vibe backend"
   endpoint_configuration {
     types = ["REGIONAL"]
   }
@@ -46,8 +55,34 @@ resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.itvibe_api.id
 }
 
-resource "aws_api_gateway_stage" "stage" {
+resource "aws_api_gateway_stage" "dev_stage" {
   stage_name = "dev"
   rest_api_id = aws_api_gateway_rest_api.itvibe_api.id
   deployment_id = aws_api_gateway_deployment.deployment.id
+}
+
+
+resource "aws_api_gateway_domain_name" "dev_api_domain_name" {
+  domain_name     = "dev.api.it-vibe.sema4-conseil.com"
+   endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+  regional_certificate_arn = var.certeficate_arn
+}
+
+resource "aws_route53_record" "dev_api_route53_record" {
+  zone_id = var.hosted_zone_id
+  name    = aws_api_gateway_domain_name.dev_api_domain_name.domain_name
+  type    = "A"
+  alias {
+    name = aws_api_gateway_domain_name.dev_api_domain_name.regional_domain_name
+    zone_id = aws_api_gateway_domain_name.dev_api_domain_name.regional_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "dev_api_domain_mapping" {
+  api_id      = aws_api_gateway_rest_api.itvibe_api.id
+  stage_name  = aws_api_gateway_stage.dev_stage.stage_name
+  domain_name = aws_api_gateway_domain_name.dev_api_domain_name.domain_name
 }
