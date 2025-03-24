@@ -1,3 +1,5 @@
+variable "hosted_zone_id" {}
+
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
   bucket = "it-vibe.dev.sema4-conseil.com"
   tags = {
@@ -101,23 +103,14 @@ resource "aws_s3_bucket_website_configuration" "it-vibe-static-site-s3-configura
 
 }
 
-output "bucket_arn" { 
-  value = aws_s3_bucket.it-vibe-static-site-s3.arn
-}
-
-output "site-endpoint" {
-  value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.website_endpoint
-}
-
-
-output "bucket_name" {
-  value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.bucket
-}
-
-output "domain_name" {
-  value = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.website_domain
-}
-
-output "zone_id" {
-  value = aws_s3_bucket.it-vibe-static-site-s3.hosted_zone_id
+// Create a route 53 for the static web-site
+resource "aws_route53_record" "s3_static_site" {
+  zone_id = var.hosted_zone_id
+  name    = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.bucket
+  type    = "A"
+  alias {
+    name = aws_s3_bucket_website_configuration.it-vibe-static-site-s3-configuration.website_domain
+    zone_id = aws_s3_bucket.it-vibe-static-site-s3.hosted_zone_id 
+    evaluate_target_health = "true"
+  }
 }
