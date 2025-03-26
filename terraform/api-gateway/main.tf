@@ -5,17 +5,10 @@ data "template_file" "itvibe_api_spec" {
     get_companies_lambda_invoke_arn = var.get_companies_lambda_invoke_arn
     create_company_lambda_invoke_arn = var.save_company_lambda_invoke_arn
     push_contact_message_lambda_invoke_arn = var.push_contact_message_lambda_invoke_arn
+    get_company_details_by_id_lambda_invoke_arn = var.get_company_details_by_id_lambda_invoke_arn
   }
 }
 
-variable "certeficate_arn" {
-  default = "arn:aws:acm:eu-west-3:327441465709:certificate/47169326-35c6-49a7-9030-d361cff2184e"
-}
-
-variable "hosted_zone_id" {
-  type = string
-  description = "The zone id of the hosted zone"
-}
 
 resource "aws_api_gateway_rest_api" "itvibe_api" {
   name        = "api.it-vibe.sema4-conseil.com"
@@ -41,6 +34,15 @@ resource "aws_lambda_permission" "create_company_lambda_permission" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
 }
+
+resource "aws_lambda_permission" "get_company_details_lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name =  var.get_company_details_by_id_lambda_arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
+}
+
 
 resource "aws_lambda_permission" "push_contact_message_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"

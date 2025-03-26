@@ -1,8 +1,19 @@
+variable "certeficate_arn" {
+  default = "arn:aws:acm:eu-west-3:327441465709:certificate/47169326-35c6-49a7-9030-d361cff2184e"
+}
+
+variable "hosted_zone_id" {
+  type = string
+  description = "The zone id of the hosted zone"
+}
+
+
 variable "get_companies_lambda_invoke_arn" {}
 variable "get_companies_lambda_arn" {}
-
 variable "save_company_lambda_invoke_arn" {}
 variable "save_company_lambda_arn" {}
+variable "get_company_details_by_id_lambda_invoke_arn" {}
+variable "get_company_details_by_id_lambda_arn" {}
 variable "push_contact_message_lambda_arn" {}
 variable "push_contact_message_lambda_invoke_arn" {}
   

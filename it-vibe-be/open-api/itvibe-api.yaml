@@ -81,6 +81,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /companies/{id}:
+    get:
+      x-amazon-apigateway-integration:
+        uri: "${get_company_details_by_id_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Get a company by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The company details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Company not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /contact:
     post:
       x-amazon-apigateway-integration:
