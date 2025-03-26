@@ -21,3 +21,11 @@ output "push_contact_message_lambda_invoke_arn" {
 output "push_contact_message_lambda_arn" {
     value = aws_lambda_function.push_contact_message_lambda.arn
 }
+
+output "get_company_details_by_id_lambda_arn" {
+  value = aws_lambda_function.get_comany_details_lambda.arn
+}
+
+output "get_company_details_by_id_lambda_invoke_arn" {
+  value = aws_lambda_function.get_comany_details_lambda.invoke_arn
+}

@@ -34,6 +34,8 @@ module "api-gateway" {
   get_companies_lambda_arn = module.lambda.get_companies_lambda_arn
   save_company_lambda_invoke_arn = module.lambda.save_company_lambda_invoke_arn
   save_company_lambda_arn = module.lambda.save_company_lambda_arn
+  get_company_details_by_id_lambda_arn = module.lambda.get_company_details_by_id_lambda_arn
+  get_company_details_by_id_lambda_invoke_arn = module.lambda.get_company_details_by_id_lambda_invoke_arn
   push_contact_message_lambda_arn = module.lambda.push_contact_message_lambda_arn
   push_contact_message_lambda_invoke_arn = module.lambda.push_contact_message_lambda_invoke_arn
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
