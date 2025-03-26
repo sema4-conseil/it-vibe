@@ -13,9 +13,14 @@ variable "push_contact_message_code_path" {
 resource "aws_lambda_function" "get_companies_lambda" {
     filename         = var.get_companies_code_path
     function_name    = "get_companies"
-    role             = aws_iam_role.lambda_exec.arn
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_companies.lambda_handler"
     runtime          = "python3.13"
+    environment {
+        variables = {
+            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+        }
+    }
 }
 
 
