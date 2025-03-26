@@ -24,6 +24,10 @@ module "lambda" {
   source = "./lambda"
 }
 
+module "dynamo-db" {
+  source = "./dynamo-db"
+}
+
 module "api-gateway" {
   source = "./api-gateway"
   get_companies_lambda_invoke_arn = module.lambda.get_companies_lambda_invoke_arn
