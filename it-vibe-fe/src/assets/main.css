@@ -20,39 +20,8 @@ body {
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   }
-  
-  .menu {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .menu li {
-    padding: 14px 20px;
-  }
-  
-  .menu li a {
-    color: #ecf0f1; /* Light text on navbar */
-    text-decoration: none;
-    display: block;
-    transition: color 0.3s ease; /* Smooth color transition */
-  }
-  
-  .menu li a:hover {
-    background-color: #34495e; /* Slightly lighter hover background */
-    color: white;
-  }
-  
-  .menu li.logo {
-    flex-grow: 1;
-    text-align: left;
-    padding-left: 20px;
-    color: white;
-    font-weight: 600; /* Bold logo text */
-    font-size: 1.2em; /* Larger logo font */
-  }
+
+
   
   .content {
     margin-top: 60px;
