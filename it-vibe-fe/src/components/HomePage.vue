@@ -1,6 +1,11 @@
 <template>
   <div class="company-cards">
-    <div v-for="company in companies" :key="company.id" class="company-card">
+    <div
+      v-for="company in companies"
+      :key="company.id"
+      class="company-card"
+      @click="goToCompanyDetails(company.id)"
+    >
       <h2>{{ company.name }}</h2>
       <p><strong>Location:</strong> {{ company.location }}</p>
       <p><strong>Industry:</strong> {{ company.industry }}</p>
@@ -76,6 +81,9 @@ export default {
           console.error("Error fetching next page:", error);
         }
       }
+    },
+    goToCompanyDetails(companyId) {
+      this.$router.push({ path: `/companies/${companyId}` });
     },
   },
 };
