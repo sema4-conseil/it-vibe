@@ -28,9 +28,14 @@ resource "aws_lambda_function" "get_companies_lambda" {
 resource "aws_lambda_function" "save_company_lambda" {
     filename         = var.save_company_code_path
     function_name    = "save_company"
-    role             = aws_iam_role.lambda_exec.arn
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "save_company.lambda_handler"
     runtime          = "python3.13"
+      environment {
+        variables = {
+            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+        }
+    }
 }
 
 resource "aws_lambda_function" "push_contact_message_lambda" {

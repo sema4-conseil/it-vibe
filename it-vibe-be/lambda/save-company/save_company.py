@@ -1,32 +1,30 @@
 import json
 import uuid
+import boto3
+import os
+
 
 def lambda_handler(event, context):
     # Parse the JSON from the body field
-    body = json.loads(event['body'])
+    companyData = json.loads(event['body'])
     try:
         # Extracting data from the event
-        company_data = {
-            "id": str(uuid.uuid4()),
-            "name": body["name"],
-            "location": body["location"],
-            "size": body.get("size", 0),
-            "revenue": body.get("revenue", 0),
-            "industry": body.get("industry", ""),
-            "description": body.get("description", "")
-        }
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table(os.environ['COMPANIES_TABLE_NAME']) # Get table name from environment variable 
 
-        print(event)
-        
-        # Here you would typically save the company_data to a database
-        # For this example, we'll just return the data as a response
+        # Check if 'id' exists and is not null; if null or missing, generate a new UUID
+        if "id" not in companyData or companyData["id"] is None:
+            id = str(uuid.uuid4())
+            companyData["id"] = id
+            httpStatusCode = 201
+        else:
+            httpStatusCode = 200
+
+        result = table.put_item(Item=companyData)
         
         return {
-            "statusCode": 201,
-            "body": json.dumps({
-                "message": "Company created successfully",
-                "company": company_data
-            }),
+            "statusCode": httpStatusCode,
+            "body": json.dumps(companyData),
             "headers": {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
