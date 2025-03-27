@@ -4,41 +4,57 @@
     <div class="spinner"></div>
   </div>
   <div v-else-if="company">
-    <div class="company-details">
-      <h1>{{ company.name }}</h1>
-      <div class="details-grid">
-        <div class="detail-item">
-          <strong>Location:</strong> {{ company.location }},
-          {{ company.country }}
+    <div class="company-details-container">
+      <div class="company-details">
+        <h1>{{ company.name }}</h1>
+        <div class="details-grid">
+          <div class="detail-item">
+            <strong>Location:</strong> {{ company.location }},
+            {{ company.country }}
+          </div>
+          <div class="detail-item">
+            <strong>Industry:</strong> {{ company.industry }}
+          </div>
+          <div class="detail-item">
+            <strong>Size:</strong> {{ company.size }} employees
+          </div>
+          <div class="detail-item">
+            <strong>Revenue:</strong> ${{ formatRevenue(company.revenue) }}
+          </div>
+          <div class="detail-item">
+            <strong>Address:</strong> {{ company.adress }}
+          </div>
+          <div class="detail-item">
+            <strong>Creation Date:</strong>
+            {{ formatDate(company.creationDate) }}
+          </div>
         </div>
-        <div class="detail-item">
-          <strong>Industry:</strong> {{ company.industry }}
+        <div class="president-details">
+          <h2>President</h2>
+          <p>
+            <strong>Name:</strong> {{ company.president.firstname }}
+            {{ company.president.lastname }}
+          </p>
+          <p><strong>Email:</strong> {{ company.president.email }}</p>
+          <p><strong>Phone:</strong> {{ company.president.phoneNumber }}</p>
         </div>
-        <div class="detail-item">
-          <strong>Size:</strong> {{ company.size }} employees
-        </div>
-        <div class="detail-item">
-          <strong>Revenue:</strong> ${{ formatRevenue(company.revenue) }}
-        </div>
-        <div class="detail-item">
-          <strong>Address:</strong> {{ company.adress }}
-        </div>
-        <div class="detail-item">
-          <strong>Creation Date:</strong> {{ formatDate(company.creationDate) }}
+        <div class="description">
+          <h2>Description</h2>
+          <p>{{ company.description }}</p>
         </div>
       </div>
-      <div class="president-details">
-        <h2>President</h2>
-        <p>
-          <strong>Name:</strong> {{ company.president.firstname }}
-          {{ company.president.lastname }}
-        </p>
-        <p><strong>Email:</strong> {{ company.president.email }}</p>
-        <p><strong>Phone:</strong> {{ company.president.phoneNumber }}</p>
-      </div>
-      <div class="description">
-        <h2>Description</h2>
-        <p>{{ company.description }}</p>
+      <div class="company-reviews">
+        <h1>Reviews</h1>
+        <div class="reviews-scrollable">
+          <ReviewOverview
+            v-for="review in reviews"
+            :key="review.id"
+            :review="review"
+          />
+        </div>
+        <div>
+          <button>Add Review</button>
+        </div>
       </div>
     </div>
   </div>
@@ -51,14 +67,88 @@
 </template>
 
 <script>
+import ReviewOverview from "@/components/review/ReviewOverview.vue";
+
 export default {
   props: ["id"],
+  components: {
+    ReviewOverview,
+  },
   data() {
     return {
       company: null,
       loading: true,
       companyNotFound: false,
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
+      reviews: [
+        {
+          id: 1,
+          author: "John Doe",
+          rating: 4,
+          comment: "Great company to work with!",
+        },
+        // ... add more reviews to test the scrollbar
+        {
+          id: 2,
+          author: "Jane Smith",
+          rating: 5,
+          comment: "Excellent service and support.",
+        },
+        {
+          id: 3,
+          author: "Alice Johnson",
+          rating: 3,
+          comment: "Good experience overall.",
+        },
+        {
+          id: 4,
+          author: "Bob Williams",
+          rating: 4,
+          comment: "Very professional and efficient.",
+        },
+        {
+          id: 5,
+          author: "Charlie Brown",
+          rating: 5,
+          comment: "Highly recommend this company!",
+        },
+        {
+          id: 6,
+          author: "David Lee",
+          rating: 3,
+          comment: "Decent experience.",
+        },
+        {
+          id: 7,
+          author: "Eve Davis",
+          rating: 4,
+          comment: "Good communication.",
+        },
+        {
+          id: 8,
+          author: "Frank Miller",
+          rating: 5,
+          comment: "Outstanding service!",
+        },
+        {
+          id: 9,
+          author: "Grace Wilson",
+          rating: 3,
+          comment: "Average experience.",
+        },
+        {
+          id: 10,
+          author: "Henry Moore",
+          rating: 4,
+          comment: "Reliable and trustworthy.",
+        },
+        {
+          id: 11,
+          author: "Ivy Taylor",
+          rating: 5,
+          comment: "Superb customer care.",
+        },
+      ],
     };
   },
   created() {
@@ -96,12 +186,30 @@ export default {
 </script>
 
 <style scoped>
-.company-details {
-  padding: 20px;
-  font-family: "Arial", sans-serif;
-  max-width: 800px;
+.company-details-container {
+  display: flex;
   margin: 20px auto;
   border-radius: 8px;
+}
+
+.company-details {
+  flex: 2; /* 2/3 of the container */
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-right: 10px; /* add some spacing between the two columns */
+}
+
+.company-reviews {
+  flex: 1; /* 1/3 of the container */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .details-grid {
@@ -112,18 +220,26 @@ export default {
 }
 
 .detail-item {
-  background-color: white;
+  background-color: #f9f9f9;
   padding: 15px;
   border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .president-details,
 .description {
-  background-color: white;
+  background-color: #f9f9f9;
   padding: 15px;
   border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+}
+
+.reviews-scrollable {
+  overflow-y: auto;
+  max-height: 620px;
+  flex: 1; /* Allow the reviews to take up available space */
+}
+
+button {
+  width: 25%;
 }
 </style>
