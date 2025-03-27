@@ -38,6 +38,8 @@ module "api-gateway" {
   get_company_details_by_id_lambda_invoke_arn = module.lambda.get_company_details_by_id_lambda_invoke_arn
   push_contact_message_lambda_arn = module.lambda.push_contact_message_lambda_arn
   push_contact_message_lambda_invoke_arn = module.lambda.push_contact_message_lambda_invoke_arn
+  get_reviews_by_company_id_lambda_arn = module.lambda.get_reviews_by_company_id_lambda_arn
+  get_reviews_by_company_id_lambda_invoke_arn = module.lambda.get_reviews_by_company_id_lambda_invoke_arn
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
   hosted_zone_id = var.hosted_zone_id
   depends_on = [ module.lambda ]

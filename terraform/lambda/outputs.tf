@@ -29,3 +29,11 @@ output "get_company_details_by_id_lambda_arn" {
 output "get_company_details_by_id_lambda_invoke_arn" {
   value = aws_lambda_function.get_comany_details_lambda.invoke_arn
 }
+
+output "get_reviews_by_company_id_lambda_arn" {
+  value = aws_lambda_function.get_reviews_by_company_id_lambda.arn
+}
+
+output "get_reviews_by_company_id_lambda_invoke_arn" {
+  value = aws_lambda_function.get_reviews_by_company_id_lambda.invoke_arn
+}
