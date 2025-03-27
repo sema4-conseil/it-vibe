@@ -61,6 +61,28 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
     }
 }
 
+data "archive_file" "get_company_review_metrics_lambda_code" {
+  type        = "zip"
+  source_file = "../it-vibe-be/lambda/get-company-review-metrics/get_company_review_metrics.py"
+  output_path = "../it-vibe-be/lambda/get-company-review-metrics/get_company_review_metrics.zip"
+}
+
+resource "aws_lambda_function" "get_comany_details_lambda" {
+    filename         = data.archive_file.get_company_review_metrics_lambda_code.output_path
+    function_name    = "get_company_details"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "get_company_details.lambda_handler"
+    runtime          = "python3.13"
+    source_code_hash = data.archive_file.get_company_review_metrics_lambda_code.output_base64sha256
+
+    environment {
+        variables = {
+            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
+        }
+    }
+}
+
+
 data archive_file "push_contact_message_lamnda_code" {
   type        = "zip"
   source_file  = "../it-vibe-be/lambda/push-contact-message/push_contact_message.py"
