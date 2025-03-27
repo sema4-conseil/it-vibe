@@ -1,18 +1,24 @@
 <template>
-  <div class="company-cards">
-    <div
-      v-for="company in companies"
-      :key="company.id"
-      class="company-card"
-      @click="goToCompanyDetails(company.id)"
-    >
-      <h2>{{ company.name }}</h2>
-      <p><strong>Location:</strong> {{ company.location }}</p>
-      <p><strong>Industry:</strong> {{ company.industry }}</p>
+  <div>
+    <div v-if="loading">
+      <p>Loading companies ...</p>
+      <div class="spinner"></div>
     </div>
-    <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
-      Next Items
-    </button>
+    <div v-else-if="companies" class="company-cards">
+      <div
+        v-for="company in companies"
+        :key="company.id"
+        class="company-card"
+        @click="goToCompanyDetails(company.id)"
+      >
+        <h2>{{ company.name }}</h2>
+        <p><strong>Location:</strong> {{ company.location }}</p>
+        <p><strong>Industry:</strong> {{ company.industry }}</p>
+      </div>
+      <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
+        Next Items
+      </button>
+    </div>
   </div>
 </template>
 
@@ -24,6 +30,7 @@ export default {
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       lastEvaluatedKey: null,
       pageSize: 4,
+      loading: true,
     };
   },
   created() {
@@ -48,6 +55,7 @@ export default {
           description: company.description,
         }));
         this.lastEvaluatedKey = data.LastEvaluatedKey;
+        this.loading = false;
       } catch (error) {
         console.error("Error fetching companies:", error);
       }
