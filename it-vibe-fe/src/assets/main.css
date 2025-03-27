@@ -21,11 +21,15 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
+.app {
+  overflow: hidden;
+}
 .content {
   margin-top: 60px;
   overflow-y: auto;
   height: calc(100vh - 60px);
   padding: 20px; /* Add padding for content */
+  max-height: 845px;
 }
 
 .search-container {

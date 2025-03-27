@@ -1,6 +1,6 @@
 =
 <template>
-  <div class="container">
+  <div>
     <h1>About IT-Vibe</h1>
     <p>
       <strong>IT-Vibe</strong> is a public platform designed for IT
@@ -44,14 +44,6 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-}
-
-.container {
-  display: flex; /* Use flexbox */
-  flex-direction: column; /* Stack children vertically */
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
 ul {
