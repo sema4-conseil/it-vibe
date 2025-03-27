@@ -44,27 +44,7 @@ export default {
   props: ["id"],
   data() {
     return {
-      company: {
-        size: "693",
-        location: "South Wilber",
-        revenue: "1000000",
-        adress: "127 Keagan Mountain",
-        president: {
-          firstname: "Camryn",
-          phoneNumber: "610-983-6541",
-          email: "Dennis.Mertz13@hotmail.com",
-          lastname: "Metz",
-        },
-        IBAN: "KW82DOEY2Q5808525I62266727X627",
-        industry: "Research",
-        creationDate:
-          "Tue Jan 14 2025 09:40:28 GMT+0100 (heure normale d’Europe centrale)",
-        description:
-          "Saepe consequuntur et id. Exercitationem a sed hic. Voluptas quibusdam omnis odit porro ipsa sequi. Natus earum quia sint fugiat accusantium sit. Et voluptatem impedit nihil.",
-        id: "ee2f1aa2-8f59-4512-bb16-2311eccb459d",
-        country: "Malta",
-        name: "Witting, Ernser and Nienow",
-      },
+      company: null,
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
     };
   },

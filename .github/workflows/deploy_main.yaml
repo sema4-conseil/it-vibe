@@ -37,42 +37,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Zip get_companies lambda
-        run: zip -r get_companies.zip get_companies.py
-        working-directory: it-vibe-be/lambda/get-companies
-
-      - name: Archive lambda get_companies artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: get_companies
-          path: it-vibe-be/lambda/get-companies/get_companies.zip
-          if-no-files-found: error
-          overwrite: true
-
-      - name: Zip save_company lambda
-        run: zip -r save_company.zip save_company.py
-        working-directory: it-vibe-be/lambda/save-company
-      
-      - name: Archive lambda save_company artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: save_company
-          path: it-vibe-be/lambda/save-company/save_company.zip
-          if-no-files-found: error
-          overwrite: true
-
-      - name: Zip push_message lambda
-        run: zip -r push_contact_message.zip push_contact_message.py
-        working-directory: it-vibe-be/lambda/push-contact-message
-      
-      - name: Archive lambda save_company artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: push_contact_message
-          path: it-vibe-be/lambda/push-contact-message/push_contact_message.zip
-          if-no-files-found: error
-          overwrite: true
-
 # Deploy jobs: deploy-front-end, deploy-back-end
   deploy:
     runs-on: ubuntu-latest
@@ -87,23 +51,6 @@ jobs:
           name: dist
           path: it-vibe-fe/dist
 
-      - name: Download get_companies lambda artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: get_companies
-          path: it-vibe-be/lambda/get-companies
-
-      - name: Download save_company lambda artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: save_company 
-          path: it-vibe-be/lambda/save-company
-
-      - name: Download push_contact_message lambda artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: push_contact_message 
-          path: it-vibe-be/lambda/push-contact-message
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
