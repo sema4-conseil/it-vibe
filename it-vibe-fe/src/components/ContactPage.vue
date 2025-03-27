@@ -55,11 +55,6 @@ export default {
   border-radius: 8px;
 }
 
-.contact-form {
-  display: flex;
-  flex-direction: column;
-}
-
 textarea.form-control {
   resize: vertical; /* Allow vertical resizing */
   min-height: 150px;
