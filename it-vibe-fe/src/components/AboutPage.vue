@@ -1,3 +1,4 @@
+=
 <template>
   <div class="container">
     <h1>About IT-Vibe</h1>
@@ -8,7 +9,7 @@
       companies, providing valuable insights for future job seekers.
     </p>
 
-    <h2>Key Features:</h2>
+    <h2>Key Features</h2>
     <ul>
       <li>Anonymous reviews to ensure open and honest feedback.</li>
       <li>
@@ -38,26 +39,22 @@ export default {
 </script>
 
 <style scoped>
-body {
-  font-family: Arial, sans-serif;
+body,
+html {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  height: 100%;
 }
+
 .container {
-  max-width: 800px;
-  margin: 50px auto;
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack children vertically */
+  min-height: 100vh;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: left;
+  box-sizing: border-box;
 }
-h1,
-h2 {
-  color: #0073e6;
-}
+
 ul {
-  padding-left: 20px;
+  list-style-type: none;
 }
 </style>
