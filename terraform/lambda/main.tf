@@ -1,26 +1,17 @@
-variable "get_companies_code_path" {
-  default = "../it-vibe-be/lambda/get-companies/get_companies.zip"
-}
-
-variable "save_company_code_path" {
-  default = "../it-vibe-be/lambda/save-company/save_company.zip"
-}
-
-variable "push_contact_message_code_path" {
-  default = "../it-vibe-be/lambda/push-contact-message/push_contact_message.zip"
-}
-
-variable "get_company_details_code_path" {
-  default = "../it-vibe-be/lambda/get-company-details/get_company_details.zip"
+data "archive_file" "get_companies_lambda_code" {
+  type        = "zip"
+  source_file = "../it-vibe-be/lambda/get-companies/get_companies.py"
+  output_path = "../it-vibe-be/lambda/get-companies/get_companies.zip"
 }
 
 
 resource "aws_lambda_function" "get_companies_lambda" {
-    filename         = var.get_companies_code_path
+    filename         = data.archive_file.get_companies_lambda_code.output_path
     function_name    = "get_companies"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_companies.lambda_handler"
     runtime          = "python3.13"
+    source_code_hash = data.archive_file.get_companies_lambda_code.output_base64sha256
     environment {
         variables = {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
@@ -29,12 +20,18 @@ resource "aws_lambda_function" "get_companies_lambda" {
 }
 
 
+data "archive_file" "save_company_lambda_code" {
+  type        = "zip"
+  source_file = "../it-vibe-be/lambda/save-company/save_company.py"
+  output_path = "../it-vibe-be/lambda/save-company/save_company.zip"
+}
 
 resource "aws_lambda_function" "save_company_lambda" {
-    filename         = var.save_company_code_path
+    filename         = data.archive_file.save_company_lambda_code.output_path
     function_name    = "save_company"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "save_company.lambda_handler"
+    source_code_hash = data.archive_file.save_company_lambda_code.output_base64sha256
     runtime          = "python3.13"
       environment {
         variables = {
@@ -43,19 +40,19 @@ resource "aws_lambda_function" "save_company_lambda" {
     }
 }
 
-data "archive_file" "get_comapanies_lambda_code" {
+data "archive_file" "get_company_details_lambda_code" {
   type        = "zip"
   source_file = "../it-vibe-be/lambda/get-company-details/get_company_details.py"
   output_path = "../it-vibe-be/lambda/get-company-details/get_company_details.zip"
 }
 
 resource "aws_lambda_function" "get_comany_details_lambda" {
-    filename         = data.archive_file.get_comapanies_lambda_code.output_path
+    filename         = data.archive_file.get_company_details_lambda_code.output_path
     function_name    = "get_company_details"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_company_details.lambda_handler"
     runtime          = "python3.13"
-    source_code_hash = data.archive_file.get_comapanies_lambda_code.output_base64sha256
+    source_code_hash = data.archive_file.get_company_details_lambda_code.output_base64sha256
 
     environment {
         variables = {
@@ -64,13 +61,19 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
     }
 }
 
+data archive_file "push_contact_message_lamnda_code" {
+  type        = "zip"
+  source_file  = "../it-vibe-be/lambda/push-contact-message/push_contact_message.py"
+  output_path = "../it-vibe-be/lambda/push-contact-message/push_contact_message.zip"
+}
 
 resource "aws_lambda_function" "push_contact_message_lambda" {
-    filename         = var.push_contact_message_code_path
+    filename         = data.archive_file.push_contact_message_lamnda_code.output_path
     function_name    = "push_contact_message"
     role             = aws_iam_role.lambda_exec.arn
     handler          = "push_contact_message.lambda_handler"
     runtime          = "python3.13"
+    source_code_hash = data.archive_file.push_contact_message_lamnda_code.output_base64sha256
 }
 
 resource "aws_iam_role" "lambda_exec" {
