@@ -104,6 +104,35 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
     }
 }
 
+# Reviews Lambda Functions
+data "archive_file" "add_review_lambda_code" {
+  type        = "zip"
+  source_file = "../it-vibe-be/lambda/add-review/add_review.py"
+  output_path = "../it-vibe-be/lambda/add-review/add_review.zip"
+}
+
+resource "aws_lambda_function" "add_review_lambda" {
+    filename         = data.archive_file.add_review_lambda_code.output_path
+    function_name    = "add_review"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "add_review.lambda_handler"
+    runtime          = "python3.13"
+    source_code_hash = data.archive_file.add_review_lambda_code.output_base64sha256
+
+    environment {
+        variables = {
+            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
+        }
+    }
+    tags = {
+        Name = "add_review"
+        Env = "Dev"
+        ManagedBy = "Terraform"
+        Scope = "Functionnal"
+    }
+
+}
+
 data archive_file "push_contact_message_lamnda_code" {
   type        = "zip"
   source_file  = "../it-vibe-be/lambda/push-contact-message/push_contact_message.py"
