@@ -159,6 +159,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    post:
+      x-amazon-apigateway-integration:
+        uri: "${add_review_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Create a review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddReviewRequest"
+      responses:
+        "201":
+          description: The created review
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateReviewResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
   /contact:
     post:
       x-amazon-apigateway-integration:
@@ -259,6 +292,41 @@ components:
         message:
           type: string
           example: "Message sent with success"
+    AddReviewRequest:
+      type: object
+      required:
+        - company_id
+        - rating
+        - comment
+        - author
+      properties:
+        company_id:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+        author:
+          type: string
+    CreateReviewResponse:
+      type: object
+      required:
+        - company_id
+        - review_id
+        - rating
+        - comment
+        - author
+      properties:
+        company_id:
+          type: string
+        review_id:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+        author:
+          type: string
     Error:
       type: object
       properties:

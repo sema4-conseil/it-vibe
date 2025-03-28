@@ -18,5 +18,7 @@ variable "push_contact_message_lambda_arn" {}
 variable "push_contact_message_lambda_invoke_arn" {}
 variable "get_reviews_by_company_id_lambda_arn" {}
 variable "get_reviews_by_company_id_lambda_invoke_arn" {} 
+variable "add_review_lambda_arn" {}
+variable "add_review_lambda_invoke_arn" {}
 
 variable "openapi_spec_location"  {}
