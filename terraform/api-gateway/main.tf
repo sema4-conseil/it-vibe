@@ -7,6 +7,8 @@ data "template_file" "itvibe_api_spec" {
     push_contact_message_lambda_invoke_arn = var.push_contact_message_lambda_invoke_arn
     get_company_details_by_id_lambda_invoke_arn = var.get_company_details_by_id_lambda_invoke_arn
     get_reviews_by_company_id_lambda_invoke_arn = var.get_reviews_by_company_id_lambda_invoke_arn
+    add_review_lambda_invoke_arn = var.add_review_lambda_invoke_arn
+    add_review_lambda_arn = var.add_review_lambda_arn
   }
 }
 
@@ -60,6 +62,15 @@ resource "aws_lambda_permission" "get_reviews_by_company_id_lambda_permission" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
 }
+
+resource "aws_lambda_permission" "add_review_lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name =  var.add_review_lambda_arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
+}
+
 
 resource "aws_api_gateway_deployment" "deployment" {
   # depends_on = [aws_api_gateway_integration.get_companies_integration]
