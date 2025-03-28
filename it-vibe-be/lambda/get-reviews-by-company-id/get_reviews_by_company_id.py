@@ -8,6 +8,12 @@ dynamodb = boto3.resource('dynamodb')
 
 table = dynamodb.Table(os.environ['COMPANY_REVIEWS_TABLE_NAME']) 
 
+
+headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+}
+
 def decimal_to_float(obj):
     if isinstance(obj, Decimal):
         return float(obj)
@@ -25,10 +31,7 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"error": "Company id is required"}),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            }
+            "headers": headers
         }
     
 
@@ -42,12 +45,14 @@ def lambda_handler(event, context):
     items = response['Items']
     if not items:
         return {
-            'statusCode': 404,
-            'body': json.dumps({'message': 'Company not found or has no reviews'})
+            'statusCode': 200,
+            'body': json.dumps([]),
+            'headers': headers
         }
 
     serializable_items = json.loads(json.dumps(items, default=decimal_to_float))
     return {
         'statusCode': 200,
-        'body': json.dumps(serializable_items)
+        'body': json.dumps(serializable_items),
+        'headers': headers
     }

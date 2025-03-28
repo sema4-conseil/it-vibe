@@ -45,12 +45,15 @@
       </div>
       <div class="company-reviews">
         <h1>Reviews</h1>
-        <div class="reviews-scrollable">
+        <div v-if="reviews && reviews.length > 0" class="reviews-scrollable">
           <ReviewOverview
             v-for="review in reviews"
             :key="review.id"
             :review="review"
           />
+        </div>
+        <div v-else>
+          <p>No reviews available.</p>
         </div>
         <div>
           <button>Add Review</button>
@@ -80,75 +83,7 @@ export default {
       loading: true,
       companyNotFound: false,
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
-      reviews: [
-        {
-          id: 1,
-          author: "John Doe",
-          rating: 4,
-          comment: "Great company to work with!",
-        },
-        // ... add more reviews to test the scrollbar
-        {
-          id: 2,
-          author: "Jane Smith",
-          rating: 5,
-          comment: "Excellent service and support.",
-        },
-        {
-          id: 3,
-          author: "Alice Johnson",
-          rating: 3,
-          comment: "Good experience overall.",
-        },
-        {
-          id: 4,
-          author: "Bob Williams",
-          rating: 4,
-          comment: "Very professional and efficient.",
-        },
-        {
-          id: 5,
-          author: "Charlie Brown",
-          rating: 5,
-          comment: "Highly recommend this company!",
-        },
-        {
-          id: 6,
-          author: "David Lee",
-          rating: 3,
-          comment: "Decent experience.",
-        },
-        {
-          id: 7,
-          author: "Eve Davis",
-          rating: 4,
-          comment: "Good communication.",
-        },
-        {
-          id: 8,
-          author: "Frank Miller",
-          rating: 5,
-          comment: "Outstanding service!",
-        },
-        {
-          id: 9,
-          author: "Grace Wilson",
-          rating: 3,
-          comment: "Average experience.",
-        },
-        {
-          id: 10,
-          author: "Henry Moore",
-          rating: 4,
-          comment: "Reliable and trustworthy.",
-        },
-        {
-          id: 11,
-          author: "Ivy Taylor",
-          rating: 5,
-          comment: "Superb customer care.",
-        },
-      ],
+      reviews: [],
     };
   },
   created() {
@@ -157,7 +92,7 @@ export default {
   methods: {
     async fetchCompanyDetails() {
       try {
-        const response = await fetch(`${this.apibaseUrl}/companies/${this.id}`);
+        let response = await fetch(`${this.apibaseUrl}/companies/${this.id}`);
         if (response.status === 404) {
           this.companyNotFound = true;
           this.loading = false;
@@ -166,8 +101,16 @@ export default {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        let data = await response.json();
         this.company = data;
+
+        // Fetch reviews for the company
+        let url = new URL(`${this.apibaseUrl}/reviews`);
+        url.searchParams.append("companyId", this.company.id);
+        response = await fetch(url);
+        data = await response.json();
+        this.reviews = data;
+
         this.loading = false;
       } catch (error) {
         console.error("Error fetching company details:", error);
