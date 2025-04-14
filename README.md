@@ -13,6 +13,10 @@
 ```
 npm run serve
 ```
+##### Build for staggig 
+```
+npm run build -- --mode stg
+```
 #### Back-end 
 * API
     * Healthcheck (dev) : https://dev.api.it-vibe.sema4-conseil.com/healthcheck
