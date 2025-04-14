@@ -28,6 +28,10 @@
             <strong>Creation Date:</strong>
             {{ formatDate(company.creationDate) }}
           </div>
+          <div class="detail-item">
+            <strong>Update Date:</strong>
+            {{ formatDate(company.updateDate) }}
+          </div>
         </div>
         <div class="president-details">
           <h2>President</h2>
