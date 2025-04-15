@@ -22,6 +22,7 @@ resource "aws_api_gateway_rest_api" "itvibe_api" {
   body = data.template_file.itvibe_api_spec.rendered
 }
 
+
 resource "aws_lambda_permission" "get_companies_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
