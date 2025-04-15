@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: ITVibe API
   version: 1.0.0
-  description: API for managing companies
+  description: API fir ITVibe Application.
 
 paths:
   /healthcheck:
@@ -55,7 +55,9 @@ paths:
         uri: "${create_company_lambda_invoke_arn}"
         httpMethod: POST
         type: aws_proxy
-      summary: Create a company
+      summary: Create or update a company
+      security:
+        - itvibe-authorizer: []
       requestBody:
         required: true
         content:
@@ -165,6 +167,8 @@ paths:
         httpMethod: POST
         type: aws_proxy
       summary: Create a review
+      security:
+        - itvibe-authorizer: []
       requestBody:
         required: true
         content:
@@ -226,6 +230,17 @@ paths:
                 $ref: "#/components/schemas/Error"
 
 components:
+  securitySchemes:
+    itvibe-authorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        identitySource: method.request.header.Authorization
+        providerARNs:
+          - arn:aws:cognito-idp:eu-west-3:327441465709:userpool/eu-west-3_X1E4ZdDIr
   schemas:
     Company:
       type: object
