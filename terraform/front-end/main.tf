@@ -48,7 +48,6 @@ resource "aws_s3_object" "index-html" {
   lifecycle {
     create_before_destroy = true
   }
-  etag = filemd5("../it-vibe-fe/dist/index.html")
 }
 
 resource "aws_s3_object" "favicon" {
@@ -58,8 +57,6 @@ resource "aws_s3_object" "favicon" {
   lifecycle {
     create_before_destroy = true
   }
-  etag = filemd5("../it-vibe-fe/dist/favicon.ico")
-
 }
 
 resource "aws_s3_object" "js" {
@@ -68,7 +65,6 @@ resource "aws_s3_object" "js" {
   key         = "js/${each.value}"
   source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
-  etag = filemd5("../it-vibe-fe/dist/js/${each.value}")
 }
 
 resource "aws_s3_object" "css" {
@@ -80,7 +76,6 @@ resource "aws_s3_object" "css" {
   lifecycle {
     create_before_destroy = true
   }
-  etag = filemd5("../it-vibe-fe/dist/css/${each.value}")
 }
 
 
