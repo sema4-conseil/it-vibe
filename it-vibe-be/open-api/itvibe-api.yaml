@@ -121,6 +121,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    delete:
+      x-amazon-apigateway-integration:
+        uri: "${delete_company_by_id_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Delete a company by ID
+      security:
+        - itvibe-authorizer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Company deleted successfully
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Company not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /reviews:
     get:
       x-amazon-apigateway-integration:
