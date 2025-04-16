@@ -22,8 +22,15 @@ resource "aws_lambda_function" "get_companies_lambda" {
 
 data "archive_file" "save_company_lambda_code" {
   type        = "zip"
-  source_file = "../it-vibe-be/lambda/save-company/save_company.py"
   output_path = "../it-vibe-be/lambda/save-company/save_company.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/save-company/save_company.py")
+    filename = "save_company.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"   
+  }
 }
 
 resource "aws_lambda_function" "save_company_lambda" {
