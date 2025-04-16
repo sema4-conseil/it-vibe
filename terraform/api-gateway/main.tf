@@ -6,6 +6,7 @@ data "template_file" "itvibe_api_spec" {
     create_company_lambda_invoke_arn = var.save_company_lambda_invoke_arn
     push_contact_message_lambda_invoke_arn = var.push_contact_message_lambda_invoke_arn
     get_company_details_by_id_lambda_invoke_arn = var.get_company_details_by_id_lambda_invoke_arn
+    delete_company_by_id_lambda_invoke_arn = var.delete_company_by_id_lambda_invoke_arn
     get_reviews_by_company_id_lambda_invoke_arn = var.get_reviews_by_company_id_lambda_invoke_arn
     add_review_lambda_invoke_arn = var.add_review_lambda_invoke_arn
     add_review_lambda_arn = var.add_review_lambda_arn
@@ -47,6 +48,13 @@ resource "aws_lambda_permission" "get_company_details_lambda_permission" {
   source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
 }
 
+resource "aws_lambda_permission" "delete_company_lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name =  var.delete_company_by_id_lambda_arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.itvibe_api.execution_arn}/*/*"
+}
 
 resource "aws_lambda_permission" "push_contact_message_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
