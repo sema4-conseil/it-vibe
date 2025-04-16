@@ -2,9 +2,24 @@ import json
 import uuid
 import boto3
 import os
+from is_user_in_group import is_user_in_group
 
 
 def lambda_handler(event, context):
+
+      # Check if the user is in the "admin" group
+    if not is_user_in_group(event, "admin"):
+        return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "errorMessage": "User is not authorized, only admin can execute this action"
+            }),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
+            }
+        }
+
     # Parse the JSON from the body field
     companyData = json.loads(event['body'])
     try:
