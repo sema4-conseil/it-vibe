@@ -30,6 +30,14 @@ output "get_company_details_by_id_lambda_invoke_arn" {
   value = aws_lambda_function.get_comany_details_lambda.invoke_arn
 }
 
+output "delete_company_by_id_lambda_arn" {
+  value = aws_lambda_function.delete_company_lambda.arn
+}
+
+output "delete_company_by_id_lambda_invoke_arn" {
+  value = aws_lambda_function.delete_company_lambda.invoke_arn
+}
+
 output "get_reviews_by_company_id_lambda_arn" {
   value = aws_lambda_function.get_reviews_by_company_id_lambda.arn
 }
