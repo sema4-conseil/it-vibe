@@ -2,6 +2,9 @@ import json
 import uuid
 import boto3
 import os
+from get_user_informations import get_user_informations
+from datetime import datetime, timezone
+
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['COMPANY_REVIEWS_TABLE_NAME']) # Get table name from environment variable 
@@ -9,6 +12,9 @@ defaultResponseHeader = {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
             }
+
+# get current datetime in UTC
+dt = datetime.now(timezone.utc)
 
 def validateReviewData(reviewData):
         # If company_id is null or empty, return 400
@@ -38,12 +44,12 @@ def validateReviewData(reviewData):
                 }),
                 "headers": defaultResponseHeader
             }
-        # if author is null or empty, return 400
-        if "author" not in reviewData or not reviewData["author"]:
+        # if comment length is less that 100 and longer than 1000, return 400
+        if len(reviewData["comment"]) < 100 or len(reviewData["comment"]) > 1000:
             return {
                 "statusCode": 400,
                 "body": json.dumps({
-                    "errorMessage": "author is required"
+                    "errorMessage": "comment must be between 100 and 1000 characters"
                 }),
                 "headers": defaultResponseHeader
             }
@@ -59,8 +65,16 @@ def lambda_handler(event, context):
         if validationError:
             return validationError
         
-        id = str(uuid.uuid4())
-        reviewData["review_id"] = id
+        # Get userdetails from lambda context
+        user_id, email, groups = get_user_informations(event)
+        reviewOwner = {
+            "user_id": user_id,
+        }
+
+        reviewData["owner"] = reviewOwner
+        reviewData["creationDate"] = dt.isoformat()
+        reviewData["review_id"] = str(uuid.uuid4())
+
         httpStatusCode = 201
         table.put_item(Item=reviewData)
         
