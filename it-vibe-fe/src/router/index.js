@@ -1,9 +1,12 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import ContactPage from "@/components/ContactPage.vue";
 import HomePage from "@/components/HomePage.vue";
 import JoinUsPage from "@/components/JoinUsPage.vue";
 import AboutPage from "@/components/AboutPage.vue";
 import CompanyDetails from "@/components/company/CompanyDetails.vue";
+import Login from "@/components/login/LoginPage.vue";
+import CallBack from "@/components/login/CallBack.vue";
+import LogoutPage from "@/components/login/LogoutPage.vue";
 
 const routes = [
   { path: "/", component: HomePage },
@@ -15,10 +18,13 @@ const routes = [
     component: CompanyDetails,
     props: true, // Passe les paramètres de la route en tant que props au composant
   },
+  { path: "/login", component: Login },
+  { path: "/logout", component: LogoutPage },
+  { path: "/callback", component: CallBack },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 });
 

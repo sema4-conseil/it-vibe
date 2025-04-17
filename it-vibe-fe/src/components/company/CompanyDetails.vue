@@ -49,12 +49,17 @@
       </div>
       <div class="company-reviews">
         <h1>Reviews</h1>
-        <div v-if="reviews && reviews.length > 0" class="reviews-scrollable">
-          <ReviewOverview
-            v-for="review in reviews"
-            :key="review.id"
-            :review="review"
-          />
+        <div class="reviews-scrollable">
+          <div v-if="reviews && reviews.length > 0">
+            <ReviewOverview
+              v-for="review in reviews"
+              :key="review.id"
+              :review="review"
+            />
+          </div>
+          <div v-else>
+            <p>No reviews available.</p>
+          </div>
           <transition name="fade-slide">
             <div id="reviewForm" v-if="showReviewForm" class="card">
               <textarea
@@ -62,6 +67,15 @@
                 placeholder="Write your review..."
                 rows="4"
               ></textarea>
+              <div class="dropdown-container">
+                <label for="rating">Rating:</label>
+                <select v-model="newReview.rating" id="rating" required>
+                  <option value="" disabled selected>Select your rating</option>
+                  <option v-for="rate in 10" :key="rate" :value="rate">
+                    {{ rate }}
+                  </option>
+                </select>
+              </div>
               <div>
                 <label class="checkbox-label">
                   <input
@@ -79,9 +93,7 @@
             </div>
           </transition>
         </div>
-        <div v-else>
-          <p>No reviews available.</p>
-        </div>
+
         <div v-if="!showReviewForm" class="button-container">
           <button @click="toggleReviewForm">Add</button>
         </div>
@@ -149,6 +161,12 @@ export default {
       }
     },
     toggleReviewForm() {
+      const token = sessionStorage.getItem("idToken");
+      // Check if the user is logged in
+      // If not, redirect to the login page
+      if (!token) {
+        this.$router.push("/login");
+      }
       this.showReviewForm = !this.showReviewForm;
       this.$nextTick(() => {
         if (this.showReviewForm) {
@@ -172,7 +190,7 @@ export default {
       try {
         // Retrieve the JWT token from session storage
         // TODO Change me
-        const token = "<The token>"; // Adjust this if the token is stored elsewhere
+        const token = sessionStorage.getItem("idToken");
         const response = await fetch(`${this.apibaseUrl}/reviews/`, {
           method: "POST",
           headers: {
@@ -183,7 +201,7 @@ export default {
             company_id: this.company.id,
             comment: this.newReview.comment,
             isAnonymous: this.newReview.isAnonymous,
-            rating: 5, // Default rating, adjust as needed
+            rating: this.newReview.rating,
           }),
         });
         if (!response.ok) {
@@ -194,7 +212,6 @@ export default {
         this.newReview.comment = "";
         this.newReview.isAnonymous = false;
         this.showReviewForm = false;
-        alert("Review submitted successfully!");
       } catch (error) {
         console.error("Error submitting review:", error);
         alert("An error occurred while submitting your review.");
