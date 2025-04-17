@@ -1,5 +1,5 @@
 <template>
-  <div class="review-overview">
+  <div class="card">
     <strong>{{ review.author }}</strong>
 
     <div class="rating">
@@ -22,13 +22,6 @@ export default {
 </script>
 
 <style scoped>
-.review-overview {
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-}
-
 .rating {
   color: gold;
 }

@@ -55,12 +55,35 @@
             :key="review.id"
             :review="review"
           />
+          <transition name="fade-slide">
+            <div id="reviewForm" v-if="showReviewForm" class="card">
+              <textarea
+                v-model="newReview.comment"
+                placeholder="Write your review..."
+                rows="4"
+              ></textarea>
+              <div>
+                <label class="checkbox-label">
+                  <input
+                    type="checkbox"
+                    v-model="newReview.isAnonymous"
+                    class="anonymous-checkbox"
+                  />
+                  Post anonymously
+                </label>
+              </div>
+              <div class="button-container">
+                <button @click="submitReview">Submit</button>
+                <button @click="cancelReview" class="cancel">Cancel</button>
+              </div>
+            </div>
+          </transition>
         </div>
         <div v-else>
           <p>No reviews available.</p>
         </div>
-        <div>
-          <button>Add Review</button>
+        <div v-if="!showReviewForm" class="button-container">
+          <button @click="toggleReviewForm">Add</button>
         </div>
       </div>
     </div>
@@ -88,6 +111,11 @@ export default {
       companyNotFound: false,
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       reviews: [],
+      showReviewForm: false,
+      newReview: {
+        comment: "",
+        isAnonymous: false,
+      },
     };
   },
   created() {
@@ -117,8 +145,54 @@ export default {
 
         this.loading = false;
       } catch (error) {
-        console.error("Error fetching company details:", error);
         this.loading = false;
+      }
+    },
+    toggleReviewForm() {
+      this.showReviewForm = !this.showReviewForm;
+      this.$nextTick(() => {
+        if (this.showReviewForm) {
+          const reviewForm = this.$el.querySelector("#reviewForm");
+          if (reviewForm) {
+            reviewForm.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      });
+    },
+    cancelReview() {
+      this.showReviewForm = false;
+      this.newReview.comment = "";
+      this.newReview.isAnonymous = false;
+    },
+    async submitReview() {
+      if (!this.newReview.comment.trim()) {
+        alert("Please write a review before submitting.");
+        return;
+      }
+      try {
+        const response = await fetch(`${this.apibaseUrl}/reviews`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            companyId: this.company.id,
+            comment: this.newReview.comment,
+            isAnonymous: this.newReview.isAnonymous,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to submit review.");
+        }
+        const newReview = await response.json();
+        this.reviews.push(newReview);
+        this.newReview.comment = "";
+        this.newReview.isAnonymous = false;
+        this.showReviewForm = false;
+        alert("Review submitted successfully!");
+      } catch (error) {
+        console.error("Error submitting review:", error);
+        alert("An error occurred while submitting your review.");
       }
     },
     formatRevenue(revenue) {
@@ -186,7 +260,26 @@ export default {
   flex: 1; /* Allow the reviews to take up available space */
 }
 
-button {
-  width: 25%;
+.checkbox-label {
+  display: flex;
+  align-items: center;
+}
+
+.anonymous-checkbox {
+  margin-right: 8px; /* Add spacing between the checkbox and the label text */
+}
+
+/* Add transition styles */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 </style>
