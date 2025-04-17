@@ -146,8 +146,15 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
 # Reviews Lambda Functions
 data "archive_file" "add_review_lambda_code" {
   type        = "zip"
-  source_file = "../it-vibe-be/lambda/add-review/add_review.py"
   output_path = "../it-vibe-be/lambda/add-review/add_review.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/add-review/add_review.py")
+    filename = "add_review.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
+    filename = "get_user_informations.py"   
+  }
 }
 
 resource "aws_lambda_function" "add_review_lambda" {
