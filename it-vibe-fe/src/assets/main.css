@@ -231,3 +231,46 @@ textarea:focus {
     transform: rotate(360deg);
   }
 }
+
+/* Dropdown Style */
+select {
+  padding: 12px 15px; /* Similar padding to other inputs */
+  border: 1px solid #bdc3c7; /* Light border */
+  border-radius: 25px; /* Rounded corners */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+  font-size: 1em; /* Consistent font size */
+  background-color: white; /* Neutral background */
+  color: #333; /* Text color */
+  cursor: pointer; /* Pointer cursor for dropdown */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  box-sizing: border-box; /* Include padding and border in width */
+  appearance: none; /* Remove default browser styling */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20'%3e%3cpath fill='%23333' d='M10 12l-6-6h12z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: var(--button-blue); /* Blue focus border */
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Blue focus shadow */
+}
+
+select:disabled {
+  background-color: var(--button-disabled); /* Disabled background color */
+  color: var(--button-disabled-text); /* Disabled text color */
+  cursor: not-allowed; /* No pointer events */
+  box-shadow: none; /* Remove shadow when disabled */
+}
+
+/* Optional: Add arrow hover effect */
+select:hover {
+  border-color: var(--button-blue-hover); /* Darker blue border on hover */
+}
+
+.dropdown-container {
+  display: flex;
+  align-items: center; /* Align label and dropdown vertically */
+  gap: 10px; /* Add spacing between label and dropdown */
+}

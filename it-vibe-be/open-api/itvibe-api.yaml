@@ -304,7 +304,7 @@ components:
         type: cognito_user_pools
         identitySource: method.request.header.Authorization
         providerARNs:
-          - arn:aws:cognito-idp:eu-west-3:327441465709:userpool/eu-west-3_X1E4ZdDIr
+          - arn:aws:cognito-idp:eu-west-3:327441465709:userpool/eu-west-3_L4u8gixpA
   schemas:
     Company:
       type: object

@@ -8,9 +8,18 @@
           </span>
         </li>
         <div class="right-menu">
-          <li><a href="#/about">About</a></li>
-          <li><a href="#/contact">Contact</a></li>
-          <li><a href="#/joint_us">Joint us</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/joint_us">Joint us</a></li>
+          <li v-if="connectedUser">
+            <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
+          </li>
+          <li v-if="connectedUser">
+            <a href="/logout"><span>logout</span></a>
+          </li>
+          <li v-else>
+            <router-link to="/login">Login</router-link>
+          </li>
         </div>
       </ul>
     </nav>
@@ -21,8 +30,31 @@
 </template>
 
 <script>
+import LoginPage from "./components/login/LoginPage.vue";
+
 export default {
   name: "App",
+  components: {
+    // eslint-disable-next-line
+    LoginPage,
+  },
+  data() {
+    return {
+      connectedUser: null, // Holds the username of the connected user
+    };
+  },
+  mounted() {
+    const idToken = sessionStorage.getItem("idToken");
+    if (idToken) {
+      try {
+        // Decode the token (base64 decoding is required)
+        const tokenPayload = JSON.parse(atob(idToken.split(".")[1])); // Extract payload
+        this.connectedUser = tokenPayload["cognito:username"];
+      } catch (error) {
+        console.error("Failed to decode idToken", error);
+      }
+    }
+  },
 };
 </script>
 
@@ -48,6 +80,16 @@ export default {
 }
 
 .menu li a {
+  color: white;
+  text-decoration: none;
+}
+
+.menu li span {
+  color: white;
+  text-decoration: none;
+}
+
+.menu li a span {
   color: white;
   text-decoration: none;
 }
