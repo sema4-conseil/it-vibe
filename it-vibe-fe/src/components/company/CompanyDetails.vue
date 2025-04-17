@@ -170,15 +170,20 @@ export default {
         return;
       }
       try {
-        const response = await fetch(`${this.apibaseUrl}/reviews`, {
+        // Retrieve the JWT token from session storage
+        // TODO Change me
+        const token = "<The token>"; // Adjust this if the token is stored elsewhere
+        const response = await fetch(`${this.apibaseUrl}/reviews/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            companyId: this.company.id,
+            company_id: this.company.id,
             comment: this.newReview.comment,
             isAnonymous: this.newReview.isAnonymous,
+            rating: 5, // Default rating, adjust as needed
           }),
         });
         if (!response.ok) {
