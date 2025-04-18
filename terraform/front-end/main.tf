@@ -19,6 +19,7 @@ resource "aws_s3_bucket" "it-vibe-static-site-s3" {
   tags = {
     Name = "IT-Vibe-s3-bucket-static-web-site"
     Env = "dev"
+    Timestamp = timestamp()
   }
 }
 
@@ -62,6 +63,9 @@ resource "aws_s3_object" "index-html" {
   lifecycle {
     create_before_destroy = true
   }
+  tags = {
+    Timestamp = timestamp()
+  }
 }
 
 resource "aws_s3_object" "favicon" {
@@ -71,6 +75,9 @@ resource "aws_s3_object" "favicon" {
   lifecycle {
     create_before_destroy = true
   }
+  tags = {
+    Timestamp = timestamp()
+  }
 }
 
 resource "aws_s3_object" "js" {
@@ -79,6 +86,9 @@ resource "aws_s3_object" "js" {
   key         = "js/${each.value}"
   source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
+  tags = {
+    Timestamp = timestamp()
+  }
 }
 
 resource "aws_s3_object" "css" {
@@ -89,6 +99,9 @@ resource "aws_s3_object" "css" {
   content_type = "text/css"
   lifecycle {
     create_before_destroy = true
+  }
+  tags = {
+    Timestamp = timestamp()
   }
 }
 
