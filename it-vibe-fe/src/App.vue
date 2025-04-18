@@ -18,7 +18,7 @@
             <a href="/logout"><span>logout</span></a>
           </li>
           <li v-else>
-            <router-link to="/login">Login</router-link>
+            <a href="/login">Login</a>
           </li>
         </div>
       </ul>

@@ -100,7 +100,7 @@ resource "aws_s3_bucket_website_configuration" "it-vibe-static-site-s3-configura
     suffix = "index.html"
   }
   error_document {
-    key = "error.html"
+    key = "index.html"
   }
 
 }
