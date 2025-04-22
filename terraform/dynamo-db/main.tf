@@ -6,6 +6,40 @@ resource "aws_dynamodb_table" "companies" {
     name = "id" 
     type = "S" # String type
   }
+
+  attribute {
+    name = "name_lowercase"
+    type = "S" # String type (for case-insensitive search)
+  }
+
+  attribute {
+    name = "siren"
+    type = "S" # String type
+  }
+
+  attribute {
+    name = "siret"
+    type = "S" # String type
+  }
+
+  global_secondary_index {
+    name            = "name-index"
+    hash_key        = "name_lowercase"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "siren-index"
+    hash_key        = "siren"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "siret-index"
+    hash_key        = "siret"
+    projection_type = "ALL"
+  }
+
 }
 
 resource "aws_dynamodb_table" "company_reviews" {

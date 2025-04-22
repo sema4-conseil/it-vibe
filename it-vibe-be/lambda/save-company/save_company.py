@@ -23,6 +23,11 @@ def lambda_handler(event, context):
     # Parse the JSON from the body field
     companyData = json.loads(event['body'])
     try:
+
+        # Fill "name_lowercase" field with the lowercase version of "name" if it exists
+        # This is useful for case-insensitive searches
+        companyData["name_lowercase"] = companyData["name"].lower() if "name" in companyData else None
+
         # Extracting data from the event
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table(os.environ['COMPANIES_TABLE_NAME']) # Get table name from environment variable 
