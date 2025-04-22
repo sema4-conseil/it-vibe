@@ -9,6 +9,7 @@
   --button-disabled-text: #95a5a6; /* Darker gray text when disabled */
   --button-red: #e74c3c; /* Red for cancel and delete actions */
   --button-red-hover: #c0392b; /* Darker red on hover */
+  --error-red: #e74c3c;
 }
 
 body {
@@ -273,4 +274,13 @@ select:hover {
   display: flex;
   align-items: center; /* Align label and dropdown vertically */
   gap: 10px; /* Add spacing between label and dropdown */
+}
+
+.error {
+  color: var(--error-red);
+  font-size: 0.9em;
+}
+.comment-feedback {
+  margin: 5px 0;
+  font-size: 0.9em;
 }

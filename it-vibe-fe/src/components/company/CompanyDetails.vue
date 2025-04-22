@@ -66,7 +66,14 @@
                 v-model="newReview.comment"
                 placeholder="Write your review..."
                 rows="4"
+                @input="updateCommentLength"
               ></textarea>
+              <p
+                class="comment-feedback"
+                :class="{ error: !isCommentValid && isSubmitted }"
+              >
+                {{ commentLengthMessage }}
+              </p>
               <div class="dropdown-container">
                 <label for="rating">Rating:</label>
                 <select v-model="newReview.rating" id="rating" required>
@@ -75,6 +82,9 @@
                     {{ rate }}
                   </option>
                 </select>
+                <p v-if="!newReview.rating && isSubmitted" class="error">
+                  Rating is required.
+                </p>
               </div>
               <div>
                 <label class="checkbox-label">
@@ -124,6 +134,7 @@ export default {
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       reviews: [],
       showReviewForm: false,
+      isSubmitted: false,
       newReview: {
         comment: "",
         isAnonymous: false,
@@ -133,7 +144,28 @@ export default {
   created() {
     this.fetchCompanyDetails();
   },
+  computed: {
+    isCommentValid() {
+      const length = this.newReview.comment.length;
+      return length >= 100 && length <= 1000;
+    },
+    commentLengthMessage() {
+      const length = this.newReview.comment.length;
+      if (length === 0) {
+        return "Write your review (minimum 100 characters, maximum 1000 characters).";
+      } else if (length < 100) {
+        return `Minimum 100 characters required. Remaining: ${100 - length}`;
+      } else if (length > 1000) {
+        return `Maximum limit exceeded by ${length - 1000} characters.`;
+      } else {
+        return `Characters: ${length}/1000`;
+      }
+    },
+  },
   methods: {
+    updateCommentLength() {
+      // Trigger computed properties to update in real-time
+    },
     async fetchCompanyDetails() {
       try {
         let response = await fetch(`${this.apibaseUrl}/companies/${this.id}`);
@@ -178,43 +210,49 @@ export default {
       });
     },
     cancelReview() {
+      this.resetForm();
       this.showReviewForm = false;
+    },
+    resetForm() {
       this.newReview.comment = "";
       this.newReview.isAnonymous = false;
+      this.newReview.rating = null;
+      this.isSubmitted = false; // Reset the submitted state
     },
     async submitReview() {
-      if (!this.newReview.comment.trim()) {
-        alert("Please write a review before submitting.");
-        return;
-      }
-      try {
-        // Retrieve the JWT token from session storage
-        // TODO Change me
-        const token = sessionStorage.getItem("idToken");
-        const response = await fetch(`${this.apibaseUrl}/reviews/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            company_id: this.company.id,
-            comment: this.newReview.comment,
-            isAnonymous: this.newReview.isAnonymous,
-            rating: this.newReview.rating,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to submit review.");
+      this.isSubmitted = true; // Set to true when the user tries to submit
+      if (this.isCommentValid && this.newReview.rating) {
+        try {
+          // Retrieve the JWT token from session storage
+          // TODO Change me
+          const token = sessionStorage.getItem("idToken");
+          const response = await fetch(`${this.apibaseUrl}/reviews/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              company_id: this.company.id,
+              comment: this.newReview.comment,
+              isAnonymous: this.newReview.isAnonymous,
+              rating: this.newReview.rating,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to submit review.");
+          }
+          const newReview = await response.json();
+          this.reviews.push(newReview);
+          this.newReview.comment = "";
+          this.newReview.isAnonymous = false;
+          this.showReviewForm = false;
+        } catch (error) {
+          console.error("Error submitting review:", error);
+          alert("An error occurred while submitting your review.");
         }
-        const newReview = await response.json();
-        this.reviews.push(newReview);
-        this.newReview.comment = "";
-        this.newReview.isAnonymous = false;
-        this.showReviewForm = false;
-      } catch (error) {
-        console.error("Error submitting review:", error);
-        alert("An error occurred while submitting your review.");
+      } else {
+        alert("Please fix the errors in the form before submitting.");
       }
     },
     formatRevenue(revenue) {
