@@ -1,6 +1,8 @@
 <template>
   <div class="card">
-    <strong>{{ review.owner.user_id || "Anonymous" }}</strong>
+    <strong>{{
+      review.owner && !review.isAnonymous ? review.owner.username : "Anonymous"
+    }}</strong>
     <div class="creation-date">{{ formattedDate }}</div>
 
     <div class="rating" :title="review.rating">
