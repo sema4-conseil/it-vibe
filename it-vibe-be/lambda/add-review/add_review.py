@@ -4,6 +4,7 @@ import boto3
 import os
 from get_user_informations import get_user_informations
 from datetime import datetime, timezone
+from review_mapper import map
 
 
 dynamodb = boto3.resource('dynamodb')
@@ -66,9 +67,11 @@ def lambda_handler(event, context):
             return validationError
         
         # Get userdetails from lambda context
-        user_id, email, groups = get_user_informations(event)
+        user_id, email, groups, username = get_user_informations(event)
         reviewOwner = {
             "user_id": user_id,
+            "email": email,
+            "username": username,
         }
 
         reviewData["owner"] = reviewOwner
@@ -80,7 +83,7 @@ def lambda_handler(event, context):
         
         return {
             "statusCode": httpStatusCode,
-            "body": json.dumps(reviewData),
+            "body": json.dumps(map(reviewData)),
             "headers": defaultResponseHeader
         }
         

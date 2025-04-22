@@ -124,8 +124,15 @@ resource "aws_lambda_function" "get_company_review_metrics_lambda" {
 # Reviews Lambda Functions
 data "archive_file" "get_reviews_by_company_id_lambda_code" {
   type        = "zip"
-  source_file = "../it-vibe-be/lambda/get-reviews-by-company-id/get_reviews_by_company_id.py"
   output_path = "../it-vibe-be/lambda/get-reviews-by-company-id/get_reviews_by_company_id.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/get-reviews-by-company-id/get_reviews_by_company_id.py")
+    filename = "get_reviews_by_company_id.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/mappers/review_mapper.py")
+    filename = "review_mapper.py"   
+  }
 }
 
 resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
@@ -154,6 +161,10 @@ data "archive_file" "add_review_lambda_code" {
   source {
     content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
     filename = "get_user_informations.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/mappers/review_mapper.py")
+    filename = "review_mapper.py"   
   }
 }
 
