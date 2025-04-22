@@ -3,6 +3,8 @@ import os
 import boto3
 import json
 from decimal import Decimal
+from review_mapper import map
+
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -51,8 +53,11 @@ def lambda_handler(event, context):
         }
 
     serializable_items = json.loads(json.dumps(items, default=decimal_to_float))
+
+    mapped_reviews = [map(item) for item in serializable_items]
+
     return {
         'statusCode': 200,
-        'body': json.dumps(serializable_items),
+        'body': json.dumps(mapped_reviews),
         'headers': headers
     }

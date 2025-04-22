@@ -46,7 +46,7 @@ def lambda_handler(event, context):
         item = response.get('Item', None)   
         if item:
             # Get the user id from lambda context
-            user_id, email, groups = get_user_informations(event)
+            user_id, email, groups, username = get_user_informations(event)
             if user_id is None:
                 return {
                     "statusCode": 401,

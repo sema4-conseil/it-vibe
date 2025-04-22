@@ -8,7 +8,8 @@ def get_user_informations(event):
         user_id = claims.get('sub', '')
         email = claims.get('email', '')
         groups = claims.get('cognito:groups', '')
-        return user_id, email, groups
+        username = claims.get('cognito:username', '')
+        return user_id, email, groups, username
     except Exception as e:
         print(e)
         return None, None, None
