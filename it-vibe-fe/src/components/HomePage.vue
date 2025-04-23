@@ -1,5 +1,25 @@
 <template>
   <div>
+    <!-- Search Panel -->
+    <div class="search-container">
+      <form @submit.prevent="searchCompanies" class="search-form">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input placeholder="Name" id="name" v-model="searchCriteria.name" />
+        </div>
+        <div class="form-group">
+          <label for="siren">SIREN</label>
+          <input type="text" id="siren" v-model="searchCriteria.siren" />
+        </div>
+        <div class="form-group">
+          <label for="siret">SIRET</label>
+          <input type="text" id="siret" v-model="searchCriteria.siret" />
+        </div>
+        <div class="button-container">
+          <button type="submit">Search</button>
+        </div>
+      </form>
+    </div>
     <div v-if="loading">
       <p>Loading companies ...</p>
       <div class="spinner"></div>
@@ -15,9 +35,11 @@
         <p><strong>Location:</strong> {{ company.location }}</p>
         <p><strong>Industry:</strong> {{ company.industry }}</p>
       </div>
-      <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
-        Next Items
-      </button>
+      <div>
+        <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
+          Next Items
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -30,18 +52,31 @@ export default {
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       lastEvaluatedKey: null,
       pageSize: 4,
-      loading: true,
+      loading: false,
+      searchCriteria: {
+        name: "",
+        siren: "",
+        siret: "",
+      },
     };
-  },
-  created() {
-    this.fetchCompanies();
   },
   methods: {
     async fetchCompanies(startKey) {
       try {
+        this.loading = true;
         let url = `${this.apibaseUrl}/companies?pageSize=${this.pageSize}`;
         if (startKey) {
           url += `&startKey=${encodeURIComponent(JSON.stringify(startKey))}`;
+        }
+        // Add search criteria to the URL if they exist
+        if (this.searchCriteria.name) {
+          url += `&name=${encodeURIComponent(this.searchCriteria.name)}`;
+        }
+        if (this.searchCriteria.siren) {
+          url += `&siren=${encodeURIComponent(this.searchCriteria.siren)}`;
+        }
+        if (this.searchCriteria.siret) {
+          url += `&siret=${encodeURIComponent(this.searchCriteria.siret)}`;
         }
 
         const response = await fetch(url);
@@ -90,6 +125,10 @@ export default {
         }
       }
     },
+    searchCompanies() {
+      this.lastEvaluatedKey = null; // Reset pagination
+      this.fetchCompanies(); // Fetch companies with the search criteria
+    },
     goToCompanyDetails(companyId) {
       this.$router.push({ path: `/companies/${companyId}` });
     },
@@ -97,7 +136,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+/* Styles for company cards remain unchanged */
 .company-cards {
   padding: 20px; /* Increased padding to match content */
   display: flex;
@@ -138,8 +178,5 @@ export default {
 .company-card strong {
   font-weight: 600;
   color: #333;
-}
-button {
-  width: 20%;
 }
 </style>
