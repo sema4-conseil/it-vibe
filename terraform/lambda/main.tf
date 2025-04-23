@@ -50,6 +50,10 @@ data "archive_file" "save_company_lambda_code" {
     filename = "is_user_in_group.py"   
   }
   source {
+    content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
+    filename = "get_user_informations.py"   
+  }
+  source {
     content  = file("../it-vibe-be/lambda/lib/mappers/company_mapper.py")
     filename = "company_mapper.py"   
   }
