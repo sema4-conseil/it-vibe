@@ -299,6 +299,20 @@ export default {
   flex-direction: column;
 }
 
+@media (max-width: 768px) {
+  .company-details-container {
+    flex-direction: column; /* Stack sections vertically */
+  }
+
+  .company-details {
+    margin-right: 0; /* Remove spacing between sections */
+    margin-bottom: 20px; /* Add spacing below the details section */
+  }
+
+  .company-reviews {
+    flex: none; /* Adjust flex property */
+  }
+}
 .details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
