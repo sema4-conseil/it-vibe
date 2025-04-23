@@ -10,7 +10,7 @@
         <div class="right-menu">
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
-          <li><a href="/joint_us">Joint us</a></li>
+          <li><a href="/join_us">Join us</a></li>
           <li v-if="connectedUser">
             <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
           </li>
