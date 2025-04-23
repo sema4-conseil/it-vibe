@@ -12,7 +12,7 @@ const routes = [
   { path: "/", component: HomePage },
   { path: "/about", component: AboutPage },
   { path: "/contact", component: ContactPage },
-  { path: "/joint_us", component: JoinUsPage },
+  { path: "/join_us", component: JoinUsPage },
   {
     path: "/companies/:id",
     component: CompanyDetails,
