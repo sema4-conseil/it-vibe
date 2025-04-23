@@ -3,6 +3,7 @@ import uuid
 import boto3
 import os
 from is_user_in_group import is_user_in_group
+from company_mapper import map
 
 
 def lambda_handler(event, context):
@@ -60,11 +61,11 @@ def lambda_handler(event, context):
         else:
             httpStatusCode = 200
 
-        result = table.put_item(Item=companyData)
+        table.put_item(Item=companyData)
         
         return {
             "statusCode": httpStatusCode,
-            "body": json.dumps(companyData),
+            "body": json.dumps(map(companyData)),
             "headers": {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
