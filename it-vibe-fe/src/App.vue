@@ -95,7 +95,7 @@ export default {
 }
 
 .menu li {
-  padding: 0 20px; /* Horizontal padding only */
+  padding: 0 10px; /* Horizontal padding only */
   height: 100%;
   display: flex;
   align-items: center;
