@@ -25,6 +25,12 @@
             <strong>Address:</strong> {{ company.adress }}
           </div>
           <div class="detail-item">
+            <strong>Siren:</strong> {{ company.siren }}
+          </div>
+          <div class="detail-item">
+            <strong>Siret:</strong> {{ company.siret }}
+          </div>
+          <div class="detail-item">
             <strong>Creation Date:</strong>
             {{ formatDate(company.creationDate) }}
           </div>
@@ -104,7 +110,7 @@
           </transition>
         </div>
 
-        <div v-if="!showReviewForm" class="button-container">
+        <div v-if="!showReviewForm">
           <button @click="toggleReviewForm">Add</button>
         </div>
       </div>
