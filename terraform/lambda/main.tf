@@ -1,7 +1,20 @@
+variable "env"  {
+  description = "The environment to deploy to"
+  type        = string
+  default     = "dev"
+}
+
 data "archive_file" "get_companies_lambda_code" {
   type        = "zip"
-  source_file = "../it-vibe-be/lambda/get-companies/get_companies.py"
   output_path = "../it-vibe-be/lambda/get-companies/get_companies.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/get-companies/get_companies.py")
+    filename = "get_companies.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/mappers/company_mapper.py")
+    filename = "company_mapper.py"   
+  }
 }
 
 
@@ -17,6 +30,11 @@ resource "aws_lambda_function" "get_companies_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
         }
     }
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
+
 }
 
 
@@ -30,6 +48,10 @@ data "archive_file" "save_company_lambda_code" {
   source {
     content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
     filename = "is_user_in_group.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/mappers/company_mapper.py")
+    filename = "company_mapper.py"   
   }
 }
 
@@ -45,6 +67,11 @@ resource "aws_lambda_function" "save_company_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
         }
     }
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
+    
 }
 
 data "archive_file" "delete_company_code" {
@@ -76,6 +103,10 @@ resource "aws_lambda_function" "delete_company_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
         }
     }
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
 }
 
 
@@ -98,6 +129,11 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
         }
     }
+
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
 }
 
 data "archive_file" "get_company_review_metrics_lambda_code" {
@@ -118,6 +154,11 @@ resource "aws_lambda_function" "get_company_review_metrics_lambda" {
         variables = {
             COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
         }
+    }
+
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
     }
 }
 
@@ -147,6 +188,11 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
         variables = {
             COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
         }
+    }
+
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
     }
 }
 
@@ -182,12 +228,9 @@ resource "aws_lambda_function" "add_review_lambda" {
         }
     }
     tags = {
-        Name = "add_review"
-        Env = "Dev"
-        ManagedBy = "Terraform"
-        Scope = "Functionnal"
+      Env = var.env
+      ManagedBy = "Terraform"
     }
-
 }
 
 data archive_file "push_contact_message_lamnda_code" {
@@ -203,6 +246,10 @@ resource "aws_lambda_function" "push_contact_message_lambda" {
     handler          = "push_contact_message.lambda_handler"
     runtime          = "python3.13"
     source_code_hash = data.archive_file.push_contact_message_lamnda_code.output_base64sha256
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
 }
 
 resource "aws_iam_role" "lambda_exec" {

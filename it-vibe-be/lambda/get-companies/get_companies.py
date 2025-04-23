@@ -3,6 +3,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
+from company_mapper import map
 
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -74,9 +75,9 @@ def lambda_handler(event, context):
 
         # Limit the items to the requested page size
         response_items = items[:pageSize]
-
+        mapped_items = [map(item) for item in response_items]
         response = {
-            "items": response_items,
+            "items": mapped_items,
             "LastEvaluatedKey": last_evaluated_key,
             "Count": len(response_items),
         }
