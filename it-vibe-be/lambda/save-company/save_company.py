@@ -22,6 +22,26 @@ def lambda_handler(event, context):
 
     # Parse the JSON from the body field
     companyData = json.loads(event['body'])
+
+    # Validate company data, mandatory fields are:
+    # name, description, siren, siret, president, adress, country,industry
+    mandatory_fields = ["name", "description", "siren", "siret", "president", "adress", "country", "industry"]
+    for field in mandatory_fields:
+        # if field not in companyData or field is null 
+        # Return a 400 error with a message indicating the missing field
+        if field not in companyData or companyData[field] is None:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "errorMessage": f"Missing mandatory field: {field}"
+                }),
+                "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
+                }
+            }
+
+
     try:
 
         # Fill "name_lowercase" field with the lowercase version of "name" if it exists

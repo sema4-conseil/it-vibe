@@ -309,8 +309,14 @@ components:
     Company:
       type: object
       required:
-        - id
         - name
+        - description
+        - siren
+        - siret
+        - president
+        - adress
+        - country
+        - industry
       properties:
         id:
           type: string
@@ -333,6 +339,22 @@ components:
         description:
           type: string
           example: "IT company"
+        creationDate:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        country:
+          type: string
+          example: "France"
+        siret:
+          type: string
+          example: "12345678901234"
+        siren:
+          type: string
+          example: "123456789"
+        IBAN:
+          type: string
+          example: "FR7612345678901234567890123"
     Review:
       type: object
       required:
