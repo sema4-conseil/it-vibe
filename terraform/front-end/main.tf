@@ -177,6 +177,18 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   }
 }
 
+resource "null_resource" "invalidate_cloudfront" {
+  triggers = {
+    # Trigger invalidation when files change
+    run_id = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+      aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.cloudfront_distribution.id} --paths /*
+    EOT
+  }
+}
 
 // Create a route 53 for the static web-site
 resource "aws_route53_record" "s3_static_site" {
