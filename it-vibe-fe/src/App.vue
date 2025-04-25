@@ -2,25 +2,19 @@
   <div id="app" class="app">
     <nav class="navbar">
       <ul class="menu">
-        <li>
-          <span>
-            <router-link to="/">IT Vibes</router-link>
-          </span>
+        <li><a href="/">IT Vibes</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/join_us">Join us</a></li>
+        <li v-if="connectedUser">
+          <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
         </li>
-        <div class="right-menu">
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
-          <li><a href="/join_us">Join us</a></li>
-          <li v-if="connectedUser">
-            <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
-          </li>
-          <li v-if="connectedUser">
-            <a href="/logout"><span>logout</span></a>
-          </li>
-          <li v-else>
-            <a href="/login">Login</a>
-          </li>
-        </div>
+        <li v-if="connectedUser">
+          <a href="/logout"><span>logout</span></a>
+        </li>
+        <li v-else>
+          <a href="/login">Login</a>
+        </li>
       </ul>
     </nav>
     <div class="content">
@@ -61,7 +55,17 @@ export default {
 <style>
 @import "@/assets/main.css";
 .navbar {
-  height: 50px;
+  /* height: 50px; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--navbar-background);
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .menu {
@@ -69,16 +73,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  margin-top: 0px;
+  margin: 0px;
   padding-inline-start: 0px;
 }
 
-.right-menu {
-  display: flex;
-  height: 100%;
-  align-items: center;
+.menu-hidden {
+  display: none !important; /* Hide the menu when toggled off */
 }
-
 .menu li a {
   color: white;
   text-decoration: none;
@@ -105,5 +106,31 @@ export default {
   display: flex; /* Make links flex items */
   align-items: center; /* Vertically center link text */
   height: 100%; /* Make links occupy full height */
+}
+.content {
+  margin-top: 30px;
+  padding: 0px 5px;
+}
+
+/* Media Query for small screens */
+@media (max-width: 768px) {
+  .menu {
+    /* display: none; Hide menu by default */
+    flex-direction: column; /* Stack the menu items */
+    background-color: var(--navbar-background); /* Add a background color */
+    position: unset;
+    right: 0;
+    width: 100%;
+    z-index: 1200;
+    padding-left: 2px;
+  }
+  .menu li {
+    width: 100%; /* Make menu items take full width */
+    text-align: center; /* Center text */
+  }
+  .content {
+    margin-top: 160px;
+    padding: 0px 5px;
+  }
 }
 </style>
