@@ -111,7 +111,9 @@
         </div>
 
         <div v-if="!showReviewForm">
-          <button @click="toggleReviewForm">Add</button>
+          <button @click="toggleReviewForm">
+            <i class="fas fa-plus"></i>Add
+          </button>
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@
           <input type="text" id="siret" v-model="searchCriteria.siret" />
         </div>
         <div class="button-container">
-          <button type="submit">Search</button>
+          <button type="submit"><i class="fa fa-search"></i>Search</button>
         </div>
       </form>
     </div>
@@ -37,7 +37,7 @@
       </div>
       <div>
         <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
-          Next Items
+          <i class="fa fa-forward"></i>Next Items
         </button>
       </div>
     </div>
@@ -159,7 +159,7 @@ export default {
 }
 
 .company-card:hover {
-  box-shadow: 0 4px 8px rgb(19, 0, 0); /* Slightly larger shadow on hover */
+  border: 1px solid var(--button-blue);
   cursor: pointer;
 }
 
