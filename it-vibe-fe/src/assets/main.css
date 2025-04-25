@@ -25,26 +25,8 @@ body {
   text-align: center;
 }
 
-.navbar {
-  background-color: var(--navbar-background);
-  overflow: hidden;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
-
 .app {
   overflow: hidden;
-}
-
-.content {
-  margin-top: 60px;
-  overflow-y: auto;
-  height: calc(100vh - 60px);
-  padding: 20px; /* Add padding for content */
-  max-height: 845px;
 }
 
 .card {
@@ -73,6 +55,7 @@ body {
   flex: 1; /* Allow fields to grow evenly */
   display: flex;
   flex-direction: column;
+  margin-bottom: 0px;
 }
 
 /* Center the button on the next line */
