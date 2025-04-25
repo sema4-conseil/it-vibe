@@ -2,18 +2,28 @@
   <div id="app" class="app">
     <nav class="navbar">
       <ul class="menu">
-        <li><a href="/">IT Vibes</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/join_us">Join us</a></li>
+        <li>
+          <a href="/"
+            ><span><i class="fa fa-home"></i>Home</span></a
+          >
+        </li>
+        <li>
+          <a href="/about"><i class="fa fa-info"></i>About</a>
+        </li>
+        <li>
+          <a href="/contact"><i class="fa fa-envelope"></i>Contact</a>
+        </li>
+        <li>
+          <a href="/join_us"><i class="fa fa-handshake"></i>Join us</a>
+        </li>
         <li v-if="connectedUser">
           <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
         </li>
         <li v-if="connectedUser">
-          <a href="/logout"><span>logout</span></a>
+          <a href="/logout"><i class="fa fa-sign-out-alt"></i>Logout</a>
         </li>
         <li v-else>
-          <a href="/login">Login</a>
+          <a href="/login"><i class="fas fa-sign-in-alt"></i>Login</a>
         </li>
       </ul>
     </nav>
@@ -110,6 +120,11 @@ export default {
 .content {
   margin-top: 30px;
   padding: 0px 5px;
+}
+
+.fa,
+.fas {
+  margin: 0px 2px;
 }
 
 /* Media Query for small screens */
