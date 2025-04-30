@@ -25,6 +25,11 @@
         <li v-else>
           <a href="/login"><i class="fas fa-sign-in-alt"></i>Login</a>
         </li>
+        <li>
+          <a href="/manage_companies"
+            ><i class="fa fa-cog"></i>Manage companies</a
+          >
+        </li>
       </ul>
     </nav>
     <div class="content">
