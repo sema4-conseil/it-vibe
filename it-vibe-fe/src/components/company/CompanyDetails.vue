@@ -256,7 +256,6 @@ export default {
           this.newReview.isAnonymous = false;
           this.showReviewForm = false;
         } catch (error) {
-          console.error("Error submitting review:", error);
           alert("An error occurred while submitting your review.");
         }
       } else {
@@ -349,19 +348,5 @@ export default {
 
 .anonymous-checkbox {
   margin-right: 8px; /* Add spacing between the checkbox and the label text */
-}
-
-/* Add transition styles */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(-20px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
 }
 </style>

@@ -10,6 +10,8 @@
   --button-red: #e74c3c; /* Red for cancel and delete actions */
   --button-red-hover: #c0392b; /* Darker red on hover */
   --error-red: #e74c3c;
+  --button-orange: #f39c12;
+  --button-orange-hover: #d68910;
 }
 
 body {
@@ -272,4 +274,17 @@ select:hover {
 .comment-feedback {
   margin: 5px 0;
   font-size: 0.9em;
+}
+/* Add transition styles */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
