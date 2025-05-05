@@ -1,3 +1,10 @@
+variable "Env" {
+  description = "Environment name"
+  type        = string
+  default     = "dev"
+}
+
+
 resource "aws_dynamodb_table" "companies" {
   name           = "IT_VIBE_DEV_COMPANIES"
   billing_mode   = "PAY_PER_REQUEST" # On-demand capacity mode
@@ -40,6 +47,12 @@ resource "aws_dynamodb_table" "companies" {
     projection_type = "ALL"
   }
 
+  tags = {
+    Name        = "IT_VIBE_DEV_COMPANIES"
+    Environment = var.Env
+    ManagedBy   = "Terraform"
+  }
+
 }
 
 resource "aws_dynamodb_table" "company_reviews" {
@@ -77,9 +90,24 @@ resource "aws_dynamodb_table" "company_reviews" {
 
   tags = {
     Name        = "IT_VIBE_DEV_COMPANY_REVIEWS"
-    Environment = "dev"
+    Environment = var.Env
     ManagedBy   = "Terraform"
   }
+}
+
+resource "aws_dynamodb_table" "contact_messages" {
+  name           = "IT_VIBE_DEV_CONTACT_MESSAGES"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "id"
+  range_key      = "timestamp"
+	attribute {
+		name = "id"
+		type = "S"
+	}
+	attribute {
+		name = "timestamp"
+		type = "S"
+	}
 }
 
   output "companies_table_arn" {
