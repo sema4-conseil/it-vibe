@@ -239,17 +239,27 @@ resource "aws_lambda_function" "add_review_lambda" {
 
 data archive_file "push_contact_message_lamnda_code" {
   type        = "zip"
-  source_file  = "../it-vibe-be/lambda/push-contact-message/push_contact_message.py"
+  source {
+    content  = file("../it-vibe-be/lambda/push-contact-message/push_contact_message.py")
+    filename = "push_contact_message.py"
+  }
   output_path = "../it-vibe-be/lambda/push-contact-message/push_contact_message.zip"
+  
 }
 
 resource "aws_lambda_function" "push_contact_message_lambda" {
     filename         = data.archive_file.push_contact_message_lamnda_code.output_path
     function_name    = "push_contact_message"
-    role             = aws_iam_role.lambda_exec.arn
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "push_contact_message.lambda_handler"
     runtime          = "python3.13"
     source_code_hash = data.archive_file.push_contact_message_lamnda_code.output_base64sha256
+    environment {
+        variables = {
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+        }
+    }
+
     tags = {
       Env = var.env
       ManagedBy = "Terraform"
