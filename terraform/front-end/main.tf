@@ -1,4 +1,7 @@
 variable "hosted_zone_id" {}
+variable "Env" {
+  default = "Dev"
+}
 
 variable "s3_name" {
   default = "it-vibe.dev.sema4-conseil.com"
@@ -18,8 +21,7 @@ resource "aws_s3_bucket" "it-vibe-static-site-s3" {
   bucket = var.s3_name
   tags = {
     Name = "IT-Vibe-s3-bucket-static-web-site"
-    Env = "dev"
-    Timestamp = timestamp()
+    Env = var.Env
   }
 }
 
@@ -64,8 +66,10 @@ resource "aws_s3_object" "index-html" {
     create_before_destroy = true
   }
   tags = {
-    Timestamp = timestamp()
+    Env = var.Env
   }
+  # Try to get the filemd5, fall back to empty string if file doesn't exist
+  etag = try(filemd5("../it-vibe-fe/dist/index.html"),"")
 }
 
 resource "aws_s3_object" "favicon" {
@@ -76,8 +80,10 @@ resource "aws_s3_object" "favicon" {
     create_before_destroy = true
   }
   tags = {
-    Timestamp = timestamp()
+    Env = var.Env
   }
+  # Try to get the filemd5, fall back to empty string if file doesn't exist
+  etag = try(filemd5("../it-vibe-fe/dist/favicon.ico"),"")
 }
 
 resource "aws_s3_object" "js" {
@@ -87,8 +93,10 @@ resource "aws_s3_object" "js" {
   source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
   tags = {
-    Timestamp = timestamp()
+    Env = var.Env
   }
+  # Try to get the filemd5, fall back to empty string if file doesn't exist
+  etag = try(filemd5("../it-vibe-fe/dist/js/${each.value}"),"")
 }
 
 resource "aws_s3_object" "css" {
@@ -101,8 +109,10 @@ resource "aws_s3_object" "css" {
     create_before_destroy = true
   }
   tags = {
-    Timestamp = timestamp()
+    Env = var.Env
   }
+  # Try to get the filemd5, fall back to empty string if file doesn't exist
+  etag = try(filemd5("../it-vibe-fe/dist/css/${each.value}"),"")
 }
 
 
@@ -185,7 +195,7 @@ resource "null_resource" "invalidate_cloudfront" {
 
   provisioner "local-exec" {
     command = <<EOT
-      aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.cloudfront_distribution.id} --paths /*
+      aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.cloudfront_distribution.id} --paths /* /.
     EOT
   }
 }

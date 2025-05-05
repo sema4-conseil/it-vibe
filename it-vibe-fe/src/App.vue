@@ -5,7 +5,7 @@
         <!-- Left-aligned items -->
         <li>
           <a href="/"
-            ><span><i class="fa fa-home"></i>Home</span></a
+            ><span><i class="fa fa-home"></i>IT-Vibe</span></a
           >
         </li>
         <li>
