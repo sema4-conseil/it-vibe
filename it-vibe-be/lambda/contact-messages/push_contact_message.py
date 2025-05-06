@@ -5,7 +5,7 @@ import boto3
 import os
 import re
 from datetime import datetime, timezone
-from enum import Enum
+from message_status import MessageStatus
 
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -24,11 +24,6 @@ DEFAULT_RESPONSE_HEADERS = {
 
 MAX_CONTENT_LENGTH = 1000
 EMAIL_REGEX = r'^[^@\s]+@[^@\s]+\.[^@\s]+$'
-
-class Status(Enum):
-    NEW = "NEW"
-    IN_PROGRESS = "IN_PROGRESS"
-    DONE = "DONE"
 
 def validate_email(email: str) -> bool:
     """Validate email format using basic regex."""
@@ -102,8 +97,8 @@ def lambda_handler(event, context):
             "id": str(uuid.uuid4()),
             "email": body["email"].strip(),
             "content": body["content"].strip(),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "status": Status.NEW.value,
+            "timestamp": int(datetime.now(timezone.utc).timestamp()),
+            "status": MessageStatus.NEW.value,
         }
 
         table.put_item(Item=message_data)
