@@ -7,7 +7,8 @@
         <input
           type="email"
           id="email"
-          v-model="email"
+          v-model="contactMessage.email"
+          placeholder="Enter your email"
           required
           class="form-control"
         />
@@ -16,8 +17,9 @@
         <label for="message">Message:</label>
         <textarea
           id="message"
-          v-model="message"
-          minlength="100"
+          v-model="contactMessage.content"
+          placeholder="Enter your message, it should be at least 10 characters long"
+          minlength="10"
           required
           class="form-control"
         ></textarea>
@@ -32,16 +34,48 @@ export default {
   name: "ContactPage",
   data() {
     return {
-      email: "",
-      message: "",
+      apibaseUrl: process.env.VUE_APP_API_BASE_URL,
+      contactMessage: {
+        email: "",
+        message: "",
+      },
     };
   },
   methods: {
-    handleSubmit() {
-      // Handle form submission logic here
-      console.log("Email:", this.email);
-      console.log("Message:", this.message);
-      // You can add your API call or other submission logic here
+    resetForm() {
+      this.contactMessage.email = "";
+      this.contactMessage.content = "";
+    },
+    async handleSubmit() {
+      // Validate email format
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(this.contactMessage.email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      // Validate message length
+      if (this.contactMessage.content.length < 100) {
+        alert("Message must be at least 100 characters long.");
+        return;
+      }
+      try {
+        const response = await fetch(`${this.apibaseUrl}/contact`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.contactMessage),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to create company");
+        }
+        let data = await response.json();
+        alert(data.message);
+        this.resetForm();
+      } catch (error) {
+        alert("An error occurred while submitting your review.");
+      }
     },
   },
 };
