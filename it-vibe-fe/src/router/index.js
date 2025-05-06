@@ -10,6 +10,7 @@ import CallBack from "@/components/login/CallBack.vue";
 import LogoutPage from "@/components/login/LogoutPage.vue";
 import ManageCompanies from "@/components/company/ManageCompanies.vue";
 import NotAuthorizedPage from "@/components/login/NotAuthorizedPage.vue";
+import ManageContactMessages from "@/components/contact/ManageContactMessages.vue";
 
 const routes = [
   { path: "/", component: HomePage },
@@ -27,6 +28,11 @@ const routes = [
   {
     path: "/manage_companies",
     component: ManageCompanies,
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: "/manage_contact_messages",
+    component: ManageContactMessages,
     meta: { requiresAdmin: true },
   },
   {
