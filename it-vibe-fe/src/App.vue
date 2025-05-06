@@ -14,9 +14,9 @@
         <li>
           <a href="/contact"><i class="fa fa-envelope"></i>Contact</a>
         </li>
-        <li>
+        <!-- <li>
           <a href="/join_us"><i class="fa fa-handshake"></i>Join us</a>
-        </li>
+        </li> -->
         <li v-if="isAdmin" class="admin-menu">
           <a href="/manage_companies"
             ><i class="fa fa-cog"></i>Manage companies</a
