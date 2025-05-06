@@ -280,6 +280,10 @@ data archive_file "get_contact_messages_lambda_code" {
     content  = file("../it-vibe-be/lambda/contact-messages/message_status.py")
     filename = "message_status.py"
   }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"   
+  }
   output_path = "../it-vibe-be/lambda/contact-messages/get_contact_messages.zip"
 }
 
@@ -300,4 +304,12 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
       Env = var.env
       ManagedBy = "Terraform"
     }
+}
+
+resource "aws_lambda_alias" "get_contact_messages_alias" {
+  for_each = toset(["dev","uat", "prod"])
+  name             = each.key
+  function_name    = aws_lambda_function.get_contact_messages_lambda.function_name
+  function_version = "$LATEST"
+  description      = "Alias for the get_contact_messages lambda function for ${each.key} environment"
 }

@@ -7,6 +7,9 @@ variable "hosted_zone_id" {
   description = "The zone id of the hosted zone"
 }
 
+variable "account_id" {}
+variable "region" {}
+variable "env" {}
 
 variable "get_companies_lambda_invoke_arn" {}
 variable "get_companies_lambda_arn" {}
@@ -18,6 +21,8 @@ variable "delete_company_by_id_lambda_invoke_arn" {}
 variable "get_company_details_by_id_lambda_arn" {}
 variable "push_contact_message_lambda_arn" {}
 variable "push_contact_message_lambda_invoke_arn" {}
+variable "get_contact_messages_lambda_arn" {}
+variable "get_contact_messages_lambda_invoke_arn" {}
 variable "get_reviews_by_company_id_lambda_arn" {}
 variable "get_reviews_by_company_id_lambda_invoke_arn" {} 
 variable "add_review_lambda_arn" {}
