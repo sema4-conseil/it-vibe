@@ -22,6 +22,11 @@
             ><i class="fa fa-cog"></i>Manage companies</a
           >
         </li>
+        <li v-if="isAdmin" class="admin-menu">
+          <a href="/manage_contact_messages"
+            ><i class="fa fa-cog"></i>Manage contact messages</a
+          >
+        </li>
 
         <!-- Right-aligned items -->
         <div class="menu-right">
@@ -133,6 +138,7 @@ export default {
 
 .admin-menu {
   background-color: var(--button-orange);
+  margin: 2px 2px;
 }
 
 .fa,
