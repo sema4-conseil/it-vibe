@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { jwtDecode } from "jwt-decode";
-import ContactPage from "@/components/ContactPage.vue";
+import ContactPage from "@/components/contact/ContactPage.vue";
 import HomePage from "@/components/HomePage.vue";
 import JoinUsPage from "@/components/JoinUsPage.vue";
 import AboutPage from "@/components/AboutPage.vue";
