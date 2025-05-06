@@ -6,6 +6,8 @@ import os
 from message_status import MessageStatus
 from decimal import Decimal
 
+from is_user_in_group import is_user_in_group
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -36,6 +38,18 @@ def lambda_handler(event, context):
     result should be ordered by creation date ascending and status ascending.
     result should be paginated with a limit of 10 items per page.
     """
+    # Check if the user is in the "admin" group
+    if not is_user_in_group(event, "admin"):
+            return {
+            "statusCode": 403,
+            "body": json.dumps({
+                "errorMessage": "User is not authorized, only admin can execute this action"
+            }),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
+            }
+        }
     try:
         startKey = None
         pageSize = 5
