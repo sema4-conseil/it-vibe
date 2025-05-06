@@ -290,6 +290,98 @@ paths:
 
 
   /contact:
+    options:
+      summary: Preflight CORS check for contact messages
+      responses:
+        "204":
+          description: No Content
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: "*"
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: "POST, GET, OPTIONS"
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: "Content-Type, Authorization"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 204}'
+        responses:
+          default:
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST, GET, OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type, Authorization'"
+    get:
+      x-amazon-apigateway-integration:
+        uri: "${get_contact_messages_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: List all contact messages
+      security:
+        - itvibe-authorizer: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - NEW
+              - IN_PROGRESS
+              - DONE
+              - ARCHIVED
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: startKey
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GetContactMessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
     post:
       x-amazon-apigateway-integration:
         uri: "${push_contact_message_lambda_invoke_arn}"
@@ -408,20 +500,45 @@ components:
       type: object
       required:
         - email
-        - messageContent
+        - content
       properties:
         email:
           type: string
           example: "jhon.dohe@company.com"
-        messageContent:
+        content:
           type: string
           example: "Hello, I would like to know more about your company"
-    ContactMessageResponse:
+    PushContactMessageResponse:
       type: object
       properties:
         message:
           type: string
           example: "Message sent with success"
+        id:
+          type: string
+          example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
+    GetContactMessageResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
+        email:
+          type: string
+          example: "jhon.dohe@test.com"
+        content:
+          type: string
+          example: "Lerum ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        status:
+          enum:
+            - "NEW"
+            - "IN_PROGRESS"
+            - "DONE"
+            - "ARCHIVED"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
     AddReviewRequest:
       type: object
       required:
