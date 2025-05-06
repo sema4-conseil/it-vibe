@@ -106,8 +106,24 @@ resource "aws_dynamodb_table" "contact_messages" {
 	}
 	attribute {
 		name = "timestamp"
-		type = "S"
+		type = "N"
 	}
+  attribute {
+    name = "status"
+    type = "N" 
+  }
+  global_secondary_index {
+    name            = "StatusTimestampIndex"
+    hash_key        = "status"
+    range_key       = "timestamp"
+    projection_type = "ALL"
+  }
+  tags = {
+    Name        = "IT_VIBE_DEV_CONTACT_MESSAGES"
+    Environment = var.Env
+    ManagedBy   = "Terraform"
+    Application = "IT-VIBE"
+  }
 }
 
   output "companies_table_arn" {

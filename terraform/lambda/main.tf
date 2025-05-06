@@ -237,23 +237,27 @@ resource "aws_lambda_function" "add_review_lambda" {
     }
 }
 
-data archive_file "push_contact_message_lamnda_code" {
+data archive_file "push_contact_message_lambda_code" {
   type        = "zip"
   source {
-    content  = file("../it-vibe-be/lambda/push-contact-message/push_contact_message.py")
+    content  = file("../it-vibe-be/lambda/contact-messages/push_contact_message.py")
     filename = "push_contact_message.py"
   }
-  output_path = "../it-vibe-be/lambda/push-contact-message/push_contact_message.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/message_status.py")
+    filename = "message_status.py"
+  }
+  output_path = "../it-vibe-be/lambda/contact-messages/push_contact_message.zip"
   
 }
 
 resource "aws_lambda_function" "push_contact_message_lambda" {
-    filename         = data.archive_file.push_contact_message_lamnda_code.output_path
+    filename         = data.archive_file.push_contact_message_lambda_code.output_path
     function_name    = "push_contact_message"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "push_contact_message.lambda_handler"
     runtime          = "python3.13"
-    source_code_hash = data.archive_file.push_contact_message_lamnda_code.output_base64sha256
+    source_code_hash = data.archive_file.push_contact_message_lambda_code.output_base64sha256
     environment {
         variables = {
             CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
@@ -266,25 +270,34 @@ resource "aws_lambda_function" "push_contact_message_lambda" {
     }
 }
 
-resource "aws_iam_role" "lambda_exec" {
-    name = "lambda_exec_role"
-
-    assume_role_policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-            {
-                Action = "sts:AssumeRole"
-                Effect = "Allow"
-                Sid    = ""
-                Principal = {
-                    Service = "lambda.amazonaws.com"
-                }
-            }
-        ]
-    })
+data archive_file "get_contact_messages_lambda_code" {
+  type        = "zip"
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/get_contact_messages.py")
+    filename = "get_contact_messages.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/message_status.py")
+    filename = "message_status.py"
+  }
+  output_path = "../it-vibe-be/lambda/contact-messages/get_contact_messages.zip"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_policy" {
-    role       = aws_iam_role.lambda_exec.name
-    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+resource "aws_lambda_function" "get_contact_messages_lambda" {
+    filename         = data.archive_file.get_contact_messages_lambda_code.output_path
+    function_name    = "get_contact_messages"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "get_contact_messages.lambda_handler"
+    runtime          = "python3.13"
+    source_code_hash = data.archive_file.get_contact_messages_lambda_code.output_base64sha256
+    environment {
+        variables = {
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+        }
+    }
+
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
 }
