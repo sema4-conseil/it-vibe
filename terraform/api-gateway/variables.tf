@@ -19,6 +19,7 @@ variable "get_company_details_by_id_lambda_invoke_arn" {}
 variable "delete_company_by_id_lambda_arn" {}
 variable "delete_company_by_id_lambda_invoke_arn" {}
 variable "get_company_details_by_id_lambda_arn" {}
+variable "get_company_metrics_lambda_arn" {}
 variable "push_contact_message_lambda_arn" {}
 variable "push_contact_message_lambda_invoke_arn" {}
 variable "get_contact_messages_lambda_arn" {}

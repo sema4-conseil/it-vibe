@@ -60,3 +60,7 @@ output "add_review_lambda_arn" {
 output "add_review_lambda_invoke_arn" {
   value = aws_lambda_function.add_review_lambda.invoke_arn
 }
+
+output "get_company_metrics_lambda_arn" {
+  value = aws_lambda_function.get_company_review_metrics_lambda.arn
+}

@@ -8,6 +8,7 @@ resource "aws_lambda_permission" "lambda_permission" {
     "get_contact_messages"        = "${var.get_contact_messages_lambda_arn}:${var.env}"
     "get_reviews_by_company_id"   = var.get_reviews_by_company_id_lambda_arn
     "add_review"                  = var.add_review_lambda_arn
+    "get_company_metrics"           = "${var.get_company_metrics_lambda_arn}:${var.env}"
   }
 
   statement_id  = "AllowAPIGatewayInvoke"
@@ -27,6 +28,7 @@ data "template_file" "itvibe_api_spec" {
     get_contact_messages_lambda_invoke_arn = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:get_contact_messages:${var.env}/invocations"
     get_company_details_by_id_lambda_invoke_arn = var.get_company_details_by_id_lambda_invoke_arn
     delete_company_by_id_lambda_invoke_arn = var.delete_company_by_id_lambda_invoke_arn
+    get_company_metrics_lambda_invoke_arn = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:get_company_review_metrics:${var.env}/invocations"
     get_reviews_by_company_id_lambda_invoke_arn = var.get_reviews_by_company_id_lambda_invoke_arn
     add_review_lambda_invoke_arn = var.add_review_lambda_invoke_arn
   }
