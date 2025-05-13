@@ -306,10 +306,19 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
     }
 }
 
+
 resource "aws_lambda_alias" "get_contact_messages_alias" {
   for_each = toset(["dev","uat", "prod"])
   name             = each.key
   function_name    = aws_lambda_function.get_contact_messages_lambda.function_name
   function_version = "$LATEST"
   description      = "Alias for the get_contact_messages lambda function for ${each.key} environment"
+}
+
+resource "aws_lambda_alias" "get_company_metrics_alias" {
+  for_each = toset(["dev","uat", "prod"])
+  name             = each.key
+  function_name    = aws_lambda_function.get_company_review_metrics_lambda.function_name
+  function_version = "$LATEST"
+  description      = "Alias for the get_company_review_metrics_lambda lambda function for ${each.key} environment"
 }

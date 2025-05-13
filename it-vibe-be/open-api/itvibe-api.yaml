@@ -185,6 +185,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /companies/{id}/metrics:
+    get:
+      x-amazon-apigateway-integration:
+        uri: "${get_company_metrics_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Get company metrics by ID, Metrics include review count, average rating, etc.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
+      responses:
+        "200":
+          description: The company metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  review_count:
+                    description: The number of reviews for the company
+                    type: number
+                    example: 1000000
+                  average_rating:
+                    description: The average rating of the company, between 0 and 10
+                    type: number
+                    example: 4.9
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Company not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /reviews:
     options:
       summary: Preflight CORS check
