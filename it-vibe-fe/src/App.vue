@@ -1,7 +1,15 @@
 <template>
   <div id="app" class="app">
     <nav class="navbar">
-      <ul class="menu">
+      <!-- fa-hamburger -->
+      <ul v-if="this.isCollapsed" class="menu">
+        <li @click="expandMenu()">
+          <a>
+            <span><i class="fa fa-bars"></i></span>
+          </a>
+        </li>
+      </ul>
+      <ul v-else class="menu">
         <!-- Left-aligned items -->
         <li>
           <a href="/"
@@ -45,7 +53,7 @@
         </div>
       </ul>
     </nav>
-    <div class="content">
+    <div @click="collapseMenu()" class="content">
       <router-view></router-view>
     </div>
   </div>
@@ -53,7 +61,7 @@
 
 <script>
 import LoginPage from "./components/login/LoginPage.vue";
-
+const maxWidth = 768;
 export default {
   name: "App",
   components: {
@@ -64,9 +72,14 @@ export default {
     return {
       connectedUser: null,
       isAdmin: false,
+      isCollapsed: false,
     };
   },
   mounted() {
+    //eslint-disable-next-line
+    window.addEventListener("resize", () => {
+      this.isCollapsed = window.innerWidth <= maxWidth;
+    });
     const idToken = sessionStorage.getItem("idToken");
     if (idToken) {
       try {
@@ -78,6 +91,17 @@ export default {
         console.error("Failed to decode idToken", error);
       }
     }
+    // Check if the screen width is less than or equal to 768px
+    // and collapse the menu if it is
+    this.isCollapsed = window.innerWidth <= maxWidth;
+  },
+  methods: {
+    collapseMenu() {
+      this.isCollapsed = window.innerWidth <= maxWidth;
+    },
+    expandMenu() {
+      this.isCollapsed = false;
+    },
   },
 };
 </script>
@@ -167,10 +191,6 @@ export default {
     position: unset;
     width: 100%;
     z-index: 1200;
-  }
-
-  .content {
-    margin-top: 200px;
   }
 }
 </style>
