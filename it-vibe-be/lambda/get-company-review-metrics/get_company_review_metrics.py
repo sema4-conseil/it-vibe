@@ -48,8 +48,11 @@ def lambda_handler(event, context):
         items = response['Items']
         if not items:
             return {
-                'statusCode': 404,
-                'body': json.dumps({'message': 'Company not found or has no reviews'}),
+                'statusCode': 200,
+                'body':  json.dumps({
+                    'average_rating': float(0),
+                    'review_count': int(0)
+                }),
                 'headers': DEFAULT_RESPONSE_HEADERS
             }
     
