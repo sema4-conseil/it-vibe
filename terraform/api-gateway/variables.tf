@@ -24,6 +24,7 @@ variable "push_contact_message_lambda_arn" {}
 variable "push_contact_message_lambda_invoke_arn" {}
 variable "get_contact_messages_lambda_arn" {}
 variable "get_contact_messages_lambda_invoke_arn" {}
+variable "patch_contact_messages_lambda_arn" {}
 variable "get_reviews_by_company_id_lambda_arn" {}
 variable "get_reviews_by_company_id_lambda_invoke_arn" {} 
 variable "add_review_lambda_arn" {}

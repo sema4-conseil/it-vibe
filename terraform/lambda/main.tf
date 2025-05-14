@@ -4,6 +4,12 @@ variable "env"  {
   default     = "dev"
 }
 
+variable "pythonVersion" {
+  description = "The Python version to use for the Lambda functions"
+  type        = string
+  default     = "python3.13"
+}
+
 data "archive_file" "get_companies_lambda_code" {
   type        = "zip"
   output_path = "../it-vibe-be/lambda/get-companies/get_companies.zip"
@@ -23,7 +29,7 @@ resource "aws_lambda_function" "get_companies_lambda" {
     function_name    = "get_companies"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_companies.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.get_companies_lambda_code.output_base64sha256
     environment {
         variables = {
@@ -65,7 +71,7 @@ resource "aws_lambda_function" "save_company_lambda" {
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "save_company.lambda_handler"
     source_code_hash = data.archive_file.save_company_lambda_code.output_base64sha256
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
       environment {
         variables = {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
@@ -101,7 +107,7 @@ resource "aws_lambda_function" "delete_company_lambda" {
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "delete_company.lambda_handler"
     source_code_hash = data.archive_file.delete_company_code.output_base64sha256
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
       environment {
         variables = {
             COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
@@ -125,7 +131,7 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
     function_name    = "get_company_details"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_company_details.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.get_company_details_lambda_code.output_base64sha256
 
     environment {
@@ -151,7 +157,7 @@ resource "aws_lambda_function" "get_company_review_metrics_lambda" {
     function_name    = "get_company_review_metrics"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_company_review_metrics.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.get_company_review_metrics_lambda_code.output_base64sha256
 
     environment {
@@ -185,7 +191,7 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
     function_name    = "get_reviews_by_company_id"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_reviews_by_company_id.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.get_reviews_by_company_id_lambda_code.output_base64sha256
 
     environment {
@@ -223,7 +229,7 @@ resource "aws_lambda_function" "add_review_lambda" {
     function_name    = "add_review"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "add_review.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.add_review_lambda_code.output_base64sha256
 
     environment {
@@ -256,7 +262,7 @@ resource "aws_lambda_function" "push_contact_message_lambda" {
     function_name    = "push_contact_message"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "push_contact_message.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.push_contact_message_lambda_code.output_base64sha256
     environment {
         variables = {
@@ -292,7 +298,7 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
     function_name    = "get_contact_messages"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_contact_messages.lambda_handler"
-    runtime          = "python3.13"
+    runtime          = var.pythonVersion
     source_code_hash = data.archive_file.get_contact_messages_lambda_code.output_base64sha256
     environment {
         variables = {
@@ -306,6 +312,41 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
     }
 }
 
+data archive_file "patch_contact_message_lambda_code" {
+  type        = "zip"
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/patch_contact_message.py")
+    filename = "patch_contact_message.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/message_status.py")
+    filename = "message_status.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"   
+  }
+  output_path = "../it-vibe-be/lambda/contact-messages/patch_contact_message.zip"
+}
+
+resource "aws_lambda_function" "patch_contact_messages_lambda" {
+    filename         = data.archive_file.patch_contact_message_lambda_code.output_path
+    function_name    = "patch_contact_message"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "patch_contact_message.lambda_handler"
+    runtime          = var.pythonVersion
+    source_code_hash = data.archive_file.patch_contact_message_lambda_code.output_base64sha256
+    environment {
+        variables = {
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+        }
+    }
+
+    tags = {
+      Env = var.env
+      ManagedBy = "Terraform"
+    }
+}
 
 resource "aws_lambda_alias" "get_contact_messages_alias" {
   for_each = toset(["dev","uat", "prod"])
@@ -321,4 +362,12 @@ resource "aws_lambda_alias" "get_company_metrics_alias" {
   function_name    = aws_lambda_function.get_company_review_metrics_lambda.function_name
   function_version = "$LATEST"
   description      = "Alias for the get_company_review_metrics_lambda lambda function for ${each.key} environment"
+}
+
+resource "aws_lambda_alias" "patch_contact_messages_alias" {
+  for_each = toset(["dev","uat", "prod"])
+  name             = each.key
+  function_name    = aws_lambda_function.patch_contact_messages_lambda.function_name
+  function_version = "$LATEST"
+  description      = "Alias for the patch_contact_messages lambda function for ${each.key} environment"
 }

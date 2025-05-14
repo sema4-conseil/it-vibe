@@ -62,6 +62,7 @@ module "api-gateway" {
   push_contact_message_lambda_invoke_arn = module.lambda.push_contact_message_lambda_invoke_arn
   get_contact_messages_lambda_invoke_arn = module.lambda.get_contact_messages_lambda_invoke_arn
   get_contact_messages_lambda_arn = module.lambda.get_contact_messages_lambda_arn
+  patch_contact_messages_lambda_arn = module.lambda.patch_contact_messages_lambda_arn
   get_reviews_by_company_id_lambda_arn = module.lambda.get_reviews_by_company_id_lambda_arn
   get_reviews_by_company_id_lambda_invoke_arn = module.lambda.get_reviews_by_company_id_lambda_invoke_arn
   add_review_lambda_invoke_arn = module.lambda.add_review_lambda_invoke_arn
