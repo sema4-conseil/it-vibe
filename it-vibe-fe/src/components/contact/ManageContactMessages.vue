@@ -6,7 +6,7 @@
         id="new"
         value="NEW"
         v-model="loadedStatus"
-        @change="fetchMessages"
+        @change="changeStatus"
       />
       <label for="new"><span class="status-badge status-1">New</span></label>
       <input
@@ -14,7 +14,7 @@
         id="in-progress"
         value="IN_PROGRESS"
         v-model="loadedStatus"
-        @change="fetchMessages"
+        @change="changeStatus"
       />
       <label for="in-progress"
         ><span class="status-badge status-2">In Progress</span></label
@@ -24,9 +24,19 @@
         id="done"
         value="DONE"
         v-model="loadedStatus"
-        @change="fetchMessages"
+        @change="changeStatus"
       />
       <label for="done"><span class="status-badge status-3">Done</span></label>
+      <input
+        type="radio"
+        id="archived"
+        value="ARCHIVED"
+        v-model="loadedStatus"
+        @change="changeStatus"
+      />
+      <label for="archived"
+        ><span class="status-badge status-4">Archived</span></label
+      >
     </div>
     <div v-if="loading">
       <p>Loading contact messages ...</p>
@@ -44,7 +54,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="message in messages" :key="message.id">
+          <tr
+            v-for="message in messages"
+            :key="message.id"
+            @click="this.selectedMessage = message"
+          >
             <!-- Convert timestamp to local dateTime -->
             <td>{{ this.formatLocalDateTime(message.timestamp) }}</td>
             <td>
@@ -57,13 +71,18 @@
             </td>
             <td>
               <select
+                v-if="message.status != 4"
                 v-model="message.status"
-                @change="updateStatus(message)"
-                :disabled="message.status == 3 || message.status == 4"
+                @change="this.updateStatus(message)"
+                :disabled="message.status == 4"
               >
-                <option value="1">New</option>
-                <option value="2">In Progress</option>
-                <option value="3">Done</option>
+                <option
+                  v-for="status in transitions[message.status]"
+                  :key="status"
+                  :value="status"
+                >
+                  {{ this.status[status] }}
+                </option>
               </select>
             </td>
           </tr>
@@ -76,21 +95,39 @@
         <i class="fa fa-forward"></i>Next Items
       </button>
     </div>
+    <div class="message-container" v-if="selectedMessage">
+      <p>
+        <strong>From: </strong>
+        <span class="email-address">{{ selectedMessage.email }}</span>
+      </p>
+      <p>
+        <strong>Status: </strong
+        ><span :class="'status-badge status-' + selectedMessage.status">
+          {{ this.status[selectedMessage.status] }}
+        </span>
+      </p>
+      <p><strong>Content:</strong> {{ selectedMessage.content }}</p>
+      <button @click="selectedMessage = null">Close</button>
+    </div>
   </div>
 </template>
 <script>
-// eslint-disable-next-line
-import { copyToClipboard } from "@/utils/copyToClipboard";
-
 export default {
   data() {
     return {
+      selectedMessage: null,
       loadedStatus: "NEW",
       status: {
         1: "New",
         2: "In Progress",
         3: "Done",
         4: "Archived",
+      },
+      transitions: {
+        1: [2, 4],
+        2: [3],
+        3: [4],
+        4: [],
       },
       messages: [],
       lastEvaluatedKey: null,
@@ -104,6 +141,7 @@ export default {
   },
   methods: {
     async fetchMessages() {
+      this.selectedMessage = null;
       const token = sessionStorage.getItem("idToken");
       let url = `${this.apibaseUrl}/contact?pageSize=${this.pageSize}`;
       if (this.lastEvaluatedKey) {
@@ -146,9 +184,49 @@ export default {
 
       return date.toLocaleString(undefined, options);
     },
-    changeStatus(status) {
-      this.loadedStatus = status;
-      this.fetchMessages();
+    async changeStatus() {
+      this.lastEvaluatedKey = null;
+      this.messages = [];
+      this.selectedMessage = null;
+      this.loading = true;
+      await this.fetchMessages();
+    },
+    updateStatus(message) {
+      let codes = {
+        1: "NEW",
+        2: "IN_PROGRESS",
+        3: "DONE",
+        4: "ARCHIVED",
+      };
+      let status = codes[message.status];
+      let url = `${this.apibaseUrl}/contact/${message.id}`;
+      const token = sessionStorage.getItem("idToken");
+      let body = {
+        status: status,
+      };
+      fetch(url, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            alert("Failed to update status");
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating status", error);
+        })
+        .finally(() => {
+          this.selectedMessage = null;
+          this.lastEvaluatedKey = null;
+          this.messages = [];
+          this.loading = true;
+          this.fetchMessages();
+        });
     },
   },
 };
@@ -184,5 +262,14 @@ export default {
   /* Archived */
   background-color: #e2e3e5;
   color: #383d41;
+}
+
+.message-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: white;
+  text-align: left;
 }
 </style>
