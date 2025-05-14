@@ -6,7 +6,19 @@
   <div v-else-if="company">
     <div class="company-details-container">
       <div class="company-details">
-        <h1>{{ company.name }}</h1>
+        <h1 class="company-header">
+          <span>{{ company.name }}</span>
+        </h1>
+        <div class="rating" :title="company.metrics.average_rating">
+          <span v-for="n in Math.floor(company.metrics.average_rating)" :key="n"
+            >★</span
+          >
+          <span
+            v-for="n in 10 - Math.floor(company.metrics.average_rating)"
+            :key="'empty-' + n"
+            >☆</span
+          >
+        </div>
         <div class="details-grid">
           <div class="detail-item">
             <strong>Location:</strong> {{ company.location }},
@@ -54,7 +66,9 @@
         </div>
       </div>
       <div class="company-reviews">
-        <h1>Reviews</h1>
+        <h1>
+          Reviews <span>({{ company.metrics.review_count }})</span>
+        </h1>
         <div class="reviews-scrollable">
           <div v-if="reviews && reviews.length > 0">
             <ReviewOverview
@@ -195,9 +209,24 @@ export default {
         data = await response.json();
         this.reviews = data;
 
+        await this.fetchComapnyMetrics();
         this.loading = false;
       } catch (error) {
         this.loading = false;
+      }
+    },
+    async fetchComapnyMetrics() {
+      try {
+        const response = await fetch(
+          `${this.apibaseUrl}/companies/${this.id}/metrics`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch company metrics.");
+        }
+        const data = await response.json();
+        this.company.metrics = data;
+      } catch (error) {
+        console.error("Error fetching company metrics:", error);
       }
     },
     toggleReviewForm() {
@@ -298,6 +327,21 @@ export default {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+}
+
+.company-header {
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.company-header .metrics {
+  font-weight: normal;
+  font-size: 1em;
+  margin-left: 10px;
+  color: #555;
 }
 
 @media (max-width: 768px) {

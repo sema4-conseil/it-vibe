@@ -50,14 +50,4 @@ export default {
   color: #888;
   margin-bottom: 0.5rem;
 }
-
-.rating {
-  color: gold;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.rating span {
-  cursor: default;
-}
 </style>

@@ -344,3 +344,13 @@ td {
   text-decoration: underline; /* Underline for email */
   cursor: pointer; /* Pointer cursor for hover effect */
 }
+
+.rating {
+  color: gold;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.rating span {
+  cursor: default;
+}
