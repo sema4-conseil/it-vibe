@@ -429,7 +429,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
     post:
       x-amazon-apigateway-integration:
         uri: "${push_contact_message_lambda_invoke_arn}"
@@ -449,6 +448,66 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactMessageResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /contact/{id}:
+    patch:
+      x-amazon-apigateway-integration:
+        uri: "${patch_contact_message_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Update a contact message
+      security:
+        - itvibe-authorizer: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "NEW"
+                  description: The status code of the contact message
+                  enum:
+                    - NEW
+                    - IN_PROGRESS
+                    - DONE
+                    - ARCHIVED
+              required:
+                - status
+      responses:
+        "200":
+          description: The contact message is updated with success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Message updated with success"
+                  id:
+                    type: string
+                    example: "aefb1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b"
         "400":
           description: Bad request
           content:

@@ -64,3 +64,7 @@ output "add_review_lambda_invoke_arn" {
 output "get_company_metrics_lambda_arn" {
   value = aws_lambda_function.get_company_review_metrics_lambda.arn
 }
+
+output "patch_contact_messages_lambda_arn" {
+  value = aws_lambda_function.patch_contact_messages_lambda.arn
+}
