@@ -1,0 +1,30 @@
+name: Build deploy version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Select the version'
+        required: true
+        type: choice
+        options:
+          - v0.0.1
+          - v0.0.2
+          - v0.0.3
+      environment:
+        description: 'Select the environment'
+        required: true
+        type: choice
+        options:
+          - uat
+          - prod
+
+jobs:
+  execute-job:
+    if: startsWith(github.ref, 'refs/tags/') # Ensure the job runs only on tags
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Job info
+        run: |
+          echo "Running Deploy version job..."
