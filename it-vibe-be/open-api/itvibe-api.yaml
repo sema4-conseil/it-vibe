@@ -8,18 +8,13 @@ paths:
   /healthcheck:
     get:
       x-amazon-apigateway-integration:
-        type: mock
-        requestTemplates:
-          application/json: '{"statusCode": 200}'
-        responses:
-          default:
-            statusCode: "200"
-            responseTemplates:
-              application/json: '{"status": "healthy"}'
-      summary: Health check
+        uri: "${health_check_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Get health check
       responses:
         "200":
-          description: Health check successful
+          description: Back-end status, version and env
           content:
             application/json:
               schema:
@@ -27,7 +22,13 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: "healthy"
+                    example: "UP"
+                  version:
+                    type: string
+                    example: "0.0.1"
+                  env:
+                    type: string
+                    example: "prod"
         "500":
           description: Internal server error
           content:

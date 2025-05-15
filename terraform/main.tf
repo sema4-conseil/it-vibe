@@ -31,6 +31,13 @@ variable "env" {
   default = "dev"
 }
 
+variable "be_version" {
+  type = string
+  description = "The backend version"
+  default = "0.0.1-SNAPSHOT"
+}
+
+
 module "front-end" {
   source = "./front-end"
   hosted_zone_id = var.hosted_zone_id
@@ -38,6 +45,8 @@ module "front-end" {
 
 module "lambda" {
   source = "./lambda"
+  env = var.env
+  be_version = var.be_version
 }
 
 module "dynamo-db" {
@@ -67,6 +76,7 @@ module "api-gateway" {
   get_reviews_by_company_id_lambda_invoke_arn = module.lambda.get_reviews_by_company_id_lambda_invoke_arn
   add_review_lambda_invoke_arn = module.lambda.add_review_lambda_invoke_arn
   add_review_lambda_arn = module.lambda.add_review_lambda_arn
+  health_check_lambda_arn = module.lambda.health_check_lambda_arn
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
   hosted_zone_id = var.hosted_zone_id
   depends_on = [ module.lambda ]

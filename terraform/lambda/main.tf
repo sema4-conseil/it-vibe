@@ -1,7 +1,11 @@
 variable "env"  {
   description = "The environment to deploy to"
   type        = string
-  default     = "dev"
+}
+
+variable "be_version"  {
+  description = "Lambda version"
+  type        = string
 }
 
 variable "pythonVersion" {
@@ -348,6 +352,37 @@ resource "aws_lambda_function" "patch_contact_messages_lambda" {
     }
 }
 
+
+data archive_file "health_check_lambda_code" {
+  type        = "zip"
+  source {
+    content  = file("../it-vibe-be/lambda/utils/get_health_check.py")
+    filename = "get_health_check.py"
+  }
+  output_path = "../it-vibe-be/lambda/utils/get_health_check.zip"
+}
+
+resource "aws_lambda_function" "health_check_lambda" {
+    filename         = data.archive_file.health_check_lambda_code.output_path
+    function_name    = "get_health_check"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "get_health_check.lambda_handler"
+    runtime          = var.pythonVersion
+    source_code_hash = data.archive_file.health_check_lambda_code.output_base64sha256
+    description      = "Health check lambda function, it returns the env and version"
+    environment {
+        variables = {
+            VERSION = var.be_version
+            ENV     = var.env
+        }
+    }
+    tags = {
+      Env = var.env
+      Version = var.be_version
+      ManagedBy = "Terraform"
+    }
+}
+
 resource "aws_lambda_alias" "get_contact_messages_alias" {
   for_each = toset(["dev","uat", "prod"])
   name             = each.key
@@ -370,4 +405,12 @@ resource "aws_lambda_alias" "patch_contact_messages_alias" {
   function_name    = aws_lambda_function.patch_contact_messages_lambda.function_name
   function_version = "$LATEST"
   description      = "Alias for the patch_contact_messages lambda function for ${each.key} environment"
+}
+
+resource "aws_lambda_alias" "healthcheck_alias" {
+  for_each = toset(["dev","uat", "prod"])
+  name             = each.key
+  function_name    = aws_lambda_function.health_check_lambda.function_name
+  function_version = "$LATEST"
+  description      = "Alias for the health_check_lambda lambda function for ${each.key} environment"
 }
