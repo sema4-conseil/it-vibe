@@ -11,6 +11,7 @@ variable "account_id" {}
 variable "region" {}
 variable "env" {}
 
+variable "health_check_lambda_arn" {}
 variable "get_companies_lambda_invoke_arn" {}
 variable "get_companies_lambda_arn" {}
 variable "save_company_lambda_invoke_arn" {}
