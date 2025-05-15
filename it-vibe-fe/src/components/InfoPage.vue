@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       version: "0.0.0",
-      env: process.env.NODE_ENV,
+      env: process.env.VUE_APP_ENVIRONMENT,
       baseUri: process.env.VUE_APP_API_BASE_URL,
       apiInfo: null,
     };
