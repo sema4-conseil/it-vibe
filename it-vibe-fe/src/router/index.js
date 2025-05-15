@@ -11,12 +11,14 @@ import LogoutPage from "@/components/login/LogoutPage.vue";
 import ManageCompanies from "@/components/company/ManageCompanies.vue";
 import NotAuthorizedPage from "@/components/login/NotAuthorizedPage.vue";
 import ManageContactMessages from "@/components/contact/ManageContactMessages.vue";
+import InfoPage from "@/components/InfoPage.vue";
 
 const routes = [
   { path: "/", component: HomePage },
   { path: "/about", component: AboutPage },
   { path: "/contact", component: ContactPage },
   { path: "/join_us", component: JoinUsPage },
+  { path: "/info", component: InfoPage },
   {
     path: "/companies/:id",
     component: CompanyDetails,
