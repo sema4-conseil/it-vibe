@@ -42,7 +42,7 @@
             <span><i class="fas fa-user"></i> {{ connectedUser }}</span>
           </li>
           <li>
-            <span><i class="fas fa-info"></i>Infos</span>
+            <a href="/info"><i class="fa fa-info-circle"></i>Info</a>
           </li>
           <li v-if="connectedUser">
             <a href="/logout"><i class="fa fa-sign-out-alt"></i>Logout</a>
