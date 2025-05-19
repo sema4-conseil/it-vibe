@@ -34,7 +34,7 @@ resource "aws_lambda_function" "get_companies_lambda" {
     source_code_hash = data.archive_file.get_companies_lambda_code.output_base64sha256
     environment {
         variables = {
-            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
     tags = {
@@ -75,7 +75,7 @@ resource "aws_lambda_function" "save_company_lambda" {
     runtime          = var.pythonVersion
       environment {
         variables = {
-            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
     tags = {
@@ -111,7 +111,7 @@ resource "aws_lambda_function" "delete_company_lambda" {
     runtime          = var.pythonVersion
       environment {
         variables = {
-            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
     tags = {
@@ -137,7 +137,7 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
 
     environment {
         variables = {
-            COMPANIES_TABLE_NAME = "IT_VIBE_DEV_COMPANIES"
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
 
@@ -163,7 +163,7 @@ resource "aws_lambda_function" "get_company_review_metrics_lambda" {
 
     environment {
         variables = {
-            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
+            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
     }
 
@@ -197,7 +197,7 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
 
     environment {
         variables = {
-            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
+            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
     }
 
@@ -235,7 +235,7 @@ resource "aws_lambda_function" "add_review_lambda" {
 
     environment {
         variables = {
-            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_DEV_COMPANY_REVIEWS"
+            COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
     }
     tags = {
@@ -267,7 +267,7 @@ resource "aws_lambda_function" "push_contact_message_lambda" {
     source_code_hash = data.archive_file.push_contact_message_lambda_code.output_base64sha256
     environment {
         variables = {
-            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
 
@@ -303,7 +303,7 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
     source_code_hash = data.archive_file.get_contact_messages_lambda_code.output_base64sha256
     environment {
         variables = {
-            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
 
@@ -339,7 +339,7 @@ resource "aws_lambda_function" "patch_contact_messages_lambda" {
     source_code_hash = data.archive_file.patch_contact_message_lambda_code.output_base64sha256
     environment {
         variables = {
-            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_DEV_CONTACT_MESSAGES"
+            CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
 

@@ -41,11 +41,16 @@ data "template_file" "itvibe_api_spec" {
 
 resource "aws_api_gateway_rest_api" "itvibe_api" {
   name        = "api.it-vibe.sema4-conseil.com"
-  description = "API for IT-Vibe backend"
+  description = "it-vibe api for ${var.env} environment"
   endpoint_configuration {
     types = ["REGIONAL"]
   }
   body = data.template_file.itvibe_api_spec.rendered
+  tags = {
+    Name        = "itvibe_api"
+    Environment = var.env
+    ManagedBy   = "Terraform"
+  }
 }
 
 
@@ -65,17 +70,27 @@ resource "aws_api_gateway_stage" "api_gateway_stage" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_logs.arn
     format = jsonencode({
-      requestId         = "$context.requestId"
-      ip                = "$context.identity.sourceIp"
-      caller            = "$context.identity.caller"
-      user              = "$context.identity.user"
-      requestTime       = "$context.requestTime"
-      httpMethod        = "$context.httpMethod"
-      resourcePath      = "$context.resourcePath"
-      status            = "$context.status"
-      protocol          = "$context.protocol"
-      responseLength    = "$context.responseLength"
-      integrationError  = "$context.integration.error"
+		# Existing fields
+		requestId         = "$context.requestId"
+		ip                = "$context.identity.sourceIp"
+		caller            = "$context.identity.caller"
+		user              = "$context.identity.user"
+		requestTime       = "$context.requestTime"
+		httpMethod        = "$context.httpMethod"
+		resourcePath      = "$context.resourcePath"
+		status            = "$context.status"
+		protocol          = "$context.protocol"
+		responseLength    = "$context.responseLength"
+		integrationError  = "$context.integration.error"
+		
+		# New fields
+		userAgent         = "$context.identity.userAgent"
+		responseLatency   = "$context.responseLatency"
+		integrationLatency= "$context.integration.latency"
+		domainName        = "$context.domainName"
+		errorMessage      = "$context.error.message"
+		apiKeyId          = "$context.identity.apiKeyId"
+		requestTimeEpoch  = "$context.requestTimeEpoch"
     })
   }
 
@@ -89,27 +104,27 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
 }
 
 
-resource "aws_api_gateway_domain_name" "dev_api_domain_name" {
-  domain_name     = "dev.api.it-vibe.sema4-conseil.com"
+resource "aws_api_gateway_domain_name" "api_domain_name" {
+  domain_name     = "${var.env}.api.it-vibe.sema4-conseil.com"
    endpoint_configuration {
     types = ["REGIONAL"]
   }
   regional_certificate_arn = var.certeficate_arn
 }
 
-resource "aws_route53_record" "dev_api_route53_record" {
+resource "aws_route53_record" "api_route53_record" {
   zone_id = var.hosted_zone_id
-  name    = aws_api_gateway_domain_name.dev_api_domain_name.domain_name
+  name    = aws_api_gateway_domain_name.api_domain_name.domain_name
   type    = "A"
   alias {
-    name = aws_api_gateway_domain_name.dev_api_domain_name.regional_domain_name
-    zone_id = aws_api_gateway_domain_name.dev_api_domain_name.regional_zone_id
+    name = aws_api_gateway_domain_name.api_domain_name.regional_domain_name
+    zone_id = aws_api_gateway_domain_name.api_domain_name.regional_zone_id
     evaluate_target_health = true
   }
 }
 
-resource "aws_api_gateway_base_path_mapping" "dev_api_domain_mapping" {
+resource "aws_api_gateway_base_path_mapping" "api_domain_mapping" {
   api_id      = aws_api_gateway_rest_api.itvibe_api.id
   stage_name  = aws_api_gateway_stage.api_gateway_stage.stage_name
-  domain_name = aws_api_gateway_domain_name.dev_api_domain_name.domain_name
+  domain_name = aws_api_gateway_domain_name.api_domain_name.domain_name
 }
