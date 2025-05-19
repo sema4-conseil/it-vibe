@@ -28,7 +28,6 @@ variable "region" {
 variable "env" {
   type = string
   description = "The environment name"
-  default = "dev"
 }
 
 variable "be_version" {
@@ -41,6 +40,8 @@ variable "be_version" {
 module "front-end" {
   source = "./front-end"
   hosted_zone_id = var.hosted_zone_id
+  env = var.env
+  region = var.region
 }
 
 module "lambda" {
@@ -51,6 +52,7 @@ module "lambda" {
 
 module "dynamo-db" {
   source = "./dynamo-db"
+  env = var.env
 }
 
 module "api-gateway" {

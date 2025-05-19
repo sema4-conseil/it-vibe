@@ -1,27 +1,19 @@
 variable "hosted_zone_id" {}
-variable "Env" {
-  default = "Dev"
-}
-
-variable "s3_name" {
-  default = "it-vibe.dev.sema4-conseil.com"
-}
-
-variable "region" {
-  default = "eu-west-3"
-}
+variable "env" {}
+variable "region" {}
 
 locals {
-  s3_origin_id   = "${var.s3_name}-origin"
-  s3_domain_name = "${var.s3_name}.s3-website.${var.region}.amazonaws.com"
+  s3_origin_id   = "it-vibe.${var.env}.sema4-conseil.com-origin"
+  s3_domain_name = "it-vibe.${var.env}.sema4-conseil.com.s3-website.${var.region}.amazonaws.com"
 }
 
 
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
-  bucket = var.s3_name
+  bucket = "it-vibe.${var.env}.sema4-conseil.com"
   tags = {
-    Name = "IT-Vibe-s3-bucket-static-web-site"
-    Env = var.Env
+    Name = "it-vibe.${var.env}.sema4-conseil.com"
+    Env = var.env
+    ManagedBy = "Terraform"
   }
 }
 
@@ -66,7 +58,7 @@ resource "aws_s3_object" "index-html" {
     create_before_destroy = true
   }
   tags = {
-    Env = var.Env
+    Env = var.env
   }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/index.html"),"")
@@ -80,7 +72,7 @@ resource "aws_s3_object" "favicon" {
     create_before_destroy = true
   }
   tags = {
-    Env = var.Env
+    Env = var.env
   }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/favicon.ico"),"")
@@ -93,7 +85,7 @@ resource "aws_s3_object" "js" {
   source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
   tags = {
-    Env = var.Env
+    Env = var.env
   }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/js/${each.value}"),"")
@@ -109,7 +101,7 @@ resource "aws_s3_object" "css" {
     create_before_destroy = true
   }
   tags = {
-    Env = var.Env
+    env = var.env
   }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/css/${each.value}"),"")
@@ -135,6 +127,7 @@ resource "aws_s3_bucket_website_configuration" "it-vibe-static-site-s3-configura
 // The distribution will also be configured to use a custom domain name
 
 resource "aws_cloudfront_distribution" "cloudfront_distribution" {
+  count = var.env == "prod" ? 1 : 0
   aliases = ["it-vibe.dev.sema4-conseil.com"]
   origin {
     origin_id                = local.s3_origin_id
@@ -147,7 +140,6 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
       origin_ssl_protocols   = ["TLSv1.2", "TLSv1.1"]
     }
   }
-
   enabled             = true
   is_ipv6_enabled      = true
   comment              = "CloudFront distribution itvibe static website"
@@ -188,6 +180,8 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
 }
 
 resource "null_resource" "invalidate_cloudfront" {
+  # This resource is used to invalidate the CloudFront cache when the S3 bucket content changes
+  count = var.env == "prod" ? 1 : 0
   triggers = {
     # Trigger invalidation when files change
     run_id = timestamp()
@@ -195,19 +189,20 @@ resource "null_resource" "invalidate_cloudfront" {
 
   provisioner "local-exec" {
     command = <<EOT
-      aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.cloudfront_distribution.id} --paths /* /.
+      aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.cloudfront_distribution[0].id} --paths /* /.
     EOT
   }
 }
 
 // Create a route 53 for the static web-site
 resource "aws_route53_record" "s3_static_site" {
+  count = var.env == "prod" ? 1 : 0
   zone_id = var.hosted_zone_id
-  name    = var.s3_name
+  name    = "it-vibe.${var.env}.sema4-conseil.com"
   type    = "A"
    alias {
-    name                   = aws_cloudfront_distribution.cloudfront_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.cloudfront_distribution.hosted_zone_id
+    name                   = aws_cloudfront_distribution.cloudfront_distribution[0].domain_name
+    zone_id                = aws_cloudfront_distribution.cloudfront_distribution[0].hosted_zone_id
     evaluate_target_health = false
   }
 }
