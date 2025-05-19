@@ -1,7 +1,4 @@
-variable "env"  {
-  description = "The environment to deploy to"
-  type        = string
-}
+variable "env"  {}
 
 variable "be_version"  {
   description = "Lambda version"
@@ -30,7 +27,7 @@ data "archive_file" "get_companies_lambda_code" {
 
 resource "aws_lambda_function" "get_companies_lambda" {
     filename         = data.archive_file.get_companies_lambda_code.output_path
-    function_name    = "get_companies"
+    function_name    = "get_companies_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_companies.lambda_handler"
     runtime          = var.pythonVersion
@@ -71,7 +68,7 @@ data "archive_file" "save_company_lambda_code" {
 
 resource "aws_lambda_function" "save_company_lambda" {
     filename         = data.archive_file.save_company_lambda_code.output_path
-    function_name    = "save_company"
+    function_name    = "save_company_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "save_company.lambda_handler"
     source_code_hash = data.archive_file.save_company_lambda_code.output_base64sha256
@@ -107,7 +104,7 @@ data "archive_file" "delete_company_code" {
 
 resource "aws_lambda_function" "delete_company_lambda" {
     filename         = data.archive_file.delete_company_code.output_path
-    function_name    = "delete_company"
+    function_name    = "delete_company_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "delete_company.lambda_handler"
     source_code_hash = data.archive_file.delete_company_code.output_base64sha256
@@ -132,7 +129,7 @@ data "archive_file" "get_company_details_lambda_code" {
 
 resource "aws_lambda_function" "get_comany_details_lambda" {
     filename         = data.archive_file.get_company_details_lambda_code.output_path
-    function_name    = "get_company_details"
+    function_name    = "get_company_details_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_company_details.lambda_handler"
     runtime          = var.pythonVersion
@@ -158,7 +155,7 @@ data "archive_file" "get_company_review_metrics_lambda_code" {
 
 resource "aws_lambda_function" "get_company_review_metrics_lambda" {
     filename         = data.archive_file.get_company_review_metrics_lambda_code.output_path
-    function_name    = "get_company_review_metrics"
+    function_name    = "get_company_review_metrics_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_company_review_metrics.lambda_handler"
     runtime          = var.pythonVersion
@@ -192,7 +189,7 @@ data "archive_file" "get_reviews_by_company_id_lambda_code" {
 
 resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
     filename         = data.archive_file.get_reviews_by_company_id_lambda_code.output_path
-    function_name    = "get_reviews_by_company_id"
+    function_name    = "get_reviews_by_company_id_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_reviews_by_company_id.lambda_handler"
     runtime          = var.pythonVersion
@@ -230,7 +227,7 @@ data "archive_file" "add_review_lambda_code" {
 
 resource "aws_lambda_function" "add_review_lambda" {
     filename         = data.archive_file.add_review_lambda_code.output_path
-    function_name    = "add_review"
+    function_name    = "add_review_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "add_review.lambda_handler"
     runtime          = var.pythonVersion
@@ -263,7 +260,7 @@ data archive_file "push_contact_message_lambda_code" {
 
 resource "aws_lambda_function" "push_contact_message_lambda" {
     filename         = data.archive_file.push_contact_message_lambda_code.output_path
-    function_name    = "push_contact_message"
+    function_name    = "push_contact_message_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "push_contact_message.lambda_handler"
     runtime          = var.pythonVersion
@@ -299,7 +296,7 @@ data archive_file "get_contact_messages_lambda_code" {
 
 resource "aws_lambda_function" "get_contact_messages_lambda" {
     filename         = data.archive_file.get_contact_messages_lambda_code.output_path
-    function_name    = "get_contact_messages"
+    function_name    = "get_contact_messages_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_contact_messages.lambda_handler"
     runtime          = var.pythonVersion
@@ -335,7 +332,7 @@ data archive_file "patch_contact_message_lambda_code" {
 
 resource "aws_lambda_function" "patch_contact_messages_lambda" {
     filename         = data.archive_file.patch_contact_message_lambda_code.output_path
-    function_name    = "patch_contact_message"
+    function_name    = "patch_contact_message_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "patch_contact_message.lambda_handler"
     runtime          = var.pythonVersion
@@ -364,7 +361,7 @@ data archive_file "health_check_lambda_code" {
 
 resource "aws_lambda_function" "health_check_lambda" {
     filename         = data.archive_file.health_check_lambda_code.output_path
-    function_name    = "get_health_check"
+    function_name    = "get_health_check_${var.env}"
     role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
     handler          = "get_health_check.lambda_handler"
     runtime          = var.pythonVersion
@@ -381,36 +378,4 @@ resource "aws_lambda_function" "health_check_lambda" {
       Version = var.be_version
       ManagedBy = "Terraform"
     }
-}
-
-resource "aws_lambda_alias" "get_contact_messages_alias" {
-  for_each = toset(["dev","uat", "prod"])
-  name             = each.key
-  function_name    = aws_lambda_function.get_contact_messages_lambda.function_name
-  function_version = "$LATEST"
-  description      = "Alias for the get_contact_messages lambda function for ${each.key} environment"
-}
-
-resource "aws_lambda_alias" "get_company_metrics_alias" {
-  for_each = toset(["dev","uat", "prod"])
-  name             = each.key
-  function_name    = aws_lambda_function.get_company_review_metrics_lambda.function_name
-  function_version = "$LATEST"
-  description      = "Alias for the get_company_review_metrics_lambda lambda function for ${each.key} environment"
-}
-
-resource "aws_lambda_alias" "patch_contact_messages_alias" {
-  for_each = toset(["dev","uat", "prod"])
-  name             = each.key
-  function_name    = aws_lambda_function.patch_contact_messages_lambda.function_name
-  function_version = "$LATEST"
-  description      = "Alias for the patch_contact_messages lambda function for ${each.key} environment"
-}
-
-resource "aws_lambda_alias" "healthcheck_alias" {
-  for_each = toset(["dev","uat", "prod"])
-  name             = each.key
-  function_name    = aws_lambda_function.health_check_lambda.function_name
-  function_version = "$LATEST"
-  description      = "Alias for the health_check_lambda lambda function for ${each.key} environment"
 }

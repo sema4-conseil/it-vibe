@@ -56,10 +56,15 @@ module "dynamo-db" {
 }
 
 module "api-gateway" {
+  depends_on = [ module.lambda ]
   account_id = var.account_id
   region = var.region
   env = var.env
   source = "./api-gateway"
+  openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
+  hosted_zone_id = var.hosted_zone_id
+  health_check_lambda_arn = module.lambda.health_check_lambda_arn
+  health_check_lambda_invoke_arn = module.lambda.health_check_lambda_invoke_arn
   get_companies_lambda_invoke_arn = module.lambda.get_companies_lambda_invoke_arn
   get_companies_lambda_arn = module.lambda.get_companies_lambda_arn
   save_company_lambda_invoke_arn = module.lambda.save_company_lambda_invoke_arn
@@ -67,6 +72,7 @@ module "api-gateway" {
   get_company_details_by_id_lambda_arn = module.lambda.get_company_details_by_id_lambda_arn
   get_company_details_by_id_lambda_invoke_arn = module.lambda.get_company_details_by_id_lambda_invoke_arn
   get_company_metrics_lambda_arn = module.lambda.get_company_metrics_lambda_arn
+  get_company_metrics_lambda_invoke_arn = module.lambda.get_company_metrics_lambda_invoke_arn
   delete_company_by_id_lambda_arn = module.lambda.delete_company_by_id_lambda_arn
   delete_company_by_id_lambda_invoke_arn = module.lambda.delete_company_by_id_lambda_invoke_arn
   push_contact_message_lambda_arn = module.lambda.push_contact_message_lambda_arn
@@ -74,12 +80,9 @@ module "api-gateway" {
   get_contact_messages_lambda_invoke_arn = module.lambda.get_contact_messages_lambda_invoke_arn
   get_contact_messages_lambda_arn = module.lambda.get_contact_messages_lambda_arn
   patch_contact_messages_lambda_arn = module.lambda.patch_contact_messages_lambda_arn
+  patch_contact_messages_lambda_invoke_arn = module.lambda.patch_contact_messages_lambda_invoke_arn
   get_reviews_by_company_id_lambda_arn = module.lambda.get_reviews_by_company_id_lambda_arn
   get_reviews_by_company_id_lambda_invoke_arn = module.lambda.get_reviews_by_company_id_lambda_invoke_arn
   add_review_lambda_invoke_arn = module.lambda.add_review_lambda_invoke_arn
   add_review_lambda_arn = module.lambda.add_review_lambda_arn
-  health_check_lambda_arn = module.lambda.health_check_lambda_arn
-  openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
-  hosted_zone_id = var.hosted_zone_id
-  depends_on = [ module.lambda ]
 }
