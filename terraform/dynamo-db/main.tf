@@ -2,7 +2,7 @@ variable "env" {}
 
 
 resource "aws_dynamodb_table" "companies" {
-  name           = "IT_VIBE_DEV_COMPANIES"
+  name           = "IT_VIBE_COMPANIES_${upper(var.env)}"
   billing_mode   = "PAY_PER_REQUEST" # On-demand capacity mode
   hash_key       = "id"
   attribute {
@@ -44,7 +44,8 @@ resource "aws_dynamodb_table" "companies" {
   }
 
   tags = {
-    Name        = "IT_VIBE_DEV_COMPANIES"
+    Name        = "IT_VIBE_COMPANIES_${upper(var.env)}"
+    Entity      = "Company"
     Environment = var.env
     ManagedBy   = "Terraform"
   }
@@ -52,7 +53,7 @@ resource "aws_dynamodb_table" "companies" {
 }
 
 resource "aws_dynamodb_table" "company_reviews" {
-  name           = "IT_VIBE_DEV_COMPANY_REVIEWS"
+  name           = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "company_id"
   range_key      = "review_id" # To ensure uniqueness of reviews per company
@@ -85,14 +86,15 @@ resource "aws_dynamodb_table" "company_reviews" {
   }
 
   tags = {
-    Name        = "IT_VIBE_DEV_COMPANY_REVIEWS"
+    Name        = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
     Environment = var.env
     ManagedBy   = "Terraform"
+    Entity      = "CompanyReview"
   }
 }
 
 resource "aws_dynamodb_table" "contact_messages" {
-  name           = "IT_VIBE_DEV_CONTACT_MESSAGES"
+  name           = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "id"
   range_key      = "timestamp"
@@ -115,17 +117,9 @@ resource "aws_dynamodb_table" "contact_messages" {
     projection_type = "ALL"
   }
   tags = {
-    Name        = "IT_VIBE_DEV_CONTACT_MESSAGES"
+    Name        = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
     Environment = var.env
     ManagedBy   = "Terraform"
-    Application = "IT-VIBE"
+    Entity      = "ContactMessage"
   }
 }
-
-  output "companies_table_arn" {
-    value = aws_dynamodb_table.companies.arn
-  }
-
-  output "company_reviews_table_arn" {
-    value = aws_dynamodb_table.company_reviews.arn
-  }
