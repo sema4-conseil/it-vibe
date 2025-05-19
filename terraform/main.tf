@@ -33,7 +33,6 @@ variable "env" {
 variable "be_version" {
   type = string
   description = "The backend version"
-  default = "0.0.1-SNAPSHOT"
 }
 
 

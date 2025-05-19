@@ -24,7 +24,7 @@ jobs:
 
       - name: Run build
         working-directory: it-vibe-fe
-        run: npm run build -- --mode stg
+        run: npm run build -- --mode dev
 
       - name: Archive static web-site artifacts
         uses: actions/upload-artifact@v4
@@ -67,7 +67,11 @@ jobs:
       - name: Initialize Terraform
         working-directory: terraform
         run: terraform init
+    
+      - name: Select terraform workspace
+        working-directory: terraform
+        run: terraform workspace select dev
 
       - name: Apply Terraform configuration
         working-directory: terraform
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var "be_version=main_branch" -var "env=dev"
