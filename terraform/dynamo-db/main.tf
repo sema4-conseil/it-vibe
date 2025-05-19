@@ -1,8 +1,4 @@
-variable "Env" {
-  description = "Environment name"
-  type        = string
-  default     = "dev"
-}
+variable "env" {}
 
 
 resource "aws_dynamodb_table" "companies" {
@@ -49,7 +45,7 @@ resource "aws_dynamodb_table" "companies" {
 
   tags = {
     Name        = "IT_VIBE_DEV_COMPANIES"
-    Environment = var.Env
+    Environment = var.env
     ManagedBy   = "Terraform"
   }
 
@@ -90,7 +86,7 @@ resource "aws_dynamodb_table" "company_reviews" {
 
   tags = {
     Name        = "IT_VIBE_DEV_COMPANY_REVIEWS"
-    Environment = var.Env
+    Environment = var.env
     ManagedBy   = "Terraform"
   }
 }
@@ -120,7 +116,7 @@ resource "aws_dynamodb_table" "contact_messages" {
   }
   tags = {
     Name        = "IT_VIBE_DEV_CONTACT_MESSAGES"
-    Environment = var.Env
+    Environment = var.env
     ManagedBy   = "Terraform"
     Application = "IT-VIBE"
   }
