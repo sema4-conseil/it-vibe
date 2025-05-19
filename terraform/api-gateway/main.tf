@@ -5,12 +5,12 @@ resource "aws_lambda_permission" "lambda_permission" {
     "get_company_details_by_id"   = var.get_company_details_by_id_lambda_arn
     "delete_company_by_id"        = var.delete_company_by_id_lambda_arn
     "push_contact_message"        = var.push_contact_message_lambda_arn
-    "get_contact_messages"        = "${var.get_contact_messages_lambda_arn}:${var.env}"
-    "patch_contact_message"       = "${var.patch_contact_messages_lambda_arn}:${var.env}"
+    "get_contact_messages"        = var.get_contact_messages_lambda_arn
+    "patch_contact_message"       = var.patch_contact_messages_lambda_arn
     "get_reviews_by_company_id"   = var.get_reviews_by_company_id_lambda_arn
     "add_review"                  = var.add_review_lambda_arn
-    "get_company_metrics"         = "${var.get_company_metrics_lambda_arn}:${var.env}"
-    "health_check"                = "${var.health_check_lambda_arn}:${var.env}"
+    "get_company_metrics"         = var.get_company_metrics_lambda_arn
+    "health_check"                = var.health_check_lambda_arn
   }
 
   statement_id  = "AllowAPIGatewayInvoke"
@@ -24,15 +24,15 @@ data "template_file" "itvibe_api_spec" {
   template = file(var.openapi_spec_location)
 
   vars = {
-    health_check_lambda_invoke_arn                = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:get_health_check:${var.env}/invocations"
+    health_check_lambda_invoke_arn                = var.health_check_lambda_invoke_arn
     get_companies_lambda_invoke_arn               = var.get_companies_lambda_invoke_arn
     create_company_lambda_invoke_arn              = var.save_company_lambda_invoke_arn
     push_contact_message_lambda_invoke_arn        = var.push_contact_message_lambda_invoke_arn
-    get_contact_messages_lambda_invoke_arn        = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:get_contact_messages:${var.env}/invocations"
-    patch_contact_message_lambda_invoke_arn       = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:patch_contact_message:${var.env}/invocations"
+    get_contact_messages_lambda_invoke_arn        = var.get_contact_messages_lambda_invoke_arn
+    patch_contact_message_lambda_invoke_arn       = var.patch_contact_messages_lambda_invoke_arn
     get_company_details_by_id_lambda_invoke_arn   = var.get_company_details_by_id_lambda_invoke_arn
     delete_company_by_id_lambda_invoke_arn        = var.delete_company_by_id_lambda_invoke_arn
-    get_company_metrics_lambda_invoke_arn         = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:get_company_review_metrics:${var.env}/invocations"
+    get_company_metrics_lambda_invoke_arn         = var.get_company_metrics_lambda_invoke_arn
     get_reviews_by_company_id_lambda_invoke_arn   = var.get_reviews_by_company_id_lambda_invoke_arn
     add_review_lambda_invoke_arn                  = var.add_review_lambda_invoke_arn
   }
