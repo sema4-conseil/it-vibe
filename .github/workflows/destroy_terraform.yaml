@@ -9,7 +9,10 @@ on:
 jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        workspace: [dev, uat]
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -25,11 +28,15 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
-
+    
     - name: Initialize Terraform
       working-directory: terraform
       run: terraform init
 
+    - name: Select Terraform workspace
+      working-directory: terraform
+      run: terraform workspace select ${{ matrix.workspace }} || terraform workspace new ${{ matrix.workspace }}
+
     - name: Perform terraform destroy
       working-directory: terraform
-      run: terraform destroy -auto-approve
+      run: terraform destroy -auto-approve -var "env=${{ matrix.workspace }}" -var "be_version=0.0.0" # No need to set the version for destroy"
