@@ -9,7 +9,10 @@ on:
 jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        workspace: [dev, uat]
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -25,6 +28,10 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+
+    - name: Select Terraform workspace
+      working-directory: terraform
+      run: terraform workspace select ${{ matrix.workspace }} || terraform workspace new ${{ matrix.workspace }}
 
     - name: Initialize Terraform
       working-directory: terraform
