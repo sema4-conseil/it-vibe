@@ -12,8 +12,27 @@ on:
           - prod
 
 jobs:
+   # This job will check if the workflow is running on a tag or non-main branch
+  validate_trigger:
+    runs-on: ubuntu-latest
+    outputs:
+      valid_trigger: ${{ steps.check_trigger.outputs.valid }}
+    steps:
+      - name: Check trigger source
+        id: check_trigger
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]] || 
+             ([[ "${{ github.ref }}" == refs/heads/* ]] && 
+              [[ "${{ github.ref }}" != 'refs/heads/main' ]]); then
+            echo "valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "Error: Workflow can only be triggered on tags or non-main branches"
+            exit 1
+          fi
   infos:
-    if: startsWith(github.ref, 'refs/tags/') # Ensure the job runs only on tags
+    needs: validate_trigger
+    if: needs.validate_trigger.outputs.valid_trigger == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Job info
@@ -21,13 +40,16 @@ jobs:
           echo "Running Deploy version job..."
           echo "Environment: ${{ github.event.inputs.environment }}"
           echo "Tag: ${{ github.ref }}"
-          echo "BE_VERSION: ${{ github.ref }}" | cut -d 'v' -f 2
+          be_version=$(echo "${{ github.ref }}" | cut -d 'v' -f 2)
+          echo "Backend version: $be_version"
           echo "Commit: ${{ github.sha }}"
           
 
       - name: Checkout repository
         uses: actions/checkout@v3
   build-front-end:
+    needs: validate_trigger
+    if: needs.validate_trigger.outputs.valid_trigger == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,8 +74,9 @@ jobs:
           name: dist
           path: it-vibe-fe/dist
   deploy:
+    needs: [validate_trigger, build-front-end]
+    if: needs.validate_trigger.outputs.valid_trigger == 'true'
     runs-on: ubuntu-latest
-    needs: [build-front-end]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

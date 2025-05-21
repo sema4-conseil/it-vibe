@@ -35,12 +35,17 @@ variable "be_version" {
   description = "The backend version"
 }
 
+variable "certeficate_arn" {
+  default = "arn:aws:acm:eu-west-3:327441465709:certificate/a84734ce-fc81-4ec5-b0a9-9ff30111831c"
+}
+
 
 module "front-end" {
   source = "./front-end"
   hosted_zone_id = var.hosted_zone_id
   env = var.env
   region = var.region
+  certeficate_arn = var.certeficate_arn
 }
 
 module "lambda" {
@@ -62,6 +67,7 @@ module "api-gateway" {
   source = "./api-gateway"
   openapi_spec_location = "../it-vibe-be/open-api/itvibe-api.yaml"
   hosted_zone_id = var.hosted_zone_id
+  certeficate_arn = var.certeficate_arn
   health_check_lambda_arn = module.lambda.health_check_lambda_arn
   health_check_lambda_invoke_arn = module.lambda.health_check_lambda_invoke_arn
   get_companies_lambda_invoke_arn = module.lambda.get_companies_lambda_invoke_arn

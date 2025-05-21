@@ -1,17 +1,25 @@
 variable "hosted_zone_id" {}
 variable "env" {}
 variable "region" {}
+variable "certeficate_arn" {}
 
 locals {
-  s3_origin_id   = "it-vibe.${var.env}.sema4-conseil.com-origin"
-  s3_domain_name = "it-vibe.${var.env}.sema4-conseil.com.s3-website.${var.region}.amazonaws.com"
+  # bucket name is "it-vibe.${var.env}.sema4-conseil.com" if env is not prod  else it-vibe.sema4-conseil.com
+  s3_name        = var.env == "prod" ? "it-vibe.sema4-conseil.com" : "it-vibe.${var.env}.sema4-conseil.com"
+  s3_origin_id   = var.env == "prod" ? "it-vibe.sema4-conseil.com-origin" : "it-vibe.${var.env}.sema4-conseil.com-origin"
+  s3_domain_name = var.env == "prod" ? "it-vibe.sema4-conseil.com.s3-website.${var.region}.amazonaws.com" : "it-vibe.${var.env}.sema4-conseil.com.s3-website.${var.region}.amazonaws.com"
+  default_tags = {
+    Env         = var.env
+    ManagedBy   = "Terraform"
+  }
+
 }
 
 
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
-  bucket = "it-vibe.${var.env}.sema4-conseil.com"
+  bucket = local.s3_name
   tags = {
-    Name = "it-vibe.${var.env}.sema4-conseil.com"
+    Name = local.s3_name
     Env = var.env
     ManagedBy = "Terraform"
   }
@@ -128,7 +136,7 @@ resource "aws_s3_bucket_website_configuration" "it-vibe-static-site-s3-configura
 
 resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   count = var.env == "prod" ? 1 : 0
-  aliases = ["it-vibe.dev.sema4-conseil.com"]
+  aliases = ["it-vibe.sema4-conseil.com"]
   origin {
     origin_id                = local.s3_origin_id
     domain_name              = local.s3_domain_name
@@ -142,10 +150,11 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   }
   enabled             = true
   is_ipv6_enabled      = true
-  comment              = "CloudFront distribution itvibe static website"
+  comment              = "[${var.env}] it-vibe static web-site"
   default_root_object  = "index.html"
 
   default_cache_behavior {
+    compress = true  # Enable gzip/brotli compression
     target_origin_id       = local.s3_origin_id
     viewer_protocol_policy = "redirect-to-https"
 
@@ -159,24 +168,31 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
       }
     }
 
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+    min_ttl     = 3600      # 1 hour (minimum cache time)
+    default_ttl = 86400     # 1 day (default cache time)
+    max_ttl     = 604800    # 7 days (maximum cache time)
+    
+
   }
 
-  price_class = "PriceClass_100"
+  # Since most traffic is from France, downgrade to PriceClass_200 (Europe, North America, and parts of Asia) instead of PriceClass_100 (global).
+  price_class = "PriceClass_200"
 
+  # Since your audience is primarily in France
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      restriction_type = "whitelist"
+      locations        = ["FR"]
     }
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "arn:aws:acm:us-east-1:327441465709:certificate/ce3fc596-3ce2-4a9c-a9a4-eb1388f7a839"
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:327441465709:certificate/c5f040cf-ff62-4309-b1d3-f85a4631a8df"
     ssl_support_method        = "sni-only"
     minimum_protocol_version  = "TLSv1.2_2021" # Use the latest protocol version
   }
+
+  tags = local.default_tags
 }
 
 resource "null_resource" "invalidate_cloudfront" {
@@ -198,7 +214,7 @@ resource "null_resource" "invalidate_cloudfront" {
 resource "aws_route53_record" "s3_static_site" {
   count = var.env == "prod" ? 1 : 0
   zone_id = var.hosted_zone_id
-  name    = "it-vibe.${var.env}.sema4-conseil.com"
+  name    = "it-vibe.sema4-conseil.com"
   type    = "A"
    alias {
     name                   = aws_cloudfront_distribution.cloudfront_distribution[0].domain_name

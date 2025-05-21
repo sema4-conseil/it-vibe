@@ -1,6 +1,4 @@
-variable "certeficate_arn" {
-  default = "arn:aws:acm:eu-west-3:327441465709:certificate/a84734ce-fc81-4ec5-b0a9-9ff30111831c"
-}
+variable "certeficate_arn" {}
 
 variable "hosted_zone_id" {
   type = string

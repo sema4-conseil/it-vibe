@@ -105,7 +105,7 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
 
 
 resource "aws_api_gateway_domain_name" "api_domain_name" {
-  domain_name     = "${var.env}.api.it-vibe.sema4-conseil.com"
+  domain_name     = var.env == "prod" ? "api.it-vibe.sema4-conseil.com" : "${var.env}.api.it-vibe.sema4-conseil.com"
    endpoint_configuration {
     types = ["REGIONAL"]
   }
