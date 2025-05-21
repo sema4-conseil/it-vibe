@@ -1,6 +1,4 @@
 variable "env" {}
-
-
 resource "aws_dynamodb_table" "companies" {
   name           = "IT_VIBE_COMPANIES_${upper(var.env)}"
   billing_mode   = "PAY_PER_REQUEST" # On-demand capacity mode
@@ -44,9 +42,8 @@ resource "aws_dynamodb_table" "companies" {
   }
 
   tags = {
-    Name        = "IT_VIBE_COMPANIES_${upper(var.env)}"
     Entity      = "Company"
-    Environment = var.env
+    Env         = var.env
     ManagedBy   = "Terraform"
   }
 
@@ -86,10 +83,9 @@ resource "aws_dynamodb_table" "company_reviews" {
   }
 
   tags = {
-    Name        = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
-    Environment = var.env
-    ManagedBy   = "Terraform"
-    Entity      = "CompanyReview"
+      Entity      = "CompanyReview"
+      Env         = var.env
+      ManagedBy   = "Terraform"
   }
 }
 
@@ -117,9 +113,8 @@ resource "aws_dynamodb_table" "contact_messages" {
     projection_type = "ALL"
   }
   tags = {
-    Name        = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
-    Environment = var.env
-    ManagedBy   = "Terraform"
-    Entity      = "ContactMessage"
+      Entity      = "ContactMessage"
+      Env         = var.env
+      ManagedBy   = "Terraform"
   }
 }

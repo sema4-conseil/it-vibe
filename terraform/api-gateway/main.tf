@@ -1,3 +1,10 @@
+locals {
+  default_tags = {
+    Env         = var.env
+    ManagedBy   = "Terraform"
+  }
+}
+
 resource "aws_lambda_permission" "lambda_permission" {
   for_each = {
     "get_companies"               = var.get_companies_lambda_arn
@@ -46,11 +53,7 @@ resource "aws_api_gateway_rest_api" "itvibe_api" {
     types = ["REGIONAL"]
   }
   body = data.template_file.itvibe_api_spec.rendered
-  tags = {
-    Name        = "itvibe_api"
-    Environment = var.env
-    ManagedBy   = "Terraform"
-  }
+  tags = local.default_tags
 }
 
 
