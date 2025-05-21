@@ -9,16 +9,6 @@
         <h1 class="company-header">
           <span>{{ company.name }}</span>
         </h1>
-        <div class="rating" :title="company.metrics.average_rating">
-          <span v-for="n in Math.floor(company.metrics.average_rating)" :key="n"
-            >★</span
-          >
-          <span
-            v-for="n in 10 - Math.floor(company.metrics.average_rating)"
-            :key="'empty-' + n"
-            >☆</span
-          >
-        </div>
         <div class="details-grid">
           <div class="detail-item">
             <strong>Location:</strong> {{ company.location }},
@@ -66,9 +56,23 @@
         </div>
       </div>
       <div class="company-reviews">
-        <h1>
-          Reviews <span>({{ company.metrics.review_count }})</span>
-        </h1>
+        <h2>
+          <span>Reviews ({{ company.metrics.review_count }})</span>
+        </h2>
+        <div
+          v-if="company.metrics.review_count > 0"
+          class="rating"
+          :title="company.metrics.average_rating"
+        >
+          <span v-for="n in Math.floor(company.metrics.average_rating)" :key="n"
+            >★</span
+          >
+          <span
+            v-for="n in 10 - Math.floor(company.metrics.average_rating)"
+            :key="'empty-' + n"
+            >☆</span
+          >
+        </div>
         <div class="reviews-scrollable">
           <div v-if="reviews && reviews.length > 0">
             <ReviewOverview
@@ -279,6 +283,7 @@ export default {
               rating: this.newReview.rating,
             }),
           });
+          await this.fetchComapnyMetrics();
           if (!response.ok) {
             throw new Error("Failed to submit review.");
           }
@@ -345,6 +350,10 @@ export default {
   font-size: 1em;
   margin-left: 10px;
   color: #555;
+}
+
+h2 {
+  margin: 5px 0;
 }
 
 @media (max-width: 768px) {
