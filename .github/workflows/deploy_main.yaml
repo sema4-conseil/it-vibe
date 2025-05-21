@@ -74,4 +74,4 @@ jobs:
 
       - name: Apply Terraform configuration
         working-directory: terraform
-        run: terraform apply -auto-approve -var "be_version=main_branch" -var "env=dev"
+        run: terraform apply -auto-approve -var "be_version=latest" -var "env=dev"
