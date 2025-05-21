@@ -9,6 +9,7 @@ export default {
   mounted() {
     console.log("CallBack component mounted");
     this.handleCognitoCallback();
+    console.log("CallBack component mounted - after handleCognitoCallback");
   },
   methods: {
     async handleCognitoCallback() {
@@ -43,7 +44,14 @@ export default {
             sessionStorage.setItem("accessToken", tokens.access_token);
             sessionStorage.setItem("idToken", tokens.id_token);
             sessionStorage.setItem("refreshToken", tokens.refresh_token);
-            window.location.href = "/"; // Redirect to home or another page
+
+            const redirectUri = sessionStorage.getItem("redirect_uri");
+            if (redirectUri) {
+              sessionStorage.removeItem("redirect_uri");
+              window.location.href = redirectUri; // Redirect to the original page
+            } else {
+              window.location.href = "/"; // Redirect to home or another page
+            }
           } else {
             console.error(
               "Failed to exchange code for tokens:",

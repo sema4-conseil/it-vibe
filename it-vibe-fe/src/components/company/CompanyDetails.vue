@@ -234,7 +234,10 @@ export default {
       // Check if the user is logged in
       // If not, redirect to the login page
       if (!token) {
-        this.$router.push("/login");
+        let redirect_uri = this.$route.fullPath;
+        this.$router.push(
+          "/login?redirect_uri=" + encodeURIComponent(redirect_uri)
+        );
       }
       this.showReviewForm = !this.showReviewForm;
       this.$nextTick(() => {
