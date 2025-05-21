@@ -5,7 +5,7 @@ provider "aws" {
       Env =  var.env
       ManagedBy   = "Terraform"
       Version = var.be_version
-      DeployedBy = var.deployedBy
+      DeployedBy = var.deployed_by
     }
   }
 }
@@ -19,7 +19,7 @@ terraform {
   }
 }
 
-variable "deployedBy" {
+variable "deployed_by" {
   type = string
   default = "manual"
 }

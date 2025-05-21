@@ -116,4 +116,4 @@ jobs:
 
       - name: Apply Terraform configuration
         working-directory: terraform
-        run: terraform apply -auto-approve -var "be_version=$BE_VERSION" -var "env=$ENV"
+        run: terraform apply -auto-approve -var "be_version=$BE_VERSION" -var "env=$ENV" -var "deployed_by=github_workflow"
