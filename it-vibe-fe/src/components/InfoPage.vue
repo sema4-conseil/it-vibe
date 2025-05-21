@@ -44,9 +44,9 @@ export default {
   name: "InfoPage",
   data() {
     return {
-      version: "0.0.0",
       env: process.env.VUE_APP_ENVIRONMENT,
       baseUri: process.env.VUE_APP_API_BASE_URL,
+      version: process.env.VUE_APP_VERSION,
       apiInfo: null,
     };
   },
