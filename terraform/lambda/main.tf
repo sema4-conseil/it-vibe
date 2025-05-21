@@ -37,11 +37,6 @@ resource "aws_lambda_function" "get_companies_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
-
 }
 
 
@@ -78,10 +73,6 @@ resource "aws_lambda_function" "save_company_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
     
 }
 
@@ -114,10 +105,6 @@ resource "aws_lambda_function" "delete_company_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
 }
 
 
@@ -140,11 +127,6 @@ resource "aws_lambda_function" "get_comany_details_lambda" {
             COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
         }
     }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
 }
 
 data "archive_file" "get_company_review_metrics_lambda_code" {
@@ -165,11 +147,6 @@ resource "aws_lambda_function" "get_company_review_metrics_lambda" {
         variables = {
             COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
-    }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
     }
 }
 
@@ -199,11 +176,6 @@ resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {
         variables = {
             COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
-    }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
     }
 }
 
@@ -238,10 +210,6 @@ resource "aws_lambda_function" "add_review_lambda" {
             COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
         }
     }
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
 }
 
 data archive_file "push_contact_message_lambda_code" {
@@ -269,11 +237,6 @@ resource "aws_lambda_function" "push_contact_message_lambda" {
         variables = {
             CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
-    }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
     }
 }
 
@@ -306,11 +269,6 @@ resource "aws_lambda_function" "get_contact_messages_lambda" {
             CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
 }
 
 data archive_file "patch_contact_message_lambda_code" {
@@ -342,11 +300,6 @@ resource "aws_lambda_function" "patch_contact_messages_lambda" {
             CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
-
-    tags = {
-      Env = var.env
-      ManagedBy = "Terraform"
-    }
 }
 
 
@@ -372,10 +325,5 @@ resource "aws_lambda_function" "health_check_lambda" {
             VERSION = var.be_version
             ENV     = var.env
         }
-    }
-    tags = {
-      Env = var.env
-      Version = var.be_version
-      ManagedBy = "Terraform"
     }
 }

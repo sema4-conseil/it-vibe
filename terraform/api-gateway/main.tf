@@ -46,11 +46,6 @@ resource "aws_api_gateway_rest_api" "itvibe_api" {
     types = ["REGIONAL"]
   }
   body = data.template_file.itvibe_api_spec.rendered
-  tags = {
-    Name        = "itvibe_api"
-    Environment = var.env
-    ManagedBy   = "Terraform"
-  }
 }
 
 

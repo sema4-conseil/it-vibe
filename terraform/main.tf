@@ -1,5 +1,13 @@
 provider "aws" {
   region = "eu-west-3"
+  default_tags {
+    tags = {
+      Env =  var.env
+      ManagedBy   = "Terraform"
+      Version = var.be_version
+      DeployedBy = var.deployedBy
+    }
+  }
 }
 
 terraform {
@@ -9,6 +17,11 @@ terraform {
     region         = "eu-west-3" 
     encrypt        = true
   }
+}
+
+variable "deployedBy" {
+  type = string
+  default = "manual"
 }
 
 variable "hosted_zone_id" {

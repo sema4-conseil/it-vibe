@@ -8,21 +8,11 @@ locals {
   s3_name        = var.env == "prod" ? "it-vibe.sema4-conseil.com" : "it-vibe.${var.env}.sema4-conseil.com"
   s3_origin_id   = var.env == "prod" ? "it-vibe.sema4-conseil.com-origin" : "it-vibe.${var.env}.sema4-conseil.com-origin"
   s3_domain_name = var.env == "prod" ? "it-vibe.sema4-conseil.com.s3-website.${var.region}.amazonaws.com" : "it-vibe.${var.env}.sema4-conseil.com.s3-website.${var.region}.amazonaws.com"
-  default_tags = {
-    Env         = var.env
-    ManagedBy   = "Terraform"
-  }
-
 }
 
 
 resource "aws_s3_bucket" "it-vibe-static-site-s3" {
   bucket = local.s3_name
-  tags = {
-    Name = local.s3_name
-    Env = var.env
-    ManagedBy = "Terraform"
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "public-access" {
@@ -65,9 +55,6 @@ resource "aws_s3_object" "index-html" {
   lifecycle {
     create_before_destroy = true
   }
-  tags = {
-    Env = var.env
-  }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/index.html"),"")
 }
@@ -79,9 +66,6 @@ resource "aws_s3_object" "favicon" {
   lifecycle {
     create_before_destroy = true
   }
-  tags = {
-    Env = var.env
-  }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/favicon.ico"),"")
 }
@@ -92,9 +76,6 @@ resource "aws_s3_object" "js" {
   key         = "js/${each.value}"
   source      = "../it-vibe-fe/dist/js/${each.value}"
   content_type = "application/javascript"
-  tags = {
-    Env = var.env
-  }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/js/${each.value}"),"")
 }
@@ -107,9 +88,6 @@ resource "aws_s3_object" "css" {
   content_type = "text/css"
   lifecycle {
     create_before_destroy = true
-  }
-  tags = {
-    env = var.env
   }
   # Try to get the filemd5, fall back to empty string if file doesn't exist
   etag = try(filemd5("../it-vibe-fe/dist/css/${each.value}"),"")
@@ -191,8 +169,6 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
     ssl_support_method        = "sni-only"
     minimum_protocol_version  = "TLSv1.2_2021" # Use the latest protocol version
   }
-
-  tags = local.default_tags
 }
 
 resource "null_resource" "invalidate_cloudfront" {
