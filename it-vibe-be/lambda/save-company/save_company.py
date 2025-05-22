@@ -42,7 +42,7 @@ def lambda_handler(event, context):
     # name, description, siren, siret, president, address, country, industry
     # Do the validation only if creation. 
     if "id" not in companyData or companyData["id"] is None:
-        mandatory_fields = ["name", "description", "siren", "siret", "president", "adress", "country", "industry"]
+        mandatory_fields = ["name", "siren", "siret", "adress", "country", "industry","creationDate"]
         for field in mandatory_fields:
         # If field not in companyData or field is null
         # Return a 400 error with a message indicating the missing field
