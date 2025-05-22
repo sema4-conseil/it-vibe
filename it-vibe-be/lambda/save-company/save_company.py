@@ -5,131 +5,117 @@ import os
 import logging
 from is_user_in_group import is_user_in_group
 from get_user_informations import get_user_informations
-from company_mapper import map
-
 
 logger = logging.getLogger()
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.INFO)
 
-
-def lambda_handler(event, context):
-
-    # Check if the user is in the "admin" group
-    if not is_user_in_group(event, "admin"):
-        return {
-            "statusCode": 403,
-            "body": json.dumps({
-                "errorMessage": "User is not authorized, only admin can execute this action"
-            }),
-            "headers": {
+DEFAULT_RESPONSE_HEADERS = {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
             }
+
+    
+DYNAMO_DB_TABLE_NAME = os.environ['COMPANIES_TABLE_NAME']
+
+if not DYNAMO_DB_TABLE_NAME:
+    logger.error("Environment variable 'COMPANIES_TABLE_NAME' is not set")
+    raise ValueError("Environment variable 'COMPANIES_TABLE_NAME' is not set")
+
+def validate_company_data(companyData):
+    """
+    Validate the company data to ensure all mandatory fields are present.
+    """
+    mandatory_fields = ["name", "siren", "siret", "adress", "country", "industry","creationDate"]
+    for field in mandatory_fields:
+        if field not in companyData or companyData[field] is None:
+            raise ValueError(f"Missing mandatory field: {field}")
+
+def validate_user_rights(event):
+    """
+    Validate if the user has the right to perform the action.
+    """
+    # Check if the user is in the "admin" group
+    if not is_user_in_group(event, "admin"):
+        raise PermissionError("User is not authorized, only admin can execute this action")
+    
+
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(DYNAMO_DB_TABLE_NAME)  # Get table name from environment variable
+
+
+def lambda_handler(event, context):
+    try:
+
+        validate_user_rights(event)
+
+        # Get user details from lambda context
+        user_id, email, groups, username = get_user_informations(event)
+        actor = {
+            "user_id": user_id,
+            "email": email,
+            "username": username,
         }
 
-    # Get user details from lambda context
-    user_id, email, groups, username = get_user_informations(event)
-    actor = {
-        "user_id": user_id,
-        "email": email,
-        "username": username,
-    }
+        # Parse the JSON from the body field
+        companyData = json.loads(event['body'])
 
-    # Parse the JSON from the body field
-    companyData = json.loads(event['body'])
+        # Validate the company data
+        validate_company_data(companyData)
 
-    # Validate company data, mandatory fields are:
-    # name, description, siren, siret, president, address, country, industry
-    # Do the validation only if creation. 
-    if "id" not in companyData or companyData["id"] is None:
-        mandatory_fields = ["name", "siren", "siret", "adress", "country", "industry","creationDate"]
-        for field in mandatory_fields:
-        # If field not in companyData or field is null
-        # Return a 400 error with a message indicating the missing field
-            if field not in companyData or companyData[field] is None:
-                return {
-                    "statusCode": 400,
-                    "body": json.dumps({
-                        "errorMessage": f"Missing mandatory field: {field}"
-                }),
-                    "headers": {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
-                }
-            }
+    
+        # Fill "name_lowercase" field with the lowercase version of "name"
+        companyData["name_lowercase"] = companyData["name"].lower()
 
-    try:
-        # Fill "name_lowercase" field with the lowercase version of "name" if it exists
-        # This is useful for case-insensitive searches
-        companyData["name_lowercase"] = companyData["name"].lower() if "name" in companyData else None
-
-        # Extracting data from the event
-        dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table(os.environ['COMPANIES_TABLE_NAME'])  # Get table name from environment variable
-
-        # Check if 'id' exists and is not null; if null or missing, generate a new UUID
-        if "id" not in companyData or companyData["id"] is None:
-            id = str(uuid.uuid4())
-            companyData["id"] = id
-            companyData["createdBy"] = actor
-            httpStatusCode = 201  # Created
+        # if 'id' is in company data, raise value error, cannot update existing company
+        if "id" in companyData:
+            raise ValueError("Cannot update existing company, please use the update endpoint")
+        
+        id = str(uuid.uuid4())
+        companyData["id"] = id
+        companyData["createdBy"] = actor
 
             # Use put_item to create a new item
-            table.put_item(Item=companyData)
-        else:
-            # If the item exists, update it
-            companyData["updatedBy"] = actor
-            httpStatusCode = 200  # Updated
-
-            # Prepare update expression and attribute values
-            update_expression = "SET "
-            expression_attribute_values = {}
-            expression_attribute_names = {}
-
-            for key, value in companyData.items():
-                if key != "id":  # Exclude the primary key from being updated
-                    update_expression += f"#{key} = :{key}, "
-                    expression_attribute_values[f":{key}"] = value
-                    expression_attribute_names[f"#{key}"] = key
-
-            # Remove trailing comma and space
-            update_expression = update_expression.rstrip(", ")
-
-            # Perform the update
-            table.update_item(
-                Key={"id": companyData["id"]},
-                UpdateExpression=update_expression,
-                ExpressionAttributeValues=expression_attribute_values,
-                ExpressionAttributeNames=expression_attribute_names
-            )
+        table.put_item(Item=companyData)
+        logger.info(f"Company data saved successfully: {companyData.get('id')}")
 
         responseBody = {
             "message": "Item saved successfully",
             "id": companyData["id"],
         }
-        return {
-            "statusCode": httpStatusCode,
-            "body": json.dumps(responseBody),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
-            }
-        }
 
+        return {
+            "statusCode": 201,
+            "body": json.dumps(responseBody),
+            "headers": DEFAULT_RESPONSE_HEADERS
+        }
+    
+    except ValueError as e:
+        logger.error(f"Validation error: {str(e)}")
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": str(e)}),
+            "headers": DEFAULT_RESPONSE_HEADERS
+        }
     except KeyError as e:
         return {
             "statusCode": 400,
             "body": json.dumps({
                 "errorMessage": f"Missing key: {str(e)}"
-            })
+            }),
+            "headers": DEFAULT_RESPONSE_HEADERS
+
+        }
+    except PermissionError as e:
+        return {
+            "statusCode": 403,
+            "body": json.dumps({"error": str(e)}),
+            "headers": DEFAULT_RESPONSE_HEADERS
         }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
         return {
             "statusCode": 500,
             "body": json.dumps({"error": "An internal server error occurred."}),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            }
+            "headers": DEFAULT_RESPONSE_HEADERS
         }
