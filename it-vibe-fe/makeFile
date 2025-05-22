@@ -25,3 +25,7 @@ docker-run:
 
 terraform-apply-one-module:
     terraform plan -target=module.<module_name>
+
+terraform-apply-dev:
+    terraform workspace select dev
+    terraform apply -var "env=dev" -var "be_version=latest" 
