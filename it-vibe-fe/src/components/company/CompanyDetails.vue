@@ -11,8 +11,8 @@
         </h1>
         <div class="details-grid">
           <div class="detail-item">
-            <strong>Location:</strong> {{ company.location }},
-            {{ company.country }}
+            <strong>Country:</strong>
+            <country-flag :country-code="company.country"> </country-flag>
           </div>
           <div class="detail-item">
             <strong>Industry:</strong> {{ company.industry }}
@@ -36,12 +36,8 @@
             <strong>Creation Date:</strong>
             {{ formatDate(company.creationDate) }}
           </div>
-          <div class="detail-item">
-            <strong>Update Date:</strong>
-            {{ formatDate(company.updateDate) }}
-          </div>
         </div>
-        <div class="president-details">
+        <div v-if="company.president" class="president-details">
           <h2>President</h2>
           <p>
             <strong>Name:</strong> {{ company.president.firstname }}
@@ -49,10 +45,6 @@
           </p>
           <p><strong>Email:</strong> {{ company.president.email }}</p>
           <p><strong>Phone:</strong> {{ company.president.phoneNumber }}</p>
-        </div>
-        <div class="description">
-          <h2>Description</h2>
-          <p>{{ company.description }}</p>
         </div>
       </div>
       <div class="company-reviews">
@@ -155,11 +147,14 @@
 <script>
 import ReviewOverview from "@/components/review/ReviewOverview.vue";
 import GenericModal from "@/components/ui/GenericModal.vue";
+import CountryFlag from "@/components/ui/CountyFlag.vue";
 export default {
   props: ["id"],
   components: {
     ReviewOverview,
     GenericModal,
+    // eslint-disable-next-line
+    CountryFlag,
   },
   data() {
     return {
@@ -336,7 +331,7 @@ export default {
 }
 
 .company-details {
-  flex: 2; /* 2/3 of the container */
+  flex: 1; /* 2/3 of the container */
   padding: 20px;
   font-family: "Arial", sans-serif;
   background-color: white;
@@ -346,7 +341,7 @@ export default {
 }
 
 .company-reviews {
-  flex: 1; /* 1/3 of the container */
+  flex: 2; /* 1/3 of the container */
   padding: 20px;
   background-color: white;
   border-radius: 8px;
@@ -399,6 +394,9 @@ h2 {
   background-color: #f9f9f9;
   padding: 15px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .president-details,

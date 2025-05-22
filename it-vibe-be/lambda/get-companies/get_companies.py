@@ -92,6 +92,16 @@ def lambda_handler(event, context):
             }
         }
 
+    except ValueError as ve:
+        logger.error(f"ValueError: {str(ve)}")
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": str(ve)}),
+            "headers": {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            }
+        }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
         return {
