@@ -135,6 +135,14 @@
         </div>
       </div>
     </div>
+    <generic-modal
+      v-if="this.modal.show"
+      :isOpen="this.modal.show"
+      @close="this.modal.show = false"
+      ><div>
+        <p>{{ modal.message }}</p>
+      </div>
+    </generic-modal>
   </div>
   <div v-else-if="companyNotFound">
     <h2>Company unknown.</h2>
@@ -146,11 +154,12 @@
 
 <script>
 import ReviewOverview from "@/components/review/ReviewOverview.vue";
-
+import GenericModal from "@/components/ui/GenericModal.vue";
 export default {
   props: ["id"],
   components: {
     ReviewOverview,
+    GenericModal,
   },
   data() {
     return {
@@ -164,6 +173,11 @@ export default {
       newReview: {
         comment: "",
         isAnonymous: false,
+      },
+      modal: {
+        show: false,
+        message: "",
+        type: "",
       },
     };
   },
@@ -293,10 +307,14 @@ export default {
           this.newReview.isAnonymous = false;
           this.showReviewForm = false;
         } catch (error) {
-          alert("An error occurred while submitting your review.");
+          this.modal.show = true;
+          this.modal.message =
+            "An error occurred while submitting your review.";
         }
       } else {
-        alert("Please fix the errors in the form before submitting.");
+        this.modal.show = true;
+        this.modal.message =
+          "Please fix the errors in the form before submitting.";
       }
     },
     formatRevenue(revenue) {
