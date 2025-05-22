@@ -15,6 +15,15 @@
   --light-red: #f8d7da;
   --dark-red: #ec2338;
   --very-dark-red: #721c24;
+  --light-green: #28bb65; /* Un ton plus foncé pour le hover */
+}
+
+.text-green {
+  color: var(--light-green);
+}
+
+.text-red {
+  color: var(--error-red);
 }
 
 body {
