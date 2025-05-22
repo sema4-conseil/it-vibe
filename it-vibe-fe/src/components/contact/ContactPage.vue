@@ -37,17 +37,34 @@
       </div>
       <button type="submit" class="contact-button">Send</button>
     </form>
+    <generic-modal
+      v-if="this.modal.show"
+      :isOpen="this.modal.show"
+      @close="this.modal.show = false"
+    >
+      <div>
+        <h1>Info</h1>
+        <p>{{ this.modal.message }}</p>
+      </div>
+    </generic-modal>
   </div>
 </template>
 
 <script>
+import GenericModal from "@/components/ui/GenericModal.vue";
 export default {
+  components: { GenericModal },
   constants: {
     MIN_MESSAGE_LENGTH: 25,
   },
   name: "ContactPage",
   data() {
     return {
+      modal: {
+        show: false,
+        message: "",
+        type: "",
+      },
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       contactMessage: {
         email: "",
@@ -81,7 +98,8 @@ export default {
     async handleSubmit() {
       let validationErrors = this.validateForm();
       if (validationErrors.length > 0) {
-        alert(validationErrors.join("\n"));
+        this.modal.message = validationErrors.join("\n");
+        this.modal.show = true;
         return;
       }
       try {
@@ -93,13 +111,16 @@ export default {
           body: JSON.stringify(this.contactMessage),
         });
         if (!response.ok) {
-          throw new Error("Failed to create company");
+          throw new Error("Problem sending message");
         }
-        let data = await response.json();
-        alert(data.message);
+        this.modal.message =
+          "Thank you for your message! We will get back to you soon.";
+        this.modal.show = true;
         this.resetForm();
       } catch (error) {
-        alert("An error occurred while submitting your review.");
+        this.modal.message =
+          "An error occurred while sending your message. Please try again.";
+        this.showModal = true;
       }
     },
   },
