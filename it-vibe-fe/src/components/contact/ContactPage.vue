@@ -18,11 +18,22 @@
         <textarea
           id="message"
           v-model="contactMessage.content"
-          placeholder="Enter your message, it should be at least 10 characters long"
-          minlength="10"
+          placeholder="Write your message..."
+          minlength="25"
+          rows="5"
           required
           class="form-control"
         ></textarea>
+        <div
+          v-if="contactMessage.content"
+          :class="
+            contactMessage.content.length < 25 ? 'text-red' : 'text-green'
+          "
+        >
+          <span
+            >Current message length: {{ contactMessage.content.length }}</span
+          >
+        </div>
       </div>
       <button type="submit" class="contact-button">Send</button>
     </form>
@@ -31,6 +42,9 @@
 
 <script>
 export default {
+  constants: {
+    MIN_MESSAGE_LENGTH: 25,
+  },
   name: "ContactPage",
   data() {
     return {
@@ -46,17 +60,28 @@ export default {
       this.contactMessage.email = "";
       this.contactMessage.content = "";
     },
-    async handleSubmit() {
+
+    validateForm() {
+      let validationErrors = [];
       // Validate email format
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(this.contactMessage.email)) {
-        alert("Please enter a valid email address.");
-        return;
+        validationErrors.push("Please enter a valid email address.");
       }
-
       // Validate message length
-      if (this.contactMessage.content.length < 100) {
-        alert("Message must be at least 100 characters long.");
+      if (this.contactMessage.content.length < this.MIN_MESSAGE_LENGTH) {
+        validationErrors.push(
+          "Message must be at least " +
+            this.MIN_MESSAGE_LENGTH +
+            " characters long."
+        );
+      }
+      return validationErrors;
+    },
+    async handleSubmit() {
+      let validationErrors = this.validateForm();
+      if (validationErrors.length > 0) {
+        alert(validationErrors.join("\n"));
         return;
       }
       try {
