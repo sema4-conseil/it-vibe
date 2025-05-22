@@ -40,11 +40,12 @@
     <generic-modal
       v-if="this.modal.show"
       :isOpen="this.modal.show"
-      @close="this.modal.show = false"
+      @close="modal.show = false"
     >
       <div>
-        <h1>Info</h1>
+        <h3>Info</h3>
         <p>{{ this.modal.message }}</p>
+        <div v-if="this.modal.loading" class="spinner"></div>
       </div>
     </generic-modal>
   </div>
@@ -64,6 +65,7 @@ export default {
         show: false,
         message: "",
         type: "",
+        loading: false,
       },
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       contactMessage: {
@@ -103,6 +105,9 @@ export default {
         return;
       }
       try {
+        this.modal.loading = true;
+        this.modal.message = "Sending message...";
+        this.modal.show = true;
         const response = await fetch(`${this.apibaseUrl}/contact`, {
           method: "POST",
           headers: {
@@ -115,7 +120,7 @@ export default {
         }
         this.modal.message =
           "Thank you for your message! We will get back to you soon.";
-        this.modal.show = true;
+        this.modal.loading = false;
         this.resetForm();
       } catch (error) {
         this.modal.message =
