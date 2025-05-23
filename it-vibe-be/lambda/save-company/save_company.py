@@ -3,6 +3,7 @@ import uuid
 import boto3
 import os
 import logging
+from datetime import datetime, timezone
 from is_user_in_group import is_user_in_group
 from get_user_informations import get_user_informations
 
@@ -55,6 +56,7 @@ def lambda_handler(event, context):
             "user_id": user_id,
             "email": email,
             "username": username,
+            "dateTime": datetime.now(timezone.utc).isoformat(),# current dateTime
         }
 
         # Parse the JSON from the body field

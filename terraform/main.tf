@@ -87,6 +87,8 @@ module "api-gateway" {
   get_companies_lambda_arn = module.lambda.get_companies_lambda_arn
   save_company_lambda_invoke_arn = module.lambda.save_company_lambda_invoke_arn
   save_company_lambda_arn = module.lambda.save_company_lambda_arn
+  patch_company_lambda_invoke_arn = module.lambda.patch_company_lambda_invoke_arn
+  patch_company_lambda_arn = module.lambda.patch_company_lambda_arn
   get_company_details_by_id_lambda_arn = module.lambda.get_company_details_by_id_lambda_arn
   get_company_details_by_id_lambda_invoke_arn = module.lambda.get_company_details_by_id_lambda_invoke_arn
   get_company_metrics_lambda_arn = module.lambda.get_company_metrics_lambda_arn

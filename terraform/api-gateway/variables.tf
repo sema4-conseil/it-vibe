@@ -15,6 +15,8 @@ variable "get_companies_lambda_invoke_arn" {}
 variable "get_companies_lambda_arn" {}
 variable "save_company_lambda_invoke_arn" {}
 variable "save_company_lambda_arn" {}
+variable "patch_company_lambda_invoke_arn" {}
+variable "patch_company_lambda_arn" {}
 variable "get_company_details_by_id_lambda_invoke_arn" {}
 variable "delete_company_by_id_lambda_arn" {}
 variable "delete_company_by_id_lambda_invoke_arn" {}

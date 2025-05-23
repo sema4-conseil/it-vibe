@@ -76,6 +76,38 @@ resource "aws_lambda_function" "save_company_lambda" {
     
 }
 
+data "archive_file" "patch_company_lambda_code" {
+  type        = "zip"
+  output_path = "../it-vibe-be/lambda/patch-company/patch_company.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/patch-company/patch_company.py")
+    filename = "patch_company.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
+    filename = "get_user_informations.py"   
+  }
+}
+
+resource "aws_lambda_function" "patch_company_lambda" {
+    filename         = data.archive_file.patch_company_lambda_code.output_path
+    function_name    = "patch_company_${var.env}"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "patch_company.lambda_handler"
+    source_code_hash = data.archive_file.patch_company_lambda_code.output_base64sha256
+    runtime          = var.pythonVersion
+      environment {
+        variables = {
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
+        }
+    }
+    
+}
+
 data "archive_file" "delete_company_code" {
   type        = "zip"
   output_path = "../it-vibe-be/lambda/delete-company/delete_company.zip"

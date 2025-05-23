@@ -14,6 +14,14 @@ output "save_company_lambda_arn" {
     value = aws_lambda_function.save_company_lambda.arn
 }
 
+output "patch_company_lambda_invoke_arn" {
+    value = aws_lambda_function.patch_company_lambda.invoke_arn
+}
+
+output "patch_company_lambda_arn" {
+    value = aws_lambda_function.patch_company_lambda.arn
+}
+
 output "get_contact_messages_lambda_invoke_arn" {
     value = aws_lambda_function.get_contact_messages_lambda.invoke_arn
 }
