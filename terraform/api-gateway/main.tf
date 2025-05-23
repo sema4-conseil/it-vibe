@@ -2,6 +2,7 @@ resource "aws_lambda_permission" "lambda_permission" {
   for_each = {
     "get_companies"               = var.get_companies_lambda_arn
     "save_company"                = var.save_company_lambda_arn
+    "patch_company"                = var.patch_company_lambda_arn
     "get_company_details_by_id"   = var.get_company_details_by_id_lambda_arn
     "delete_company_by_id"        = var.delete_company_by_id_lambda_arn
     "push_contact_message"        = var.push_contact_message_lambda_arn
@@ -27,6 +28,7 @@ data "template_file" "itvibe_api_spec" {
     health_check_lambda_invoke_arn                = var.health_check_lambda_invoke_arn
     get_companies_lambda_invoke_arn               = var.get_companies_lambda_invoke_arn
     create_company_lambda_invoke_arn              = var.save_company_lambda_invoke_arn
+    patch_company_lambda_invoke_arn               = var.patch_company_lambda_invoke_arn
     push_contact_message_lambda_invoke_arn        = var.push_contact_message_lambda_invoke_arn
     get_contact_messages_lambda_invoke_arn        = var.get_contact_messages_lambda_invoke_arn
     patch_contact_message_lambda_invoke_arn       = var.patch_contact_messages_lambda_invoke_arn
