@@ -1,5 +1,5 @@
 <template>
-  <div class="create-company">
+  <div class="manage-company-container">
     <h1 @click="toggleCollapse" class="collapsible-header">
       Create Company
       <span
@@ -29,22 +29,6 @@
               :required="field.required"
             ></textarea>
           </div>
-
-          <h2>President Details</h2>
-          <div
-            v-for="(field, index) in presidentFields"
-            :key="index"
-            class="form-group"
-          >
-            <label :for="field.name">{{ field.label }}</label>
-            <input
-              :type="field.type"
-              :id="field.name"
-              v-model="form.president[field.name]"
-              :required="field.required"
-            />
-          </div>
-
           <button type="submit">Create Company</button>
         </form>
       </div>
@@ -61,49 +45,19 @@ export default {
       isCollapsed: true,
       fields: [
         { name: "name", label: "Company Name", type: "text", required: true },
-        { name: "location", label: "Location", type: "text", required: true },
+        { name: "industry", label: "Industry", type: "text", required: true },
+        { name: "country", label: "Country", type: "text", required: true },
         { name: "size", label: "Size", type: "text", required: true },
         { name: "revenue", label: "Revenue", type: "text", required: true },
-        { name: "industry", label: "Industry", type: "text", required: true },
-        {
-          name: "description",
-          label: "Description",
-          type: "textarea",
-          required: true,
-        },
-        { name: "country", label: "Country", type: "text", required: true },
         {
           name: "creationDate",
           label: "Creation Date",
           type: "date",
           required: true,
         },
-        {
-          name: "updateDate",
-          label: "Update Date",
-          type: "date",
-          required: true,
-        },
         { name: "adress", label: "Address", type: "text", required: true },
-        { name: "IBAN", label: "IBAN", type: "text", required: true },
         { name: "siren", label: "SIREN", type: "text", required: true },
         { name: "siret", label: "SIRET", type: "text", required: true },
-      ],
-      presidentFields: [
-        {
-          name: "firstname",
-          label: "First Name",
-          type: "text",
-          required: true,
-        },
-        { name: "lastname", label: "Last Name", type: "text", required: true },
-        {
-          name: "phoneNumber",
-          label: "Phone Number",
-          type: "text",
-          required: true,
-        },
-        { name: "email", label: "Email", type: "email", required: true },
       ],
       form: {
         name: "",
@@ -156,24 +110,14 @@ export default {
     resetForm() {
       this.form = {
         name: "",
-        location: "",
         size: "",
         revenue: "",
         industry: "",
-        description: "",
         country: "",
         creationDate: "",
-        updateDate: "",
         adress: "",
-        IBAN: "",
         siren: "",
         siret: "",
-        president: {
-          firstname: "",
-          lastname: "",
-          phoneNumber: "",
-          email: "",
-        },
       };
       this.isCollapsed = true;
     },
@@ -182,48 +126,5 @@ export default {
 </script>
 
 <style scoped>
-input,
-textarea {
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ccc; /* Lighter border for inputs */
-  border-radius: 4px; /* Rounded corners for inputs */
-  flex: 2; /* Takes more space than the label */
-}
-label {
-  flex: 1; /* Label takes less space compared to input */
-  margin-right: 10px; /* Add some spacing between label and input */
-  white-space: nowrap; /* Prevent label text from wrapping */
-}
-.form-group {
-  display: flex;
-  align-items: center; /* Align label and input vertically */
-  margin-bottom: 10px; /* Add spacing between form groups */
-}
-textarea {
-  resize: vertical; /* Allow vertical resizing of text areas */
-}
-.create-company {
-  max-width: 600px;
-  padding: 0 5px 5px 5px;
-  margin: 10px auto;
-  border: 1px solid #e0e0e0; /* Lighter border to match overall style */
-  border-radius: 12px; /* Slightly more rounded corners */
-  background-color: white; /* White background for cards */
-  flex: auto;
-  flex-direction: column;
-}
-
-.collapsible-header {
-  cursor: pointer;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
+@import "./styles/styles.css";
 </style>

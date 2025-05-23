@@ -10,7 +10,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-UPDATABLE_FIELDS = ["name", "siren", "siret", "adress", "country", "industry","creationDate"]
+UPDATABLE_FIELDS = ["name", "siren", "siret", "adress", "country", "industry","creationDate","size","revenue"]
 
 DEFAULT_RESPONSE_HEADERS = {
                 "Content-Type": "application/json",
