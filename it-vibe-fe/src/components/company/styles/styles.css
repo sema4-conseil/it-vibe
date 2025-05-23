@@ -1,0 +1,45 @@
+.manage-company-container {
+  max-width: 600px;
+  padding: 0 5px 5px 5px;
+  margin: 10px auto;
+  border: 1px solid #e0e0e0; /* Lighter border to match overall style */
+  border-radius: 12px; /* Slightly more rounded corners */
+  background-color: white; /* White background for cards */
+  flex: auto;
+  flex-direction: column;
+}
+
+input,
+textarea {
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc; /* Lighter border for inputs */
+  border-radius: 4px; /* Rounded corners for inputs */
+  flex: 2; /* Takes more space than the label */
+}
+label {
+  flex: 1; /* Label takes less space compared to input */
+  margin-right: 10px; /* Add some spacing between label and input */
+  white-space: nowrap; /* Prevent label text from wrapping */
+}
+.form-group {
+  display: flex;
+  align-items: center; /* Align label and input vertically */
+  margin-bottom: 10px; /* Add spacing between form groups */
+}
+textarea {
+  resize: vertical; /* Allow vertical resizing of text areas */
+}
+
+.collapsible-header {
+  cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
