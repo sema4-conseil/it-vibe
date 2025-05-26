@@ -2,6 +2,7 @@ import json
 import boto3
 import os
 import logging
+import time
 from datetime import datetime, timezone
 from is_user_in_group import is_user_in_group
 from get_user_informations import get_user_informations

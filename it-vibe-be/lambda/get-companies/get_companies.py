@@ -3,6 +3,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
+from decimal import Decimal
 from company_mapper import map
 
 logger = logging.getLogger()
@@ -13,6 +14,12 @@ table_name = os.environ.get('COMPANIES_TABLE_NAME')
 if not table_name:
     raise ValueError("Environment variable 'COMPANIES_TABLE_NAME' is not set.")
 table = dynamodb.Table(table_name)
+
+def decimal_to_float(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    return obj
+
 
 def lambda_handler(event, context):
     try:
@@ -82,6 +89,9 @@ def lambda_handler(event, context):
             "Count": len(response_items),
         }
 
+        # Convert Decimal to float for JSON serialization
+        response = json.loads(json.dumps(response, default=decimal_to_float))
+        logger.info(f"Retrieved {len(response_items)} companies successfully.")
 
         return {
             "statusCode": 200,
