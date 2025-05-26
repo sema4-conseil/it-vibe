@@ -18,6 +18,11 @@
             type="text"
             id="companyId"
             v-model="searchForm.companyId"
+            @input="
+              company = null;
+              originalCompany = null;
+              resetChangedFields();
+            "
             required
           />
         </div>
@@ -146,6 +151,7 @@
             </button>
           </div>
         </div>
+        <div v-else-if="this.searchLoading" class="spinner"></div>
       </div>
     </transition>
     <generic-modal
@@ -202,9 +208,11 @@ export default {
   methods: {
     async searchCompany() {
       try {
+        this.searchLoading = true;
         const response = await fetch(
           `${this.apibaseUrl}/companies/${this.searchForm.companyId}`
         );
+        this.searchLoading = false;
         if (response.ok) {
           this.company = await response.json();
           this.originalCompany = JSON.parse(JSON.stringify(this.company));
@@ -213,6 +221,12 @@ export default {
           this.modal = {
             show: true,
             message: "Company not found",
+            title: "Error",
+          };
+        } else if (response.status === 400) {
+          this.modal = {
+            show: true,
+            message: "Invalid company ID",
             title: "Error",
           };
         } else {
@@ -250,6 +264,11 @@ export default {
         }
         const token = sessionStorage.getItem("idToken");
         this.updateLoading = true;
+        this.modal = {
+          show: true,
+          message: "Updating company data...",
+          title: "Info",
+        };
         const response = await fetch(
           `${this.apibaseUrl}/companies/${this.company.id}`,
           {
@@ -274,11 +293,25 @@ export default {
           this.isCollapsed = true;
           this.searchForm.companyId = "";
         } else {
-          this.modal = {
-            show: true,
-            message: "Error updating company data",
-            title: "Error",
-          };
+          if (response.status === 404) {
+            this.modal = {
+              show: true,
+              message: "Company not found",
+              title: "Error",
+            };
+          } else if (response.status === 400) {
+            this.modal = {
+              show: true,
+              message: "Invalid data provided",
+              title: "Error",
+            };
+          } else {
+            this.modal = {
+              show: true,
+              message: "Error updating company data",
+              title: "Error",
+            };
+          }
           console.error("Error updating company data:", response.status);
         }
       } catch (error) {
@@ -311,8 +344,6 @@ export default {
 };
 </script>
 <style scoped>
-@import "./styles/styles.css";
-
 .changed {
   background-color: #fffde7; /* Light yellow background */
   border-left: 3px solid #ffc107; /* Yellow accent border */
@@ -322,5 +353,56 @@ export default {
 .changed input {
   font-weight: bold;
   color: #ff6f00; /* Orange text */
+}
+
+.form-group {
+  display: flex;
+  align-items: center; /* Align label and input vertically */
+  margin-bottom: 10px; /* Add spacing between form groups */
+}
+.manage-company-container {
+  max-width: 600px;
+  padding: 0 5px 5px 5px;
+  margin: 10px auto;
+  border: 1px solid #e0e0e0; /* Lighter border to match overall style */
+  border-radius: 12px; /* Slightly more rounded corners */
+  background-color: white; /* White background for cards */
+  flex: auto;
+  flex-direction: column;
+}
+
+input,
+textarea {
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc; /* Lighter border for inputs */
+  border-radius: 4px; /* Rounded corners for inputs */
+  flex: 2; /* Takes more space than the label */
+}
+label {
+  flex: 1; /* Label takes less space compared to input */
+  margin-right: 10px; /* Add some spacing between label and input */
+  white-space: nowrap; /* Prevent label text from wrapping */
+}
+.form-group {
+  display: flex;
+  align-items: center; /* Align label and input vertically */
+  margin-bottom: 10px; /* Add spacing between form groups */
+}
+textarea {
+  resize: vertical; /* Allow vertical resizing of text areas */
+}
+
+.collapsible-header {
+  cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
