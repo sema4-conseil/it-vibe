@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from message_status import MessageStatus
 
 logger = logging.getLogger()
-logger.setLevel(logging.ERROR)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('CONTACT_MESSAGE_TABLE_NAME')
