@@ -1,7 +1,7 @@
 <template>
   <div class="manage-company-container">
     <h1 @click="toggleCollapse" class="collapsible-header">
-      Update Company
+      Update or Delete Company
       <span
         class="fa"
         :class="{
@@ -35,6 +35,22 @@
             Search
           </button>
         </div>
+        <div v-if="company">
+          <div v-if="!company.deletedBy" class="form-group">
+            <button
+              type="button"
+              class="delete"
+              v-if="company"
+              @click="isDeleting = true"
+            >
+              Delete
+            </button>
+          </div>
+          <div v-else>
+            <span class="deleted-message"> Deleted </span>
+          </div>
+        </div>
+
         <div v-if="this.company">
           <div class="form-group" :class="{ changed: changedFields.name }">
             <label for="companyName">Company Name</label>
@@ -165,6 +181,27 @@
         <p>{{ modal.message }}</p>
       </div>
     </generic-modal>
+    <generic-modal
+      v-if="this.isDeleting"
+      :isOpen="this.isDeleting"
+      @close="isDeleting = false"
+    >
+      <div>
+        <div style="margin: 10px 0">
+          <span>Are you shure you want to delete this company ?</span>
+        </div>
+        <div class="form-group">
+          <button style="margin: 0px 5px" @click="deleteCompany">YES</button>
+          <button
+            style="margin: 0px 5px"
+            class="cancel"
+            @click="isDeleting = false"
+          >
+            NO
+          </button>
+        </div>
+      </div>
+    </generic-modal>
   </div>
 </template>
 
@@ -180,6 +217,7 @@ export default {
     return {
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       isCollapsed: true,
+      isDeleting: false,
       searchForm: {
         companyId: "",
       },
@@ -340,6 +378,56 @@ export default {
         this.searchForm.companyId = "";
       }
     },
+    deleteCompany() {
+      this.isDeleting = false;
+      this.modal = {
+        show: true,
+        message: "Deleting company...",
+        title: "Info",
+      };
+      const token = sessionStorage.getItem("idToken");
+      fetch(`${this.apibaseUrl}/companies/${this.company.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            this.modal = {
+              show: true,
+              message: "Company deleted successfully",
+              title: "Success",
+            };
+            this.isDeleting = false;
+            this.company = null;
+            this.originalCompany = null;
+            this.resetChangedFields();
+            this.isCollapsed = true;
+            this.searchForm.companyId = "";
+          } else if (response.status === 404) {
+            this.modal = {
+              show: true,
+              message: "Company not found",
+              title: "Error",
+            };
+          } else {
+            this.modal = {
+              show: true,
+              message: "Error deleting company",
+              title: "Error",
+            };
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          this.modal = {
+            show: true,
+            message: "Error deleting company",
+            title: "Error",
+          };
+        });
+    },
   },
 };
 </script>
@@ -404,5 +492,16 @@ textarea {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.deleted-message {
+  color: var(--dark-red);
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  margin: 5px 0;
+  padding: 5px;
+  border: 1px solid var(--dark-red);
+  border-radius: 8px;
 }
 </style>

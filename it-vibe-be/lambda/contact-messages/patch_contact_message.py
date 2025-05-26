@@ -11,7 +11,7 @@ from is_user_in_group import is_user_in_group
 
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('CONTACT_MESSAGE_TABLE_NAME')

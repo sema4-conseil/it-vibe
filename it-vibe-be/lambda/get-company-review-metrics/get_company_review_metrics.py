@@ -7,7 +7,7 @@ import logging
 
 dynamodb = boto3.resource('dynamodb')
 logger = logging.getLogger()
-logger.setLevel(logging.ERROR)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 
 table_name = os.environ.get('COMPANY_REVIEWS_TABLE_NAME')

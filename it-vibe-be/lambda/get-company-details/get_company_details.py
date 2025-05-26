@@ -3,12 +3,10 @@ import boto3
 import os
 from decimal import Decimal
 import uuid
-import logging
-
 
 from logging import getLogger   
 logger = getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 
 # check if the environment variable COMPANIES_TABLE_NAME is set

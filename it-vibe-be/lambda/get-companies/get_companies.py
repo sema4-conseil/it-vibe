@@ -7,7 +7,7 @@ from decimal import Decimal
 from company_mapper import map
 
 logger = logging.getLogger()
-logger.setLevel(logging.ERROR)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('COMPANIES_TABLE_NAME')
