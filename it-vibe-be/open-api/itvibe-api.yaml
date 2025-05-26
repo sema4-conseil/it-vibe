@@ -802,7 +802,9 @@ components:
         - company_id
         - rating
         - comment
-        - author
+        - isanonymous
+        - contractType
+        - startDate
       properties:
         company_id:
           type: string
@@ -810,8 +812,32 @@ components:
           type: integer
         comment:
           type: string
-        author:
+        isanonymous:
+          type: boolean
+          description: "If true, the review will be anonymous"
+          example: false
+          # Contract type possible values: (CDI, CDD, Internship, Contractor)
+        contractType:
           type: string
+          description: "The contract type of the author"
+          example: "CDI"
+          enum:
+            - CDI
+            - CDD
+            - INTTERNSHIP
+            - CONTRACTOR
+            - FREELANCE
+            - OTHER
+        startDate:
+          type: string
+          format: date-time
+          description: "The start date of the contract"
+          example: "2023-01-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          description: "The end date of the contract"
+          example: "2023-12-31T00:00:00Z"
     CreateReviewResponse:
       type: object
       required:
