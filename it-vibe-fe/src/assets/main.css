@@ -363,3 +363,31 @@ td {
 .rating span {
   cursor: default;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+li {
+  padding: 8px 0;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+li strong {
+  font-weight: 600;
+}
+
+/* Nested list styling */
+li ul {
+  margin: 8px 0 0 16px;
+  padding-left: 16px;
+}
+
+li ul li {
+  padding: 4px 0;
+}

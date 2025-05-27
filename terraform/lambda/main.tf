@@ -1,4 +1,5 @@
 variable "env"  {}
+variable "log_level" {}
 
 variable "be_version"  {
   description = "Lambda version"
@@ -194,6 +195,40 @@ data "archive_file" "get_reviews_by_company_id_lambda_code" {
     content  = file("../it-vibe-be/lambda/lib/mappers/review_mapper.py")
     filename = "review_mapper.py"   
   }
+}
+
+# Import companies from json file
+data "archive_file" "import_companies_lambda_code" {
+  type        = "zip"
+  output_path = "../it-vibe-be/lambda/import_companies/import_companies_from_file.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/import_companies/import_companies_from_file.py")
+    filename = "import_companies_from_file.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"   
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
+    filename = "get_user_informations.py"   
+  }
+}
+
+resource "aws_lambda_function" "import_companies_lambda" {
+    filename         = data.archive_file.import_companies_lambda_code.output_path
+    function_name    = "import_companies_${var.env}"
+    role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+    handler          = "import_companies_from_file.lambda_handler"
+    runtime          = var.pythonVersion
+    source_code_hash = data.archive_file.import_companies_lambda_code.output_base64sha256
+
+    environment {
+        variables = {
+            COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
+            LOG_LEVEL           = var.log_level
+        }
+    }
 }
 
 resource "aws_lambda_function" "get_reviews_by_company_id_lambda" {

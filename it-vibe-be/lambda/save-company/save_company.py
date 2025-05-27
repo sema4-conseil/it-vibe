@@ -8,7 +8,7 @@ from is_user_in_group import is_user_in_group
 from get_user_informations import get_user_informations
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
 DEFAULT_RESPONSE_HEADERS = {
                 "Content-Type": "application/json",

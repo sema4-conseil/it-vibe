@@ -12,6 +12,7 @@ resource "aws_lambda_permission" "lambda_permission" {
     "add_review"                  = var.add_review_lambda_arn
     "get_company_metrics"         = var.get_company_metrics_lambda_arn
     "health_check"                = var.health_check_lambda_arn
+    "import_companies"            = var.import_companies_lambda_arn
   }
 
   statement_id  = "AllowAPIGatewayInvoke"
@@ -28,6 +29,7 @@ data "template_file" "itvibe_api_spec" {
     health_check_lambda_invoke_arn                = var.health_check_lambda_invoke_arn
     get_companies_lambda_invoke_arn               = var.get_companies_lambda_invoke_arn
     create_company_lambda_invoke_arn              = var.save_company_lambda_invoke_arn
+    import_companies_lambda_invoke_arn            = var.import_companies_lambda_invoke_arn
     patch_company_lambda_invoke_arn               = var.patch_company_lambda_invoke_arn
     push_contact_message_lambda_invoke_arn        = var.push_contact_message_lambda_invoke_arn
     get_contact_messages_lambda_invoke_arn        = var.get_contact_messages_lambda_invoke_arn

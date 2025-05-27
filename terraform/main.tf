@@ -43,6 +43,12 @@ variable "env" {
   description = "The environment name"
 }
 
+variable "log_level" {
+  type = string
+  default = "INFO"
+  description = "The log level for the application"
+}
+
 variable "be_version" {
   type = string
   description = "The backend version"
@@ -65,6 +71,7 @@ module "lambda" {
   source = "./lambda"
   env = var.env
   be_version = var.be_version
+  log_level = var.log_level
 }
 
 module "dynamo-db" {
@@ -105,4 +112,6 @@ module "api-gateway" {
   get_reviews_by_company_id_lambda_invoke_arn = module.lambda.get_reviews_by_company_id_lambda_invoke_arn
   add_review_lambda_invoke_arn = module.lambda.add_review_lambda_invoke_arn
   add_review_lambda_arn = module.lambda.add_review_lambda_arn
+  import_companies_lambda_invoke_arn = module.lambda.import_companies_lambda_invoke_arn
+  import_companies_lambda_arn = module.lambda.import_companies_lambda_arn
 }

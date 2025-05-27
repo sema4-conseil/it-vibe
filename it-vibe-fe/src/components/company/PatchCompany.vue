@@ -444,19 +444,44 @@ export default {
 }
 
 .form-group {
+  padding: 20px;
   display: flex;
-  align-items: center; /* Align label and input vertically */
-  margin-bottom: 10px; /* Add spacing between form groups */
+  flex-direction: column;
+  gap: 12px;
 }
 .manage-company-container {
   max-width: 600px;
-  padding: 0 5px 5px 5px;
-  margin: 10px auto;
-  border: 1px solid #e0e0e0; /* Lighter border to match overall style */
-  border-radius: 12px; /* Slightly more rounded corners */
-  background-color: white; /* White background for cards */
-  flex: auto;
-  flex-direction: column;
+  padding: 0;
+  margin: 20px auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  cursor: pointer;
+  padding: 16px 20px;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.collapsible-header:hover {
+  background-color: #f1f3f5;
+}
+
+.collapsible-header .fa {
+  font-size: 0.9rem;
+  color: #6c757d;
+  transition: transform 0.2s ease;
 }
 
 input,
@@ -472,11 +497,7 @@ label {
   margin-right: 10px; /* Add some spacing between label and input */
   white-space: nowrap; /* Prevent label text from wrapping */
 }
-.form-group {
-  display: flex;
-  align-items: center; /* Align label and input vertically */
-  margin-bottom: 10px; /* Add spacing between form groups */
-}
+
 textarea {
   resize: vertical; /* Allow vertical resizing of text areas */
 }
