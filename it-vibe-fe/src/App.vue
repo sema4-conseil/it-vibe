@@ -156,7 +156,7 @@ export default {
 }
 
 .content {
-  margin-top: 60px;
+  margin-top: 30px;
   padding: 0 5px;
   height: calc(100vh - 60px); /* Full viewport height minus navbar */
   overflow-y: auto; /* Scrollbar only on content */

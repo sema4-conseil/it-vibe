@@ -22,7 +22,7 @@ DEFAULT_HEADERS = {
                 "Access-Control-Allow-Origin": "*",  # Required for CORS support to work
             }
 
-CONTRACT_TYPES = ["CDI", "CDD", "INTERNSHIP", "CONSTRACTOR", "FREELANCE", "OTHER"]
+CONTRACT_TYPES = ["CDI", "CDD", "INTERNSHIP", "CONTRACTOR", "FREELANCE", "OTHER"]
 
 DATE_FORMAT = "%Y-%m-%d"
 
