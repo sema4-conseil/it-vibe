@@ -48,14 +48,16 @@
         </div>
       </div>
       <div class="company-reviews">
-        <h2>
-          <span>Reviews ({{ company.metrics.review_count }})</span>
-        </h2>
         <div
-          v-if="company.metrics.review_count > 0"
+          v-if="company.metrics && company.metrics.review_count > 0"
           class="rating"
           :title="company.metrics.average_rating"
         >
+          <h2>
+            <span style="color: black"
+              >Reviews ({{ company.metrics.review_count }})</span
+            >
+          </h2>
           <span v-for="n in Math.floor(company.metrics.average_rating)" :key="n"
             >★</span
           >
@@ -90,27 +92,60 @@
               >
                 {{ commentLengthMessage }}
               </p>
-              <div class="dropdown-container">
-                <label for="rating">Rating:</label>
-                <select v-model="newReview.rating" id="rating" required>
-                  <option value="" disabled selected>Select your rating</option>
-                  <option v-for="rate in 10" :key="rate" :value="rate">
-                    {{ rate }}
-                  </option>
-                </select>
-                <p v-if="!newReview.rating && isSubmitted" class="error">
-                  Rating is required.
-                </p>
-              </div>
-              <div>
-                <label class="checkbox-label">
-                  <input
-                    type="checkbox"
-                    v-model="newReview.isAnonymous"
-                    class="anonymous-checkbox"
-                  />
-                  Post anonymously
-                </label>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="rating">Rating:</label>
+                  <select v-model="newReview.rating" id="rating" required>
+                    <option value="" disabled selected>
+                      Select your rating
+                    </option>
+                    <option v-for="rate in 10" :key="rate" :value="rate">
+                      {{ rate }}
+                    </option>
+                  </select>
+                  <p v-if="!newReview.rating && isSubmitted" class="error">
+                    Rating is required.
+                  </p>
+                </div>
+                <div class="form-group">
+                  <label for="rating">Contract type:</label>
+                  <select v-model="newReview.contractType" required>
+                    <option value="" disabled selected>Contcat type</option>
+                    <option value="CDI">CDI</option>
+                    <option value="CDD">CDD</option>
+                    <option value="INTERNSHIP">Internship</option>
+                    <option value="CONTRACTOR">Contractor</option>
+                    <option value="FREELANCE">Freelance</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                  <p
+                    v-if="!newReview.contractType && isSubmitted"
+                    class="error"
+                  >
+                    Contract type is required.
+                  </p>
+                </div>
+                <div class="form-group">
+                  <label>Start date:</label>
+                  <input type="date" v-model="newReview.startDate" required />
+                  <p v-if="!newReview.startDate && isSubmitted" class="error">
+                    Start date is required.
+                  </p>
+                </div>
+                <div class="form-group">
+                  <label>End date:</label>
+                  <input type="date" v-model="newReview.endDate" />
+                </div>
+                <div>
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      v-model="newReview.isAnonymous"
+                      class="anonymous-checkbox"
+                    />
+                    Post anonymously
+                  </label>
+                </div>
               </div>
               <div class="button-container">
                 <button @click="submitReview">Submit</button>
@@ -134,6 +169,7 @@
       ><div>
         <p>{{ modal.message }}</p>
       </div>
+      <div v-if="modal.loading" class="spinner"></div>
     </generic-modal>
   </div>
   <div v-else-if="companyNotFound">
@@ -168,11 +204,14 @@ export default {
       newReview: {
         comment: "",
         isAnonymous: false,
+        contractType: "",
+        rating: null,
       },
       modal: {
         show: false,
         message: "",
         type: "",
+        loading: false,
       },
     };
   },
@@ -274,6 +313,11 @@ export default {
     },
     async submitReview() {
       this.isSubmitted = true; // Set to true when the user tries to submit
+      this.modal = {
+        show: true, // Hide any previous modal messages
+        message: "Sending review...",
+        loading: true,
+      };
       if (this.isCommentValid && this.newReview.rating) {
         try {
           // Retrieve the JWT token from session storage
@@ -290,14 +334,33 @@ export default {
               comment: this.newReview.comment,
               isAnonymous: this.newReview.isAnonymous,
               rating: this.newReview.rating,
+              contractType: this.newReview.contractType,
+              startDate: this.newReview.startDate,
+              endDate: this.newReview.endDate || null,
             }),
           });
-          await this.fetchComapnyMetrics();
+          this.modal = {
+            show: false, // Hide any previous modal messages
+            message: "",
+            loading: false,
+          };
           if (!response.ok) {
-            throw new Error("Failed to submit review.");
+            if (response.status == 400) {
+              this.modal.show = true;
+              this.modal.message = await response
+                .json()
+                .then((data) => data.error || "Invalid review data.");
+              return;
+            }
           }
-          const newReview = await response.json();
-          this.reviews.push(newReview);
+          await this.fetchCompanyDetails();
+          await this.fetchComapnyMetrics();
+
+          this.newReview.rating = null;
+          this.newReview.contractType = "";
+          this.newReview.startDate = "";
+          this.newReview.endDate = "";
+          this.isSubmitted = false; // Reset the submitted state
           this.newReview.comment = "";
           this.newReview.isAnonymous = false;
           this.showReviewForm = false;
@@ -324,10 +387,18 @@ export default {
 </script>
 
 <style scoped>
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 15px 0;
+}
+
 .company-details-container {
   display: flex;
-  margin: 20px auto;
+  margin: 0px auto;
   border-radius: 8px;
+  height: calc(100vh - 60px);
 }
 
 .company-details {
@@ -409,7 +480,6 @@ h2 {
 
 .reviews-scrollable {
   overflow-y: auto;
-  max-height: 620px;
   flex: 1; /* Allow the reviews to take up available space */
 }
 
