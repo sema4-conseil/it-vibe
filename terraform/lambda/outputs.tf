@@ -85,6 +85,15 @@ output "patch_contact_messages_lambda_invoke_arn" {
   value = aws_lambda_function.patch_contact_messages_lambda.invoke_arn
 }
 
+output "import_companies_lambda_arn" {
+  value = aws_lambda_function.import_companies_lambda.arn
+}
+
+output "import_companies_lambda_invoke_arn" {
+  value = aws_lambda_function.import_companies_lambda.invoke_arn
+}
+
+
 
 output "health_check_lambda_arn" {
   value = aws_lambda_function.health_check_lambda.arn

@@ -276,7 +276,90 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+  /companies/import:
+    options:
+      summary: Preflight CORS check
+      responses:
+        "204":
+          description: No Content
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: "*"
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: "POST, OPTIONS"
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: "Content-Type, Authorization"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 204}'
+        responses:
+          default:
+            statusCode: "204"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'POST, OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'content-type, Authorization'"
+    post:
+      x-amazon-apigateway-integration:
+        uri: "${import_companies_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Import companies from a JSON file
+      security:
+        - itvibe-authorizer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: JSON file containing companies data
+      responses:
+        "200":
+          description: Companies imported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Companies imported successfully"
+                  importedCount:
+                    type: integer
+                    example: 10
+                  failedCount:
+                    type: integer
+                    example: 2
+        "400":
+          description: Bad request (invalid file format or content)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /companies/{id}/metrics:
     get:
       x-amazon-apigateway-integration:

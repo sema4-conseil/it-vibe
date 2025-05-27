@@ -88,6 +88,11 @@ def lambda_handler(event, context):
         for field in UPDATABLE_FIELDS:
             if field in body:
                 company[field] = body[field]
+                if (field == "name"):
+                    # If the name is updated, also update the name_lowercase field
+                    company["name_lowercase"] = body[field].lower()
+
+                    
         company["updatedBy"] = updateInfos
 
 
