@@ -1,19 +1,37 @@
 <template>
   <div>
     <!-- Search Panel -->
-    <div class="search-container">
+    <div class="search-container" style="max-width">
       <form @submit.prevent="searchCompanies" class="search-form">
         <div class="form-group">
           <label for="name">Name</label>
-          <input placeholder="Name" id="name" v-model="searchCriteria.name" />
+          <input
+            placeholder="e.g. Tech Corp"
+            id="name"
+            v-model.trim="searchCriteria.name"
+          />
         </div>
         <div class="form-group">
           <label for="siren">SIREN</label>
-          <input type="text" id="siren" v-model="searchCriteria.siren" />
+          <input
+            type="text"
+            id="siren"
+            v-model.trim="searchCriteria.siren"
+            placeholder="9-digit SIREN"
+            maxlength="9"
+          />
         </div>
         <div class="form-group">
-          <label for="siret">SIRET</label>
-          <input type="text" id="siret" v-model="searchCriteria.siret" />
+          <div class="form-group">
+            <label for="siret">SIRET</label>
+            <input
+              type="text"
+              id="siret"
+              v-model.trim="searchCriteria.siret"
+              placeholder="14-digit SIRET"
+              maxlength="14"
+            />
+          </div>
         </div>
         <div class="button-container">
           <button type="submit"><i class="fa fa-search"></i>Search</button>
@@ -24,17 +42,13 @@
       <p>Loading companies ...</p>
       <div class="spinner"></div>
     </div>
-    <div v-else-if="companies" class="company-cards">
-      <div
+    <div v-else-if="companies" class="search-results">
+      <company-card
         v-for="company in companies"
         :key="company.id"
-        class="company-card"
+        :company="company"
         @click="goToCompanyDetails(company.id)"
-      >
-        <h2>{{ company.name }}</h2>
-        <p><strong>Location:</strong> {{ company.location }}</p>
-        <p><strong>Industry:</strong> {{ company.industry }}</p>
-      </div>
+      ></company-card>
       <div>
         <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
           <i class="fa fa-forward"></i>Next Items
@@ -45,7 +59,9 @@
 </template>
 
 <script>
+import CompanyCard from "./company/CompanyCard.vue";
 export default {
+  components: { CompanyCard },
   data() {
     return {
       companies: [],
@@ -82,13 +98,7 @@ export default {
         const response = await fetch(url);
         const data = await response.json();
 
-        this.companies = data.items.map((company) => ({
-          id: company.id,
-          name: company.name,
-          location: company.location,
-          industry: company.industry,
-          description: company.description,
-        }));
+        this.companies = data.items;
         this.lastEvaluatedKey = data.LastEvaluatedKey;
         this.loading = false;
       } catch (error) {
@@ -138,45 +148,11 @@ export default {
 
 <style scoped>
 /* Styles for company cards remain unchanged */
-.company-cards {
-  padding: 20px; /* Increased padding to match content */
-  display: flex;
+.search-results {
   flex-wrap: wrap;
   flex-direction: column;
   gap: 20px; /* Increased gap for better spacing */
   max-width: 800px; /* Limit width for readability */
   margin: 20px auto; /* Center the cards */
-}
-
-.company-card {
-  border: 1px solid #e0e0e0; /* Lighter border to match overall style */
-  border-radius: 12px; /* Slightly more rounded corners */
-  width: 100%;
-  background-color: white; /* White background for cards */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-  padding: 10px; /* Padding inside the cards */
-  transition: box-shadow 0.3s ease; /* Smooth shadow transition */
-}
-
-.company-card:hover {
-  border: 1px solid var(--button-blue);
-  cursor: pointer;
-}
-
-.company-card h2 {
-  font-size: 1.5em;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.company-card p {
-  font-size: 1em;
-  color: #555;
-  margin-bottom: 8px;
-}
-
-.company-card strong {
-  font-weight: 600;
-  color: #333;
 }
 </style>
