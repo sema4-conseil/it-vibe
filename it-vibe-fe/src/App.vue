@@ -82,7 +82,7 @@ export default {
     window.addEventListener("resize", () => {
       this.isCollapsed = window.innerWidth <= maxWidth;
     });
-    const idToken = sessionStorage.getItem("idToken");
+    const idToken = localStorage.getItem("idToken");
     if (idToken) {
       try {
         const tokenPayload = JSON.parse(atob(idToken.split(".")[1]));

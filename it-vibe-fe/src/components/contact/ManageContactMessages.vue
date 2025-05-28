@@ -142,7 +142,7 @@ export default {
   methods: {
     async fetchMessages() {
       this.selectedMessage = null;
-      const token = sessionStorage.getItem("idToken");
+      const token = localStorage.getItem("idToken");
       let url = `${this.apibaseUrl}/contact?pageSize=${this.pageSize}`;
       if (this.lastEvaluatedKey) {
         url += `&startKey=${encodeURIComponent(
@@ -200,7 +200,7 @@ export default {
       };
       let status = codes[message.status];
       let url = `${this.apibaseUrl}/contact/${message.id}`;
-      const token = sessionStorage.getItem("idToken");
+      const token = localStorage.getItem("idToken");
       let body = {
         status: status,
       };

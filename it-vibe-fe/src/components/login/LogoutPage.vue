@@ -16,10 +16,10 @@ export default {
         postLogoutRedirectUri: process.env.VUE_APP_LOGOUT_REDIRECT_URI,
       };
 
-      // Clear tokens from sessionStorage
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("idToken");
-      sessionStorage.removeItem("refreshToken");
+      // Clear tokens from localStorage
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("idToken");
+      localStorage.removeItem("refreshToken");
 
       // Redirect to Cognito logout endpoint
       const logoutUrl = `https://${

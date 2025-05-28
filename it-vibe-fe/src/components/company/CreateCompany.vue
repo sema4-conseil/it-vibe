@@ -95,7 +95,7 @@ export default {
     async saveCompany() {
       try {
         // Retrieve the JWT token from session storage
-        const token = sessionStorage.getItem("idToken");
+        const token = localStorage.getItem("idToken");
         const response = await fetch(`${this.apibaseUrl}/companies/`, {
           method: "POST",
           headers: {

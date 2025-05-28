@@ -52,7 +52,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // Check if the route requires admin rights
   if (to.matched.some((record) => record.meta.requiresAdmin)) {
-    const token = sessionStorage.getItem("idToken");
+    const token = localStorage.getItem("idToken");
     if (token) {
       try {
         const decodedToken = jwtDecode(token); // Decode the JWT
