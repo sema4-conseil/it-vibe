@@ -282,7 +282,7 @@ export default {
       }
     },
     toggleReviewForm() {
-      const token = sessionStorage.getItem("idToken");
+      const token = localStorage.getItem("idToken");
       // Check if the user is logged in
       // If not, redirect to the login page
       if (!token) {
@@ -322,7 +322,7 @@ export default {
         try {
           // Retrieve the JWT token from session storage
           // TODO Change me
-          const token = sessionStorage.getItem("idToken");
+          const token = localStorage.getItem("idToken");
           const response = await fetch(`${this.apibaseUrl}/reviews/`, {
             method: "POST",
             headers: {

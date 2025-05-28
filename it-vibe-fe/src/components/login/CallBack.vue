@@ -41,9 +41,9 @@ export default {
 
           if (response.ok) {
             const tokens = await response.json();
-            sessionStorage.setItem("accessToken", tokens.access_token);
-            sessionStorage.setItem("idToken", tokens.id_token);
-            sessionStorage.setItem("refreshToken", tokens.refresh_token);
+            localStorage.setItem("accessToken", tokens.access_token);
+            localStorage.setItem("idToken", tokens.id_token);
+            localStorage.setItem("refreshToken", tokens.refresh_token);
 
             const redirectUri = sessionStorage.getItem("redirect_uri");
             if (redirectUri) {

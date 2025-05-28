@@ -300,7 +300,7 @@ export default {
           };
           return;
         }
-        const token = sessionStorage.getItem("idToken");
+        const token = localStorage.getItem("idToken");
         this.updateLoading = true;
         this.modal = {
           show: true,
@@ -385,7 +385,7 @@ export default {
         message: "Deleting company...",
         title: "Info",
       };
-      const token = sessionStorage.getItem("idToken");
+      const token = localStorage.getItem("idToken");
       fetch(`${this.apibaseUrl}/companies/${this.company.id}`, {
         method: "DELETE",
         headers: {

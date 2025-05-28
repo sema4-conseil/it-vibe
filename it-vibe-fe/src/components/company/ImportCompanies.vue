@@ -114,7 +114,7 @@ export default {
         const formData = new FormData();
         formData.append("file", this.selectedFile);
 
-        const token = sessionStorage.getItem("idToken");
+        const token = localStorage.getItem("idToken");
 
         const headers = {
           Authorization: `Bearer ${token}`,
