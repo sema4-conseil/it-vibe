@@ -9,6 +9,11 @@ from company_mapper import map
 logger = logging.getLogger()
 logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
+DEFAULT_RESPONSE_HEADERS = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*", 
+}
+
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('COMPANIES_TABLE_NAME')
 if not table_name:
@@ -40,7 +45,10 @@ def lambda_handler(event, context):
         if not isinstance(pageSize, int) or pageSize <= 0:
             raise ValueError("pageSize must be a positive integer.")
 
-        filter_expression = None
+        # Initialize filter expression
+        # exclude deleted companies
+        filter_expression = Attr("deletedBy").not_exists()
+
         scan_kwargs = {'Limit': pageSize}
 
         if startKey:
@@ -51,18 +59,18 @@ def lambda_handler(event, context):
 
         if name_value:
             name_lower = name_value.lower()
-            filter_expression = Attr("name_lowercase").contains(name_lower)
+            condition = Attr("name_lowercase").contains(name_lower)
+            filter_expression = filter_expression & condition
         
         if siren_value:
             condition = Attr("siren").eq(siren_value)
-            filter_expression = condition if not filter_expression else filter_expression & condition
+            filter_expression = filter_expression & condition
 
         if siret_value:
             condition = Attr("siret").eq(siret_value)
-            filter_expression = condition if not filter_expression else filter_expression & condition
+            filter_expression = filter_expression & condition
         
-        if filter_expression:
-            scan_kwargs['FilterExpression'] = filter_expression
+        scan_kwargs['FilterExpression'] = filter_expression
         
         # Perform the scan
         items = []
@@ -91,15 +99,12 @@ def lambda_handler(event, context):
 
         # Convert Decimal to float for JSON serialization
         response = json.loads(json.dumps(response, default=decimal_to_float))
-        logger.info(f"Retrieved {len(response_items)} companies successfully.")
+        logger.debug(f"Retrieved {len(response_items)} companies successfully.")
 
         return {
             "statusCode": 200,
             "body": json.dumps(response),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            }
+            "headers": DEFAULT_RESPONSE_HEADERS
         }
 
     except ValueError as ve:
@@ -107,18 +112,12 @@ def lambda_handler(event, context):
         return {
             "statusCode": 400,
             "body": json.dumps({"error": str(ve)}),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            }
+            "headers": DEFAULT_RESPONSE_HEADERS
         }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
         return {
             "statusCode": 500,
             "body": json.dumps({"error": "An internal server error occurred."}),
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            }
+            "headers": DEFAULT_RESPONSE_HEADERS
         }
