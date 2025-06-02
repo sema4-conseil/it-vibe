@@ -1,5 +1,6 @@
 variable "env"  {}
 variable "log_level" {}
+variable "contact_message_stream_arn" {}
 
 variable "be_version"  {
   description = "Lambda version"
@@ -367,6 +368,43 @@ resource "aws_lambda_function" "patch_contact_messages_lambda" {
             CONTACT_MESSAGE_TABLE_NAME = "IT_VIBE_CONTACT_MESSAGES_${upper(var.env)}"
         }
     }
+}
+
+data archive_file "handle_new_contact_lambda_code" {
+  type        = "zip"
+  source {
+    content  = file("../it-vibe-be/lambda/contact-messages/handle_new_contact.py")
+    filename = "handle_new_contact.py"
+  }
+  output_path = "../it-vibe-be/lambda/utils/handle_new_contact.zip"
+}
+
+resource "aws_lambda_function" "handle_new_contact_lambda" {
+    filename         = data.archive_file.handle_new_contact_lambda_code.output_path
+    function_name    = "handle_new_contact_${var.env}"
+    role             = "arn:aws:iam::327441465709:role/DynamoAndSesAndCloudwatchForLambda"
+    handler          = "handle_new_contact.lambda_handler"
+    runtime          = var.pythonVersion
+    source_code_hash = data.archive_file.handle_new_contact_lambda_code.output_base64sha256
+    description      = "Handle new contact lambda function for ${var.env} environment"
+    environment {
+        variables = {
+            VERSION       = var.be_version
+            ENV           = var.env
+            LOG_LEVEL     = var.log_level
+            CONFIG_BUCKET = "it-vibe-sema4-conseil-config"
+            CONFIG_KEY    = "lambda/handle_new_contact/${var.env}/config.json"
+        }
+    }
+}
+
+# Event Source Mapping (Trigger)
+# Allow the Lambda function to be triggered by new records in the DynamoDB stream
+resource "aws_lambda_event_source_mapping" "contact_message_stream_trigger" {
+  event_source_arn  = var.contact_message_stream_arn
+  function_name     = aws_lambda_function.handle_new_contact_lambda.arn
+  starting_position = "LATEST"
+  batch_size        = 1 # Process one record at a time
 }
 
 
