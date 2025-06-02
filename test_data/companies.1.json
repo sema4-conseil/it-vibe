@@ -1,0 +1,14 @@
+{
+  "companies": [
+    { "name": "Aria Stark company", "size": 123, "revenue": 321654, "creationDate": "2023-03-31", "adress": "winterfil", "siren": "321654321", "siret": "32165432100000", "industry": "IT consulting", "country": "FR" },
+    { "name": "Sansa Stark company", "size": 41, "revenue": 120000, "creationDate": "2022-03-31", "adress": "Winterfil", "siren": "987654987", "siret": "98765498700000", "industry": "IT consulting", "country": "FR" },
+    { "name": "Ned Stark company", "size": 3000, "revenue": 22000000, "creationDate": "2000-04-28", "adress": "Winterfil", "siren": "123456123", "siret": "12345612300000", "industry": "IT consulting", "country": "FR" },
+    { "name": "Sersey Lannister company", "size": 1500, "revenue": 1700000, "creationDate": "1998-06-21", "adress": "Castle rock", "siren": "654321654", "siret": "98765432100000", "industry": "IT consulting", "country": "IT" },
+    { "name": "Stannis Brath company", "size": 12, "revenue": 9800000, "creationDate": "2005-06-21", "adress": "Kings landing", "siren": "741852369", "siret": "74185236900000", "industry": "IT consulting", "country": "IT" },
+    { "name": "Dragonstone Innovations", "size": 450, "revenue": 8500000, "creationDate": "2010-11-15", "adress": "Dragonstone", "siren": "159753468", "siret": "15975346800000", "industry": "Renewable Energy", "country": "ES" },
+    { "name": "Highgarden Biotech", "size": 320, "revenue": 5200000, "creationDate": "2015-07-08", "adress": "Highgarden", "siren": "258369147", "siret": "25836914700000", "industry": "Biotechnology", "country": "UK" },
+    { "name": "Ironborn Logistics", "size": 780, "revenue": 12500000, "creationDate": "2008-09-22", "adress": "Pyke", "siren": "369147258", "siret": "36914725800000", "industry": "Transportation", "country": "NO" },
+    { "name": "Dorne Agro", "size": 1200, "revenue": 9500000, "creationDate": "1995-04-12", "adress": "Sunspear", "siren": "147258369", "siret": "14725836900000", "industry": "Agriculture", "country": "ES" },
+    { "name": "Braavos Finance Group", "size": 2500, "revenue": 45000000, "creationDate": "1989-02-18", "adress": "Braavos", "siren": "852963741", "siret": "85296374100000", "industry": "Banking", "country": "NL" }
+  ]
+}

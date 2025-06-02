@@ -1,0 +1,10 @@
+
+    {
+        "companies": [
+            { "name": "Winterfell Brewery", "size": 85, "revenue": 3200000, "creationDate": "2018-05-30", "adress": "Winterfell", "siren": "963741852", "siret": "96374185200000", "industry": "Beverages", "country": "UK" },
+            { "name": "Valyrian Steelworks", "size": 600, "revenue": 18000000, "creationDate": "1975-12-03", "adress": "Valyria", "siren": "456123789", "siret": "45612378900000", "industry": "Manufacturing", "country": "DE" },
+            { "name": "The Eyrie Analytics", "size": 150, "revenue": 6500000, "creationDate": "2016-10-09", "adress": "The Eyrie", "siren": "789123456", "siret": "78912345600000", "industry": "Data Science", "country": "CH" },
+            { "name": "Meereen Fashion", "size": 420, "revenue": 8800000, "creationDate": "2007-08-14", "adress": "Meereen", "siren": "654987321", "siret": "65498732100000", "industry": "Apparel", "country": "IT" },
+            { "name": "Storm's End Security", "size": 200, "revenue": 5500000, "creationDate": "2012-01-25", "adress": "Storm's End", "siren": "321789654", "siret": "32178965400000", "industry": "Cybersecurity", "country": "FR" }        
+        ]
+    }
