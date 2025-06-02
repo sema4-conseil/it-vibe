@@ -90,6 +90,8 @@ resource "aws_dynamodb_table" "contact_messages" {
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "id"
   range_key      = "timestamp"
+  stream_enabled = true
+  stream_view_type = "NEW_IMAGE"
 	attribute {
 		name = "id"
 		type = "S"
@@ -111,4 +113,9 @@ resource "aws_dynamodb_table" "contact_messages" {
   tags = {
       Entity      = "ContactMessage"
   }
+}
+
+output "contact_message_stream_arn" {
+  value       = aws_dynamodb_table.contact_messages.stream_arn
+  description = "The ARN of the DynamoDB stream for contact messages"
 }

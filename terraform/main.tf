@@ -72,6 +72,8 @@ module "lambda" {
   env = var.env
   be_version = var.be_version
   log_level = var.log_level
+
+  contact_message_stream_arn = module.dynamo-db.contact_message_stream_arn
 }
 
 module "dynamo-db" {
