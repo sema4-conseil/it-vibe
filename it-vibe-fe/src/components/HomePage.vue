@@ -43,6 +43,12 @@
       <div class="spinner"></div>
     </div>
     <div v-else-if="companies" class="search-results">
+      <div v-if="!companies.length">
+        <p>No companies found.</p>
+      </div>
+      <div v-else>
+        <p v-if="totalCount > 1">found {{ totalCount }} companies</p>
+      </div>
       <company-card
         v-for="company in companies"
         :key="company.id"
@@ -64,10 +70,11 @@ export default {
   components: { CompanyCard },
   data() {
     return {
-      companies: [],
+      companies: null,
       apibaseUrl: process.env.VUE_APP_API_BASE_URL,
       lastEvaluatedKey: null,
       pageSize: 4,
+      totalCount: 0,
       loading: false,
       searchCriteria: {
         name: "",
@@ -99,6 +106,7 @@ export default {
         const data = await response.json();
 
         this.companies = data.items;
+        this.totalCount = data.Count;
         this.lastEvaluatedKey = data.LastEvaluatedKey;
         this.loading = false;
       } catch (error) {
