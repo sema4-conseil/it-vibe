@@ -49,6 +49,7 @@ def lambda_handler(event, context):
         # exclude deleted companies
         filter_expression = Attr("deletedBy").not_exists()
 
+        count_kwargs = {'Select': 'COUNT'}
         scan_kwargs = {'Limit': pageSize}
 
         if startKey:
@@ -71,6 +72,12 @@ def lambda_handler(event, context):
             filter_expression = filter_expression & condition
         
         scan_kwargs['FilterExpression'] = filter_expression
+        count_kwargs['FilterExpression'] = filter_expression
+
+        # Get the total count
+        count_response = table.scan(**count_kwargs)
+        total_count = count_response['Count']
+        logger.debug(f"Total count of companies: {total_count}")
         
         # Perform the scan
         items = []
@@ -94,7 +101,7 @@ def lambda_handler(event, context):
         response = {
             "items": mapped_items,
             "LastEvaluatedKey": last_evaluated_key,
-            "Count": len(response_items),
+            "Count": total_count,
         }
 
         # Convert Decimal to float for JSON serialization
