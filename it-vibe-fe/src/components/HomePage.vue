@@ -47,7 +47,9 @@
         <p>No companies found.</p>
       </div>
       <div v-else>
-        <p v-if="totalCount > 1">found {{ totalCount }} companies</p>
+        <p v-if="totalCount > 1">
+          found {{ companies.length }} / {{ totalCount }} companies
+        </p>
       </div>
       <company-card
         v-for="company in companies"
@@ -56,7 +58,7 @@
         @click="goToCompanyDetails(company.id)"
       ></company-card>
       <div>
-        <button @click="fetchNextPage()" :disabled="!lastEvaluatedKey">
+        <button @click="fetchCompanies()" :disabled="!lastEvaluatedKey">
           <i class="fa fa-forward"></i>Next Items
         </button>
       </div>
@@ -84,12 +86,14 @@ export default {
     };
   },
   methods: {
-    async fetchCompanies(startKey) {
+    async fetchCompanies() {
       try {
         this.loading = true;
         let url = `${this.apibaseUrl}/companies?pageSize=${this.pageSize}`;
-        if (startKey) {
-          url += `&startKey=${encodeURIComponent(JSON.stringify(startKey))}`;
+        if (this.lastEvaluatedKey) {
+          url += `&startKey=${encodeURIComponent(
+            JSON.stringify(this.lastEvaluatedKey)
+          )}`;
         }
         // Add search criteria to the URL if they exist
         if (this.searchCriteria.name) {
@@ -105,10 +109,15 @@ export default {
         const response = await fetch(url);
         const data = await response.json();
 
-        this.companies = data.items;
+        if (!this.companies) {
+          this.companies = data.items;
+        } else {
+          this.companies = [...this.companies, ...data.items];
+        }
         this.totalCount = data.Count;
         this.lastEvaluatedKey = data.LastEvaluatedKey;
         this.loading = false;
+        window.scrollTo(0, document.body.scrollHeight);
       } catch (error) {
         console.error("Error fetching companies:", error);
       }
@@ -145,6 +154,8 @@ export default {
     },
     searchCompanies() {
       this.lastEvaluatedKey = null; // Reset pagination
+      this.companies = null; // Clear previous results
+      this.totalCount = 0; // Reset total count
       this.fetchCompanies(); // Fetch companies with the search criteria
     },
     goToCompanyDetails(companyId) {
