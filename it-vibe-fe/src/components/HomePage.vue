@@ -115,41 +115,20 @@ export default {
           this.companies = [...this.companies, ...data.items];
         }
         this.totalCount = data.Count;
-        this.lastEvaluatedKey = data.LastEvaluatedKey;
+        this.lastEvaluatedKey = data.startKey;
         this.loading = false;
-        window.scrollTo(0, document.body.scrollHeight);
+        this.$nextTick(() => {
+          const contentEl = document.getElementById("content");
+          if (contentEl) {
+            console.log("scroll to element");
+            contentEl.scrollTo({
+              top: contentEl.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        });
       } catch (error) {
         console.error("Error fetching companies:", error);
-      }
-    },
-    async fetchNextPage() {
-      console.log("Fetching next page...");
-      if (this.lastEvaluatedKey) {
-        try {
-          let url = `${this.apibaseUrl}/companies?pageSize=${this.pageSize}`;
-
-          url += `&startKey=${encodeURIComponent(
-            JSON.stringify(this.lastEvaluatedKey)
-          )}`;
-
-          const response = await fetch(url);
-          const data = await response.json();
-
-          const newCompanies = data.items.map((company) => ({
-            id: company.id,
-            name: company.name,
-            location: company.location,
-            industry: company.industry,
-            description: company.description,
-          }));
-
-          this.companies = [...this.companies, ...newCompanies]; // Append new companies
-          this.lastEvaluatedKey = data.LastEvaluatedKey;
-
-          window.scrollTo(0, document.body.scrollHeight);
-        } catch (error) {
-          console.error("Error fetching next page:", error);
-        }
       }
     },
     searchCompanies() {

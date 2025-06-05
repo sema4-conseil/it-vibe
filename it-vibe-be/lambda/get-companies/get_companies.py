@@ -4,10 +4,12 @@ from boto3.dynamodb.conditions import Key, Attr
 import os
 import logging
 from decimal import Decimal
-from company_mapper import map
 
-logger = logging.getLogger()
+
+
+logger = logging.getLogger(__name__)
 logger.setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
+
 
 DEFAULT_RESPONSE_HEADERS = {
     "Content-Type": "application/json",
@@ -27,104 +29,105 @@ def decimal_to_float(obj):
 
 
 def lambda_handler(event, context):
+    query_params = event.get('queryStringParameters', {}) or {}
+    name = query_params.get('name', '').lower()
+    siren = query_params.get('siren', '')
+    siret = query_params.get('siret', '')
+    country = query_params.get('country', 'FR')
+    pageSize = int(query_params.get('pageSize', 5))
+    
+    logger.debug(f"Received query parameters: {query_params}")
+
     try:
-        startKey = None
-        pageSize = 5  # Default page size
-        name_value = None
-        siren_value = None
-        siret_value = None
+        if (siren or siret) and name: 
+            raise ValueError("Cannot filter by both 'name' and 'siren'/'siret'. Please choose one.")
+    
+        query_args = {};
 
-        if event and event.get('queryStringParameters'):
-            query_params = event['queryStringParameters']
-            startKey = query_params.get('startKey')
-            pageSize = int(query_params.get('pageSize', 5))
-            name_value = query_params.get("name")
-            siren_value = query_params.get("siren")
-            siret_value = query_params.get("siret")
+        if siren:
+            query_args = {
+                'TableName': table_name,
+                'IndexName': 'siren-index',
+                'KeyConditionExpression': 'siren = :siren',
+                'ExpressionAttributeValues': {
+                    ':siren': siren
+                },
+            } 
         
-        if not isinstance(pageSize, int) or pageSize <= 0:
-            raise ValueError("pageSize must be a positive integer.")
-
-        # Initialize filter expression
-        # exclude deleted companies
-        filter_expression = Attr("deletedBy").not_exists()
-
-        count_kwargs = {'Select': 'COUNT'}
-        scan_kwargs = {'Limit': pageSize}
-
-        if startKey:
-            try:
-                scan_kwargs['ExclusiveStartKey'] = json.loads(startKey)
-            except json.JSONDecodeError:
-                raise ValueError("Invalid format for startKey.")
-
-        if name_value:
-            name_lower = name_value.lower()
-            condition = Attr("name_lowercase").contains(name_lower)
-            filter_expression = filter_expression & condition
+        elif siret:
+            query_args = {
+                'TableName': table_name,
+                'IndexName': 'siret-index',
+                'KeyConditionExpression': 'siret = :siret',
+                'ExpressionAttributeValues': {
+                    ':siret': siret
+                },
+            } 
         
-        if siren_value:
-            condition = Attr("siren").eq(siren_value)
-            filter_expression = filter_expression & condition
-
-        if siret_value:
-            condition = Attr("siret").eq(siret_value)
-            filter_expression = filter_expression & condition
-        
-        scan_kwargs['FilterExpression'] = filter_expression
-        count_kwargs['FilterExpression'] = filter_expression
-
-        # Get the total count
-        count_response = table.scan(**count_kwargs)
-        total_count = count_response['Count']
-        logger.debug(f"Total count of companies: {total_count}")
-        
-        # Perform the scan
-        items = []
-        while len(items) < pageSize:
-            result = table.scan(**scan_kwargs)
-            items.extend(result.get('Items', []))
             
-            # Capture the LastEvaluatedKey from the result
-            last_evaluated_key = result.get('LastEvaluatedKey')
+        else:
+            
+            startKey = query_params.get('startKey')
 
-            # Break if no more items to scan
-            if not last_evaluated_key:
-                break
+            # validate pageSize
+            if pageSize < 1 or pageSize > 100:
+                raise ValueError("pageSize must be between 1 and 100.")
+            
+            # validate startKey
+            if startKey:
+                try:
+                    startKey = json.loads(startKey, parse_float=Decimal)
+                except json.JSONDecodeError:
+                    raise ValueError("Invalid startKey format. It should be a valid JSON string.")
+            
+                
+            query_args = {
+                'TableName': table_name,
+                'IndexName': 'country-index',
+                'KeyConditionExpression': 'country = :country',
+                'ExpressionAttributeValues': {
+                    ':country': country
+                },
+                'Limit': pageSize,
+                'ScanIndexForward': True  # Sort ascending
+            }
+            if startKey:
+                query_args['ExclusiveStartKey'] = startKey
 
-            # Update for next iteration
-            scan_kwargs['ExclusiveStartKey'] = result['LastEvaluatedKey']
+            if name:
+                query_args['KeyConditionExpression'] += ' and begins_with(name_lowercase, :name)'
+                query_args['ExpressionAttributeValues'][':name'] = name
+        
+        logger.debug(f"Query args for dynamo db: {query_args}")
 
-        # Limit the items to the requested page size
-        response_items = items[:pageSize]
-        mapped_items = [map(item) for item in response_items]
-        response = {
-            "items": mapped_items,
-            "LastEvaluatedKey": last_evaluated_key,
-            "Count": total_count,
+        response = table.query(**query_args)
+
+        result = {
+                "items": response.get('Items', []),
+                "count": response.get('Count', 0),
+                "pageSize": pageSize,
+                "startKey": response.get('LastEvaluatedKey', None)
         }
-
-        # Convert Decimal to float for JSON serialization
-        response = json.loads(json.dumps(response, default=decimal_to_float))
-        logger.debug(f"Retrieved {len(response_items)} companies successfully.")
 
         return {
             "statusCode": 200,
-            "body": json.dumps(response),
+            "body": json.dumps(result, default=decimal_to_float),
             "headers": DEFAULT_RESPONSE_HEADERS
         }
-
-    except ValueError as ve:
-        logger.error(f"ValueError: {str(ve)}")
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": str(ve)}),
-            "headers": DEFAULT_RESPONSE_HEADERS
-        }
+            
+    
+    
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
         return {
             "statusCode": 500,
             "body": json.dumps({"error": "An internal server error occurred."}),
+            "headers": DEFAULT_RESPONSE_HEADERS
+        }
+    except ValueError as ve:
+        logger.debug(f"Validation error: {str(ve)}")
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": str(ve)}),
             "headers": DEFAULT_RESPONSE_HEADERS
         }
