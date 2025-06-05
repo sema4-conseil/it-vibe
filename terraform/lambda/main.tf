@@ -37,6 +37,9 @@ resource "aws_lambda_function" "get_companies_lambda" {
     environment {
         variables = {
             COMPANIES_TABLE_NAME = "IT_VIBE_COMPANIES_${upper(var.env)}"
+            VERSION       = var.be_version
+            ENV           = var.env
+            LOG_LEVEL     = var.log_level
         }
     }
 }

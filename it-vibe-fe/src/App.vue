@@ -55,7 +55,7 @@
         </div>
       </ul>
     </nav>
-    <div @click="collapseMenu()" class="content">
+    <div id="content" @click="collapseMenu()" class="content">
       <router-view></router-view>
     </div>
   </div>

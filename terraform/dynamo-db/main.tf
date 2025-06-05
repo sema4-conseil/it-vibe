@@ -5,7 +5,7 @@ resource "aws_dynamodb_table" "companies" {
   hash_key       = "id"
   attribute {
     name = "id" 
-    type = "S" # String type
+    type = "S"
   }
 
   attribute {
@@ -14,19 +14,18 @@ resource "aws_dynamodb_table" "companies" {
   }
 
   attribute {
+    name = "country"
+    type = "S"
+  }
+
+  attribute {
     name = "siren"
-    type = "S" # String type
+    type = "S"
   }
 
   attribute {
     name = "siret"
-    type = "S" # String type
-  }
-
-  global_secondary_index {
-    name            = "name-index"
-    hash_key        = "name_lowercase"
-    projection_type = "ALL"
+    type = "S"
   }
 
   global_secondary_index {
@@ -38,6 +37,13 @@ resource "aws_dynamodb_table" "companies" {
   global_secondary_index {
     name            = "siret-index"
     hash_key        = "siret"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "country-index"
+    hash_key        = "country"
+    range_key       = "name_lowercase"
     projection_type = "ALL"
   }
 
