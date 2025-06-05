@@ -114,7 +114,7 @@ export default {
         } else {
           this.companies = [...this.companies, ...data.items];
         }
-        this.totalCount = data.Count;
+        this.totalCount = data.count;
         this.lastEvaluatedKey = data.startKey;
         this.loading = false;
         this.$nextTick(() => {
