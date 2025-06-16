@@ -116,4 +116,6 @@ module "api-gateway" {
   add_review_lambda_arn = module.lambda.add_review_lambda_arn
   import_companies_lambda_invoke_arn = module.lambda.import_companies_lambda_invoke_arn
   import_companies_lambda_arn = module.lambda.import_companies_lambda_arn
+  delete_review_lambda_arn = module.lambda.delete_review_lambda_arn
+  delete_review_lambda_invoke_arn = module.lambda.delete_review_lambda_invoke_arn
 }

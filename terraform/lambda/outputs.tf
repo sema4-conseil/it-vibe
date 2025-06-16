@@ -102,3 +102,11 @@ output "health_check_lambda_arn" {
 output "health_check_lambda_invoke_arn" {
   value = aws_lambda_function.health_check_lambda.invoke_arn
 }
+
+output "delete_review_lambda_arn" {
+  value = aws_lambda_function.delete_review_lambda.arn
+}
+
+output "delete_review_lambda_invoke_arn" {
+  value = aws_lambda_function.delete_review_lambda.invoke_arn
+}

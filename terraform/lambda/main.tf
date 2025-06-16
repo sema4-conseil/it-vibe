@@ -283,6 +283,38 @@ resource "aws_lambda_function" "add_review_lambda" {
     }
 }
 
+data "archive_file" "delete_review_code" {
+  type        = "zip"
+  output_path = "../it-vibe-be/lambda/delete-company/delete_review.zip"
+  source {
+    content  = file("../it-vibe-be/lambda/delete-review/delete_review.py")
+    filename = "delete_review.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/is_user_in_group.py")
+    filename = "is_user_in_group.py"
+  }
+  source {
+    content  = file("../it-vibe-be/lambda/lib/get_user_informations.py")
+    filename = "get_user_informations.py"
+  }
+}
+
+resource "aws_lambda_function" "delete_review_lambda" {
+  filename         = data.archive_file.delete_review_code.output_path
+  function_name    = "delete_review_${var.env}"
+  role             = "arn:aws:iam::327441465709:role/DynamoDbReadWriteRole"
+  handler          = "delete_review.lambda_handler"
+  source_code_hash = data.archive_file.delete_review_code.output_base64sha256
+  runtime          = var.pythonVersion
+  environment {
+    variables = {
+      COMPANY_REVIEWS_TABLE_NAME = "IT_VIBE_COMPANY_REVIEWS_${upper(var.env)}"
+      LOG_LEVEL = var.log_level
+    }
+  }
+}
+
 data archive_file "push_contact_message_lambda_code" {
   type        = "zip"
   source {
