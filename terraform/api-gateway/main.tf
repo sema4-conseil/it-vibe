@@ -2,7 +2,7 @@ resource "aws_lambda_permission" "lambda_permission" {
   for_each = {
     "get_companies"               = var.get_companies_lambda_arn
     "save_company"                = var.save_company_lambda_arn
-    "patch_company"                = var.patch_company_lambda_arn
+    "patch_company"               = var.patch_company_lambda_arn
     "get_company_details_by_id"   = var.get_company_details_by_id_lambda_arn
     "delete_company_by_id"        = var.delete_company_by_id_lambda_arn
     "push_contact_message"        = var.push_contact_message_lambda_arn
@@ -10,6 +10,7 @@ resource "aws_lambda_permission" "lambda_permission" {
     "patch_contact_message"       = var.patch_contact_messages_lambda_arn
     "get_reviews_by_company_id"   = var.get_reviews_by_company_id_lambda_arn
     "add_review"                  = var.add_review_lambda_arn
+    "delete_review"               = var.delete_review_lambda_arn
     "get_company_metrics"         = var.get_company_metrics_lambda_arn
     "health_check"                = var.health_check_lambda_arn
     "import_companies"            = var.import_companies_lambda_arn
@@ -39,6 +40,7 @@ data "template_file" "itvibe_api_spec" {
     get_company_metrics_lambda_invoke_arn         = var.get_company_metrics_lambda_invoke_arn
     get_reviews_by_company_id_lambda_invoke_arn   = var.get_reviews_by_company_id_lambda_invoke_arn
     add_review_lambda_invoke_arn                  = var.add_review_lambda_invoke_arn
+    delete_review_lambda_invoke_arn               = var.delete_review_lambda_invoke_arn
   }
 }
 

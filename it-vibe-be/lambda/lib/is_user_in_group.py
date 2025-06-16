@@ -1,6 +1,3 @@
-import json
-
-
 def is_user_in_group(event, group_name):
     """
     Checks if the user is in the specified Cognito group.

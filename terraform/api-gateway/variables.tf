@@ -33,6 +33,8 @@ variable "get_reviews_by_company_id_lambda_arn" {}
 variable "get_reviews_by_company_id_lambda_invoke_arn" {} 
 variable "add_review_lambda_arn" {}
 variable "add_review_lambda_invoke_arn" {}
+variable "delete_review_lambda_arn" {}
+variable "delete_review_lambda_invoke_arn" {}
 variable "import_companies_lambda_arn" {}
 variable "import_companies_lambda_invoke_arn" {}
 

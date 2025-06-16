@@ -422,7 +422,7 @@ paths:
             Access-Control-Allow-Methods:
               schema:
                 type: string
-                example: "POST, GET, OPTIONS"
+                example: "POST, GET, DELETE, OPTIONS"
             Access-Control-Allow-Headers:
               schema:
                 type: string
@@ -436,7 +436,7 @@ paths:
             statusCode: "204"
             responseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Allow-Methods: "'POST, GET, OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'POST, GET, DELETE, OPTIONS'"
               method.response.header.Access-Control-Allow-Headers: "'Content-Type, Authorization'"
     get:
       x-amazon-apigateway-integration:
@@ -510,7 +510,86 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+    delete:
+      x-amazon-apigateway-integration:
+        uri: "${delete_review_lambda_invoke_arn}"
+        httpMethod: POST
+        type: aws_proxy
+      summary: Delete a review
+      security:
+        - itvibe-authorizer: [ ]
+      parameters:
+        - name: review_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Deletion OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The review is deleted successfully"
+        "400":
+          description: "problem with provided review id"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The given id is not in uuid"
+        "404":
+          description: "Review not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Review not found"
+          "401":
+            description: "Not authenticated"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "You should be authenticated to perform this action"
+          "403":
+            description: "Not authorized"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "You are not authorized to perform this action"
+          "500":
+            description: "Internal server error"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Internal server error"
   /contact:
     options:
       summary: Preflight CORS check for contact messages
