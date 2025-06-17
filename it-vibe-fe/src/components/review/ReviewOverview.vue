@@ -40,11 +40,70 @@
     <div class="comment-section">
       <p class="comment-text">{{ review.comment }}</p>
     </div>
+
+    <div class="action-section">
+      <button class="delete" @click="isDeleting = true">
+        <i class="fa fa-trash"></i>
+      </button>
+    </div>
+
+    <generic-modal
+      v-if="this.isDeleting"
+      :isOpen="this.isDeleting"
+      @close="isDeleting = false"
+    >
+      <div>
+        <div v-if="!deleteLoading" style="margin: 10px 0">
+          <span>Are you shure you want to delete this review ?</span>
+        </div>
+        <div v-else>
+          <span>Deleting review ...</span>
+        </div>
+        <div
+          v-if="!deleteLoading"
+          class="action-section"
+          style="text-align: center"
+        >
+          <button style="margin: 0px 5px" @click="deleteReview">Yes</button>
+          <button
+            style="margin: 0px 5px"
+            class="cancel"
+            @click="isDeleting = false"
+          >
+            No
+          </button>
+        </div>
+        <div v-else class="spinner"></div>
+      </div>
+    </generic-modal>
+    <generic-modal
+      v-if="this.showInfo"
+      :isOpen="this.showInfo"
+      @close="resetInformationMessage"
+    >
+      <div>
+        <span>{{ this.informationMessage }}</span>
+      </div>
+    </generic-modal>
   </div>
 </template>
 
 <script>
+import GenericModal from "../ui/GenericModal.vue";
+
 export default {
+  components: {
+    GenericModal,
+  },
+  data() {
+    return {
+      apibaseUrl: process.env.VUE_APP_API_BASE_URL,
+      isDeleting: false,
+      deleteLoading: false,
+      showInfo: false,
+      informationMessage: "",
+    };
+  },
   props: {
     review: {
       type: Object,
@@ -61,6 +120,58 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       });
+    },
+  },
+  methods: {
+    resetInformationMessage() {
+      this.showInfo = false;
+      this.informationMessage = "";
+    },
+    async deleteReview() {
+      this.deleteLoading = true;
+      const url = new URL(`${this.apibaseUrl}/reviews`);
+      const requestParams = {
+        company_id: this.review.company_id,
+        review_id: this.review.review_id,
+      };
+      const token = localStorage.getItem("idToken");
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      Object.entries(requestParams).forEach(([key, value]) => {
+        url.searchParams.append(key, value);
+      });
+
+      fetch(url, {
+        method: "DELETE",
+        headers: headers,
+      })
+        .then((response) => {
+          if (response.status === 403) {
+            // Handle forbidden access specifically
+            this.informationMessage =
+              "You are not authorized to delete this review.";
+            this.showInfo = true;
+            throw new Error("Forbidden");
+          } else if (!response.ok) {
+            // Handle other errors
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          this.$emit("refresh-reviews");
+        })
+        .catch((error) => {
+          console.error("Error deleting review:", error);
+          if (error.message !== "Forbidden") {
+            this.informationMessage = "Failed to delete review.";
+            this.showInfo = true;
+          }
+        })
+        .finally(() => {
+          this.deleteLoading = false;
+          this.isDeleting = false;
+        });
     },
   },
 };
@@ -142,6 +253,12 @@ export default {
   border-top: 1px solid #eee;
 }
 
+.action-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  text-align: left;
+}
 .comment-section label {
   font-size: 0.9rem;
   color: #666;
