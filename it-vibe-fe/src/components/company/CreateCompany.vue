@@ -79,12 +79,6 @@ export default {
         IBAN: "",
         siren: "",
         siret: "",
-        president: {
-          firstname: "",
-          lastname: "",
-          phoneNumber: "",
-          email: "",
-        },
       },
     };
   },
