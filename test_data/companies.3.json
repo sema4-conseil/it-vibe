@@ -1,0 +1,6 @@
+
+    {
+        "companies": [
+            { "name": "2 Faceless corporation", "size": 14, "revenue": 103200000, "creationDate": "2000-05-30", "adress": "Bravos - Essos", "siren": "963741800", "siret": "96374180000000", "industry": "Beverages", "country": "FR","website" : "http://bravos.corp.com" }
+        ]
+    }

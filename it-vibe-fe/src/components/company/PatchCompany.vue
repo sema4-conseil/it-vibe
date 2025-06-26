@@ -152,6 +152,17 @@
               required
             />
           </div>
+          <!-- website -->
+          <div class="form-group" :class="{ changed: changedFields.website }">
+            <label for="siret">WEBSITE</label>
+            <input
+              type="text"
+              id="website"
+              v-model="company.website"
+              @input="markFieldChanged('website')"
+              required
+            />
+          </div>
           <div class="form-group">
             <button type="button" @click="updateCompany">Save</button>
           </div>
@@ -233,6 +244,7 @@ export default {
         adress: false,
         siren: false,
         siret: false,
+        website: false,
       },
       modal: {
         show: false,
