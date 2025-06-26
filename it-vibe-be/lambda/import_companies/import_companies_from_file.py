@@ -189,7 +189,8 @@ def lambda_handler(event, context):
                 adress=company['adress'],
                 siren=company['siren'],
                 siret=company['siret'],
-                createdBy=createdByInfos
+                createdBy=createdByInfos,
+                website=company['website'] if 'website' in company else None,
             )
             entities.append(entity.to_dict())
         
@@ -231,7 +232,7 @@ def lambda_handler(event, context):
         }
 
 class CompanyEntiy :
-    def __init__(self, name, size, country, industry, revenue, creationDate, adress, siren, siret, createdBy):
+    def __init__(self, name, size, country, industry, revenue, creationDate, adress, siren, siret, createdBy,website=None):
         self.name = name
         self.size = size
         self.country = country
@@ -243,6 +244,7 @@ class CompanyEntiy :
         self.siret = siret
         self.id = str(uuid.uuid4())
         self.createdBy = createdBy
+        self.website = website
 
     def to_dict(self):
         return {
@@ -257,5 +259,6 @@ class CompanyEntiy :
             'adress': self.adress,
             'siren': self.siren,
             'siret': self.siret,
-            'createdBy': self.createdBy
+            'createdBy': self.createdBy,
+            'website': self.website
         }

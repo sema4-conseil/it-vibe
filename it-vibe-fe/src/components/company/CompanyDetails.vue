@@ -36,6 +36,12 @@
             <strong>Creation Date:</strong>
             {{ formatDate(company.creationDate) }}
           </div>
+          <div class="detail-item">
+            <strong>Website:</strong>
+            <a v-if="company.website" :href="company.website" target="_blank">{{
+              company.website
+            }}</a>
+          </div>
         </div>
         <div v-if="company.president" class="president-details">
           <h2>President</h2>

@@ -64,6 +64,7 @@ export default {
         { name: "adress", label: "Address", type: "text", required: true },
         { name: "siren", label: "SIREN", type: "text", required: true },
         { name: "siret", label: "SIRET", type: "text", required: true },
+        { name: "website", label: "WEBSITE", type: "text", required: false },
       ],
       form: {
         name: "",
@@ -79,6 +80,7 @@ export default {
         IBAN: "",
         siren: "",
         siret: "",
+        website: "",
       },
     };
   },
