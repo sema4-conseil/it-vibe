@@ -110,3 +110,12 @@ output "delete_review_lambda_arn" {
 output "delete_review_lambda_invoke_arn" {
   value = aws_lambda_function.delete_review_lambda.invoke_arn
 }
+
+output "transform_review_lambda_arn" {
+  value = aws_lambda_function.transform_review_lambda.arn
+}
+
+output "transform_review_lambda_invoke_arn" {
+  value = aws_lambda_function.transform_review_lambda.invoke_arn
+}
+

@@ -37,5 +37,7 @@ variable "delete_review_lambda_arn" {}
 variable "delete_review_lambda_invoke_arn" {}
 variable "import_companies_lambda_arn" {}
 variable "import_companies_lambda_invoke_arn" {}
+variable "transform_review_lambda_arn" {}
+variable "transform_review_lambda_invoke_arn" {}
 
 variable "openapi_spec_location"  {}

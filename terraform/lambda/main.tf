@@ -467,3 +467,29 @@ resource "aws_lambda_function" "health_check_lambda" {
         }
     }
 }
+
+data archive_file "transform_review_lambda_code" {
+  type        = "zip"
+  source {
+    content  = file("../it-vibe-be/lambda/transform/transform_review.py")
+    filename = "transform_review.py"
+  }
+  output_path = "../../it-vibe-be/lambda/transform/transform_review.zip"
+}
+
+resource "aws_lambda_function" "transform_review_lambda" {
+  filename         = data.archive_file.transform_review_lambda_code.output_path
+  function_name    = "transform_review_${var.env}"
+  role             = "arn:aws:iam::327441465709:role/ITVibeBedRockForLambda"
+  handler          = "transform_review.lambda_handler"
+  runtime          = var.pythonVersion
+  source_code_hash = data.archive_file.transform_review_lambda_code.output_base64sha256
+  description      = "Lambda to transform a review using generative AI"
+  environment {
+    variables = {
+      VERSION = var.be_version
+      ENV     = var.env
+      LOG_LEVEL = var.log_level
+    }
+  }
+}
