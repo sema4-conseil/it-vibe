@@ -93,6 +93,17 @@
                 rows="4"
                 @input="updateCommentLength"
               ></textarea>
+              <div class="button-container">
+                <button @click="transformReview">
+                  <i class="fa fa-spinner"></i>Transform with UI
+                </button>
+                <button
+                  @click="backToPreviousReview"
+                  :disabled="previousReviews.length < 1"
+                >
+                  <i class="fa fa-reply"></i>Back
+                </button>
+              </div>
               <p
                 class="comment-feedback"
                 :class="{ error: !isCommentValid && isSubmitted }"
@@ -155,8 +166,12 @@
                 </div>
               </div>
               <div class="button-container">
-                <button @click="submitReview">Submit</button>
-                <button @click="cancelReview" class="cancel">Cancel</button>
+                <button @click="submitReview">
+                  <i class="fa fa-paper-plane"></i>Submit
+                </button>
+                <button @click="cancelReview" class="cancel">
+                  <i class="fa fa-ban"></i>Cancel
+                </button>
               </div>
             </div>
           </transition>
@@ -220,6 +235,7 @@ export default {
         type: "",
         loading: false,
       },
+      previousReviews: [],
     };
   },
   created() {
@@ -371,6 +387,7 @@ export default {
           this.newReview.comment = "";
           this.newReview.isAnonymous = false;
           this.showReviewForm = false;
+          this.previousReviews = [];
         } catch (error) {
           this.modal.show = true;
           this.modal.message =
@@ -380,6 +397,7 @@ export default {
         this.modal.show = true;
         this.modal.message =
           "Please fix the errors in the form before submitting.";
+        this.modal.loading = false;
       }
     },
     formatRevenue(revenue) {
@@ -388,6 +406,71 @@ export default {
     formatDate(dateString) {
       const date = new Date(dateString);
       return date.toLocaleDateString();
+    },
+    async transformReview() {
+      try {
+        if (!this.isCommentValid) {
+          this.modal = {
+            show: true,
+            message: "Review comment must be between 100 and 1000 characters.",
+            loading: false,
+          };
+          return;
+        }
+        this.modal = {
+          show: true,
+          message: "Transforming review with UI...",
+          loading: true,
+        };
+
+        const token = localStorage.getItem("idToken");
+        const uri = `${this.apibaseUrl}/reviews/transform`;
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+        const body = {
+          content: this.newReview.comment,
+        };
+
+        fetch(uri, {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(body),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to transform review.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            this.previousReviews.push(this.newReview.comment);
+            this.newReview.comment = data.response_content;
+            this.modal = {
+              show: true,
+              message: "Review transformed successfully.",
+              loading: false,
+            };
+          });
+      } catch (error) {
+        this.modal = {
+          show: true,
+          message: "An error occurred while transforming the review.",
+          loading: false,
+        };
+      }
+    },
+    backToPreviousReview() {
+      if (this.previousReviews.length > 0) {
+        this.newReview.comment = this.previousReviews.pop();
+      } else {
+        this.modal = {
+          show: true,
+          message: "No previous reviews to go back to.",
+          loading: false,
+        };
+      }
     },
   },
 };
