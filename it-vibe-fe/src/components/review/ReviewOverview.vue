@@ -271,6 +271,7 @@ export default {
   line-height: 1.6;
   color: #444;
   white-space: pre-line;
+  text-align: left;
 }
 
 @media (max-width: 600px) {
